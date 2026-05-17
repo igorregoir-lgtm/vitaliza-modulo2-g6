@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gym Churn Predictor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:       #0b0e13;
+      --surface:  #13171f;
+      --surface2: #1a1f2b;
+      --border:   #222838;
+      --teal:     #00c4a7;
+      --teal-dim: #009e86;
+      --text:     #e4e8f0;
+      --muted:    #5a6278;
+      --high:     #ff4d6d;
+      --med:      #ffb830;
+      --low:      #00c4a7;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      padding: 48px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* HEADER */
+    header {
+      width: 100%;
+      max-width: 800px;
+      margin-bottom: 40px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
+    }
+    .header-left .eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--teal);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .header-left h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+    .header-left h1 span { color: var(--teal); }
+    .header-right {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      text-align: right;
+      line-height: 1.8;
+    }
+
+    /* LAYOUT */
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 20px;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+    }
+
+    .section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: var(--teal);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* FIELDS */
+    .fields { display: flex; flex-direction: column; gap: 14px; }
+
+    .field-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field.full { grid-column: span 2; }
+
+    label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      letter-spacing: 0.05em;
+    }
+
+    input, select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.88rem;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--teal);
+    }
+    input::placeholder { color: var(--muted); }
+
+    /* TOGGLE GROUP */
+    .toggle-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 2px;
+    }
+    .toggle-btn {
+      padding: 8px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+    .toggle-btn.active {
+      border-color: var(--teal);
+      color: var(--teal);
+      background: rgba(0,196,167,0.08);
+    }
+
+    /* BUTTON */
+    #predict-btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 13px;
+      background: var(--teal);
+      color: #0b0e13;
+      border: none;
+      border-radius: 9px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    #predict-btn:hover  { background: var(--teal-dim); }
+    #predict-btn:active { transform: scale(0.98); }
+    #predict-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* RESULT PANEL */
+    .result-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* PROBABILITY RING */
+    .ring-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 0 10px;
+    }
+    .ring-svg { width: 140px; height: 140px; transform: rotate(-90deg); }
+    .ring-bg   { fill: none; stroke: var(--border); stroke-width: 10; }
+    .ring-fill { fill: none; stroke-width: 10; stroke-linecap: round;
+                 stroke-dasharray: 339.3; stroke-dashoffset: 339.3;
+                 transition: stroke-dashoffset 0.8s cubic-bezier(.4,0,.2,1), stroke 0.3s; }
+    .ring-center {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .ring-wrap-inner { position: relative; display: flex; align-items: center; justify-content: center; }
+    .ring-pct {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.7rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text);
+    }
+    .ring-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--muted);
+      margin-top: 2px;
+      letter-spacing: 0.08em;
+    }
+
+    /* VERDICT */
+    .verdict {
+      text-align: center;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+    }
+    .verdict-label {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .verdict-label.high   { color: var(--high); }
+    .verdict-label.medium { color: var(--med);  }
+    .verdict-label.low    { color: var(--low);  }
+    .verdict-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* FEATURE BARS */
+    .feature-bars { display: flex; flex-direction: column; gap: 10px; }
+    .feat-row { display: flex; flex-direction: column; gap: 4px; }
+    .feat-meta {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+    .feat-bar-bg {
+      height: 4px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .feat-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: var(--teal);
+      width: 0%;
+      transition: width 0.6s ease;
+    }
+
+    /* PLACEHOLDER */
+    .placeholder {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .placeholder-icon { font-size: 2.5rem; opacity: 0.3; }
+    .placeholder-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .error-msg {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--high);
+      margin-top: 10px;
+      min-height: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .layout { grid-template-columns: 1fr; }
+      header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .header-right { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="eyebrow">inteli MBA · Semana 5 · Churn Prediction</div>
+    <h1>Gym <span>Churn</span><br/>Predictor</h1>
+  </div>
+  <div class="header-right">
+    modelo · RandomForest<br/>
+    features · 11<br/>
+    dataset · 4 000 clientes
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- FORMULÁRIO -->
+  <div class="card">
+    <div class="section-label">dados do cliente</div>
+    <div class="fields">
+
+      <div class="field-group">
+        <div class="field">
+          <label>Tempo como cliente (meses)</label>
+          <input type="number" id="Lifetime" placeholder="ex: 12" min="0"/>
+        </div>
+        <div class="field">
+          <label>Idade</label>
+          <input type="number" id="Age" placeholder="ex: 32" min="16" max="80"/>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field">
+          <label>Duração do contrato (meses)</label>
+          <input type="number" id="Contract_period" placeholder="1, 6 ou 12" min="1"/>
+        </div>
+        <div class="field">
+          <label>Meses até vencer o contrato</label>
+          <input type="number" id="Month_to_end_contract" placeholder="ex: 4" min="0" step="0.1"/>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field">
+          <label>Freq. aulas — esse mês (por semana)</label>
+          <input type="number" id="Avg_class_frequency_current_month" placeholder="ex: 2.5" step="0.1" min="0"/>
+        </div>
+        <div class="field">
+          <label>Freq. aulas — histórico (por semana)</label>
+          <input type="number" id="Avg_class_frequency_total" placeholder="ex: 2.0" step="0.1" min="0"/>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Gastos extras na academia (R$)</label>
+        <input type="number" id="Avg_additional_charges_total" placeholder="ex: 150.00" step="0.01" min="0"/>
+      </div>
+
+      <div class="field-group">
+        <div class="field">
+          <label>Faz aulas em grupo?</label>
+          <div class="toggle-group">
+            <button class="toggle-btn" onclick="toggle('Group_visits', 1, this)">Sim</button>
+            <button class="toggle-btn" onclick="toggle('Group_visits', 0, this)">Não</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Veio por indicação?</label>
+          <div class="toggle-group">
+            <button class="toggle-btn" onclick="toggle('Promo_friends', 1, this)">Sim</button>
+            <button class="toggle-btn" onclick="toggle('Promo_friends', 0, this)">Não</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field">
+          <label>Empresa parceira?</label>
+          <div class="toggle-group">
+            <button class="toggle-btn" onclick="toggle('Partner', 1, this)">Sim</button>
+            <button class="toggle-btn" onclick="toggle('Partner', 0, this)">Não</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Mora perto da academia?</label>
+          <div class="toggle-group">
+            <button class="toggle-btn" onclick="toggle('Near_Location', 1, this)">Sim</button>
+            <button class="toggle-btn" onclick="toggle('Near_Location', 0, this)">Não</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <button id="predict-btn" onclick="predict()">Calcular probabilidade de churn</button>
+    <div class="error-msg" id="error-msg"></div>
+  </div>
+
+  <!-- RESULTADO -->
+  <div class="card result-panel" id="result-panel">
+    <div class="section-label">resultado</div>
+
+    <div id="placeholder" class="placeholder">
+      <div class="placeholder-icon">◎</div>
+      <div class="placeholder-text">preencha os dados<br/>e clique em calcular</div>
+    </div>
+
+    <div id="result-content" style="display:none; flex-direction:column; gap:20px;">
+
+      <div class="ring-wrap">
+        <div class="ring-wrap-inner">
+          <svg class="ring-svg" viewBox="0 0 120 120">
+            <circle class="ring-bg"   cx="60" cy="60" r="54"/>
+            <circle class="ring-fill" cx="60" cy="60" r="54" id="ring-fill"/>
+          </svg>
+          <div class="ring-center">
+            <div class="ring-pct" id="ring-pct">—</div>
+            <div class="ring-sub">CHURN PROB.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="verdict">
+        <div class="verdict-label" id="verdict-label">—</div>
+        <div class="verdict-sub" id="verdict-sub">—</div>
+      </div>
+
+      <div>
+        <div class="section-label">fatores de risco</div>
+        <div class="feature-bars" id="feature-bars"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ==================================================
+  // Troque pela URL do seu backend no Render
+  // ==================================================
+  const API_URL = "https://SEU-PROJETO.onrender.com";
+
+  // Estado dos toggles
+  const toggleValues = {
+    Group_visits: null,
+    Promo_friends: null,
+    Partner: null,
+    Near_Location: null,
+  };
+
+  function toggle(field, value, btn) {
+    toggleValues[field] = value;
+    const group = btn.closest('.toggle-group');
+    group.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function getVal(id) {
+    return parseFloat(document.getElementById(id)?.value);
+  }
+
+  async function predict() {
+    const errorEl = document.getElementById("error-msg");
+    errorEl.textContent = "";
+
+    const payload = {
+      Lifetime:                             parseInt(getVal("Lifetime")),
+      Avg_class_frequency_current_month:    parseFloat(getVal("Avg_class_frequency_current_month")),
+      Age:                                  parseInt(getVal("Age")),
+      Contract_period:                      parseInt(getVal("Contract_period")),
+      Month_to_end_contract:                parseFloat(getVal("Month_to_end_contract")),
+      Avg_class_frequency_total:            parseFloat(getVal("Avg_class_frequency_total")),
+      Avg_additional_charges_total:         parseFloat(getVal("Avg_additional_charges_total")),
+      Group_visits:                         toggleValues.Group_visits,
+      Promo_friends:                        toggleValues.Promo_friends,
+      Partner:                              toggleValues.Partner,
+      Near_Location:                        toggleValues.Near_Location,
+    };
+
+    const missing = Object.entries(payload).filter(([k, v]) => v === null || isNaN(v));
+    if (missing.length > 0) {
+      errorEl.textContent = "Preencha todos os campos antes de calcular.";
+      return;
+    }
+
+    const btn = document.getElementById("predict-btn");
+    btn.disabled = true;
+    btn.textContent = "Calculando...";
+
+    try {
+      const res = await fetch(`${API_URL}/predict`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`Erro ${res.status}`);
+      const data = await res.json();
+      showResult(data, payload);
+    } catch (err) {
+      errorEl.textContent = `Erro ao conectar com a API: ${err.message}`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Calcular probabilidade de churn";
+    }
+  }
+
+  function showResult({ churn_probability, churn_label, risk_level }, payload) {
+    document.getElementById("placeholder").style.display = "none";
+    const content = document.getElementById("result-content");
+    content.style.display = "flex";
+
+    // Ring
+    const pct = Math.round(churn_probability * 100);
+    const circumference = 339.3;
+    const offset = circumference * (1 - churn_probability);
+    const ring = document.getElementById("ring-fill");
+    const colors = { high: "#ff4d6d", medium: "#ffb830", low: "#00c4a7" };
+    ring.style.strokeDashoffset = offset;
+    ring.style.stroke = colors[risk_level];
+    document.getElementById("ring-pct").textContent = `${pct}%`;
+
+    // Verdict
+    const vLabel = document.getElementById("verdict-label");
+    vLabel.textContent = churn_label;
+    vLabel.className = `verdict-label ${risk_level}`;
+
+    const subtexts = {
+      high:   "ação imediata recomendada",
+      medium: "monitorar de perto",
+      low:    "cliente estável"
+    };
+    document.getElementById("verdict-sub").textContent = subtexts[risk_level];
+
+    // Feature bars — importância relativa baseada na correlação do dataset
+    const featureImportance = [
+      { key: "Lifetime",                           label: "Tempo como cliente",     importance: 0.438 },
+      { key: "Avg_class_frequency_current_month",  label: "Frequência esse mês",    importance: 0.412 },
+      { key: "Age",                                label: "Idade",                  importance: 0.404 },
+      { key: "Contract_period",                    label: "Período do contrato",     importance: 0.390 },
+      { key: "Month_to_end_contract",              label: "Meses até vencer",        importance: 0.381 },
+    ];
+
+    const barsEl = document.getElementById("feature-bars");
+    barsEl.innerHTML = "";
+
+    const maxImp = Math.max(...featureImportance.map(f => f.importance));
+    featureImportance.forEach(f => {
+      const widthPct = Math.round((f.importance / maxImp) * 100);
+      const val = payload[f.key];
+      const row = document.createElement("div");
+      row.className = "feat-row";
+      row.innerHTML = `
+        <div class="feat-meta">
+          <span>${f.label}</span>
+          <span>${typeof val === 'number' ? val : '—'}</span>
+        </div>
+        <div class="feat-bar-bg">
+          <div class="feat-bar-fill" style="width:0%" data-width="${widthPct}%"></div>
+        </div>`;
+      barsEl.appendChild(row);
+    });
+
+    // Anima barras
+    setTimeout(() => {
+      barsEl.querySelectorAll('.feat-bar-fill').forEach(bar => {
+        bar.style.width = bar.dataset.width;
+      });
+    }, 50);
+  }
+</script>
+
+</body>
+</html>
