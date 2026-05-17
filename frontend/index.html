@@ -575,6 +575,63 @@
       gap: 20px;
     }
 
+    .doc-story {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .doc-hero {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface-soft) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .doc-hero h2 {
+      color: var(--text);
+      font-size: clamp(1.9rem, 4vw, 3rem);
+      letter-spacing: -0.05em;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+
+    .doc-hero p {
+      color: var(--muted-strong);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 700px;
+    }
+
+    .doc-summary {
+      display: grid;
+      gap: 12px;
+    }
+
+    .doc-summary-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .doc-summary-item strong {
+      color: var(--text);
+      display: block;
+      font-size: 1.25rem;
+      letter-spacing: -0.04em;
+      margin-bottom: 4px;
+    }
+
+    .doc-summary-item span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
     .doc-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -585,6 +642,10 @@
 
     .doc-card.full {
       grid-column: 1 / -1;
+    }
+
+    .doc-card.accent {
+      background: var(--surface-soft);
     }
 
     .doc-kicker {
@@ -640,6 +701,44 @@
       font-size: 0.8rem;
       font-weight: 800;
       padding: 8px 12px;
+    }
+
+    .story-steps {
+      counter-reset: story-step;
+      display: grid;
+      gap: 14px;
+    }
+
+    .story-step {
+      counter-increment: story-step;
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .story-step::before {
+      content: counter(story-step);
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--brand);
+      color: var(--text-on-accent);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+    }
+
+    .story-step strong {
+      color: var(--text);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .story-step span {
+      color: var(--muted-strong);
+      font-size: 0.92rem;
+      line-height: 1.5;
     }
 
     .flow-steps {
@@ -698,6 +797,7 @@
     @media (max-width: 900px) {
       body { padding: 16px; }
       .hero,
+      .doc-story,
       .layout,
       .upload-layout,
       .doc-grid,
@@ -934,87 +1034,108 @@
 
   <section class="tab-panel" id="tab-documentation" aria-label="Documentação da entrega Semana 5">
     <div class="doc-layout">
-      <article class="doc-card full">
-        <div class="doc-kicker">Entrega Semana 5</div>
-        <h2>Primeira versão funcional para predição de churn</h2>
-        <p>
-          Esta entrega cobre a análise exploratória da base de clientes e uma primeira versão funcional do sistema:
-          upload de CSV, treino do modelo no backend, API de inferência e interface web simples para simular o risco de cancelamento.
-        </p>
-        <div class="doc-pill-row">
-          <span class="doc-pill">EDA</span>
-          <span class="doc-pill">Upload CSV</span>
-          <span class="doc-pill">RandomForest</span>
-          <span class="doc-pill">FastAPI</span>
-          <span class="doc-pill">Vercel + Render</span>
-          <span class="doc-pill">Inferência com mínimo de 2 campos</span>
-        </div>
-      </article>
-
-      <div class="doc-grid">
-        <article class="doc-card">
-          <div class="doc-kicker">Arquitetura</div>
-          <h3>Como o sistema funciona</h3>
-          <div class="flow-steps">
-            <div class="flow-step">
-              <strong>Dataset</strong>
-              <span>Usuário envia gym_churn_us.csv pela aba Upload CSV.</span>
-            </div>
-            <div class="flow-step">
-              <strong>Treino</strong>
-              <span>Backend valida colunas, limpa dados, treina RandomForest e calcula métricas.</span>
-            </div>
-            <div class="flow-step">
-              <strong>Backend</strong>
-              <span>FastAPI no Render mantém o modelo treinado em runtime e expõe /predict.</span>
-            </div>
-            <div class="flow-step">
-              <strong>Frontend</strong>
-              <span>Vercel envia dados para inferência e exibe probabilidade e risco.</span>
-            </div>
+      <section class="doc-story">
+        <article class="doc-hero">
+          <div class="doc-kicker">Entrega Semana 5</div>
+          <h2>Da análise exploratória à primeira inferência de churn</h2>
+          <p>
+            A proposta desta semana é demonstrar uma primeira versão funcional: entender a base de clientes,
+            treinar um modelo preditivo e disponibilizar uma interface simples para estimar o risco de cancelamento.
+            O fluxo foi desenhado para ser demonstrável em sala: o usuário envia o CSV, o backend treina o modelo
+            e a tela de inferência passa a usar esse treinamento.
+          </p>
+          <div class="doc-pill-row">
+            <span class="doc-pill">EDA</span>
+            <span class="doc-pill">Upload CSV</span>
+            <span class="doc-pill">RandomForest</span>
+            <span class="doc-pill">FastAPI</span>
+            <span class="doc-pill">Vercel + Render</span>
           </div>
         </article>
 
+        <aside class="doc-summary" aria-label="Resumo da entrega">
+          <div class="doc-summary-item">
+            <strong>4.000</strong>
+            <span>clientes na base original</span>
+          </div>
+          <div class="doc-summary-item">
+            <strong>11</strong>
+            <span>features usadas pelo modelo</span>
+          </div>
+          <div class="doc-summary-item">
+            <strong>3 abas</strong>
+            <span>upload, inferência e documentação</span>
+          </div>
+        </aside>
+      </section>
+
+      <div class="doc-grid">
+        <article class="doc-card accent">
+          <div class="doc-kicker">1. Contexto do problema</div>
+          <h3>Por que prever churn em academias?</h3>
+          <p>
+            Academias dependem de recorrência. Quando um cliente reduz frequência, está perto do fim do contrato
+            ou interage pouco com a operação, o risco de cancelamento aumenta. O objetivo do projeto é transformar
+            esses sinais em uma probabilidade de churn para apoiar ações de retenção.
+          </p>
+        </article>
+
         <article class="doc-card">
-          <div class="doc-kicker">Dataset</div>
-          <h3>Base utilizada</h3>
+          <div class="doc-kicker">2. Dados utilizados</div>
+          <h3>O que existe na base</h3>
           <ul>
             <li>4.000 clientes de uma academia americana.</li>
             <li>Target: Churn, em que 0 significa permaneceu e 1 significa cancelou.</li>
             <li>Sem valores nulos, com limpeza de duplicados no pipeline.</li>
-            <li>gender e Phone foram descartadas por baixa correlação com churn.</li>
+            <li>gender e Phone foram descartadas por baixa relação com o cancelamento.</li>
           </ul>
         </article>
 
-        <article class="doc-card">
-          <div class="doc-kicker">Features</div>
-          <h3>Variáveis usadas pelo modelo</h3>
-          <div class="feature-list">
-            <span>Lifetime</span>
-            <span>Avg_class_frequency_current_month</span>
-            <span>Age</span>
-            <span>Contract_period</span>
-            <span>Month_to_end_contract</span>
-            <span>Avg_class_frequency_total</span>
-            <span>Avg_additional_charges_total</span>
-            <span>Group_visits, Promo_friends, Partner, Near_Location</span>
+        <article class="doc-card full">
+          <div class="doc-kicker">3. Jornada técnica</div>
+          <h3>Como a solução funciona na prática</h3>
+          <div class="story-steps">
+            <div class="story-step">
+              <div>
+                <strong>Upload da base</strong>
+                <span>O usuário envia o arquivo gym_churn_us.csv pela aba Upload CSV.</span>
+              </div>
+            </div>
+            <div class="story-step">
+              <div>
+                <strong>Validação e limpeza</strong>
+                <span>O backend confere se existem Churn e as 11 features, remove duplicados e linhas inválidas.</span>
+              </div>
+            </div>
+            <div class="story-step">
+              <div>
+                <strong>Treino do modelo</strong>
+                <span>A FastAPI treina um RandomForest, calcula métricas e mantém o modelo disponível em runtime.</span>
+              </div>
+            </div>
+            <div class="story-step">
+              <div>
+                <strong>Inferência</strong>
+                <span>A tela envia os dados do cliente para o Render e recebe probabilidade, rótulo e nível de risco.</span>
+              </div>
+            </div>
           </div>
         </article>
 
         <article class="doc-card">
-          <div class="doc-kicker">EDA</div>
-          <h3>Análises previstas</h3>
+          <div class="doc-kicker">4. EDA</div>
+          <h3>O que a exploração dos dados busca responder</h3>
           <ul>
-            <li>Distribuição da variável Churn para entender o desbalanceamento.</li>
-            <li>Comparação de idade, tempo como cliente e frequência entre churn e não churn.</li>
-            <li>Análise de contrato e meses até vencimento como sinais de retenção.</li>
-            <li>Correlação das features com Churn para justificar seleção de variáveis.</li>
+            <li>Qual é a proporção de clientes que cancelaram?</li>
+            <li>Clientes com menor frequência recente cancelam mais?</li>
+            <li>Tempo como cliente e contrato longo ajudam na retenção?</li>
+            <li>Quais variáveis parecem mais relacionadas ao churn?</li>
           </ul>
         </article>
 
         <article class="doc-card">
-          <div class="doc-kicker">Modelo</div>
-          <h3>Primeira versão preditiva</h3>
+          <div class="doc-kicker">5. Modelo</div>
+          <h3>RandomForest + ROC-AUC</h3>
           <p>
             Utilizamos o RandomForestClassifier, um algoritmo consolidado de machine learning disponível na biblioteca scikit-learn.
             Ele combina múltiplas árvores de decisão para estimar a probabilidade de churn de cada cliente.
@@ -1028,27 +1149,40 @@
           </div>
         </article>
 
-        <article class="doc-card">
-          <div class="doc-kicker">Inferência</div>
-          <h3>Como interpretar o resultado</h3>
-          <ul>
-            <li>Baixo risco: probabilidade menor que 40%.</li>
-            <li>Risco médio: probabilidade entre 40% e 69%.</li>
-            <li>Alto risco: probabilidade a partir de 70%.</li>
-          </ul>
-          <div class="callout">
-            Antes de inferir, envie o CSV na aba Upload CSV. A tela permite calcular com pelo menos 2 campos; os campos não informados são preenchidos com valores de referência derivados do treinamento.
+        <article class="doc-card full">
+          <div class="doc-kicker">6. Features usadas</div>
+          <h3>Quais sinais alimentam a previsão</h3>
+          <div class="feature-list">
+            <span>Tempo como cliente: Lifetime</span>
+            <span>Frequência recente: Avg_class_frequency_current_month</span>
+            <span>Idade: Age</span>
+            <span>Contrato: Contract_period e Month_to_end_contract</span>
+            <span>Histórico de uso: Avg_class_frequency_total</span>
+            <span>Gastos extras: Avg_additional_charges_total</span>
+            <span>Vínculo e contexto: Group_visits, Promo_friends, Partner, Near_Location</span>
           </div>
         </article>
 
         <article class="doc-card">
-          <div class="doc-kicker">Limitações</div>
-          <h3>O que ainda será evoluído</h3>
+          <div class="doc-kicker">7. Como interpretar</div>
+          <h3>Da probabilidade para a ação</h3>
           <ul>
-            <li>Semana 10 deve trazer modelo final e explicabilidade com LLM.</li>
-            <li>O modelo treinado via upload fica disponível enquanto o serviço do Render estiver rodando.</li>
-            <li>Se o Render reiniciar ou redeployar, será necessário enviar o CSV novamente.</li>
+            <li>Baixo risco: probabilidade menor que 40%, cliente aparentemente estável.</li>
+            <li>Risco médio: probabilidade entre 40% e 69%, cliente merece acompanhamento.</li>
+            <li>Alto risco: probabilidade a partir de 70%, ação de retenção recomendada.</li>
           </ul>
+          <div class="callout">
+            A inferência funciona com pelo menos 2 campos. Os campos ausentes são completados com valores de referência derivados do treinamento.
+          </div>
+        </article>
+
+        <article class="doc-card">
+          <div class="doc-kicker">8. Próximos passos</div>
+          <h3>Da Semana 5 para a Semana 10</h3>
+          <p>
+            Para a Semana 5, a prioridade é provar o fluxo ponta a ponta. Para a Semana 10, a evolução natural é
+            persistir o modelo treinado, refinar a performance e adicionar LLM para explicabilidade e análise prescritiva.
+          </p>
         </article>
       </div>
     </div>
