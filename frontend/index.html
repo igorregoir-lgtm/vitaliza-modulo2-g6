@@ -1395,8 +1395,8 @@
         <div>
           <div class="section-label">Fatores de risco</div>
           <p class="risk-help">
-            Estes são os sinais que mais pesaram nesta previsão. A barra mostra o peso relativo no cálculo;
-            o texto compara o cliente com a referência da base treinada.
+            Estes são os sinais que mais pesaram nesta previsão. A referência do treino é o valor típico
+            do CSV enviado: mediana para campos numéricos e opção mais comum para campos Sim/Não.
           </p>
           <div class="feature-bars" id="feature-bars"></div>
         </div>
@@ -2592,15 +2592,17 @@
     ];
     const importanciaFeatures = Array.isArray(top_3_drivers) && top_3_drivers.length
       ? top_3_drivers.map(driver => ({
+          feature: driver.feature,
           label: driver.label,
           importance: driver.driver_score || driver.importance || 0.1,
-          value: formatarValorDriver(driver.value),
+          value: driver.value,
+          referenceValue: driver.reference_value,
           explanation: descreverDriver(driver),
         }))
       : fallbackFeatures.map(feature => ({
           ...feature,
-          value: typeof payload[feature.key] === "number" ? formatarValorDriver(payload[feature.key]) : "não informado",
-          explanation: "Peso histórico dessa variável na separação entre clientes que ficam e cancelam.",
+          value: payload[feature.key],
+          explanation: "Peso histórico dessa variável na separação entre clientes que ficam e cancelam. Treine o modelo para ver a referência do CSV.",
         }));
 
     const barsEl = document.getElementById("feature-bars");
@@ -2624,7 +2626,7 @@
       explicacao.className = "feat-explain";
 
       rotulo.textContent = f.label;
-      valorEl.textContent = f.value;
+      valorEl.textContent = `Impacto relativo: ${larguraPct}%`;
       explicacao.textContent = f.explanation;
       barra.style.width = `${larguraPct}%`;
 
@@ -2635,26 +2637,70 @@
     });
   }
 
-  function formatarValorDriver(value) {
+  function obterUnidadeDriver(feature) {
+    const unidades = {
+      Lifetime: "meses como cliente",
+      Avg_class_frequency_current_month: "aulas/semana no mês atual",
+      Avg_class_frequency_total: "aulas/semana no histórico",
+      Age: "anos",
+      Contract_period: "meses de contrato",
+      Month_to_end_contract: "meses até vencer",
+      Avg_additional_charges_total: "US$ em gastos extras",
+    };
+    return unidades[feature] || "";
+  }
+
+  function formatarValorDriver(value, feature) {
+    if (typeof value !== "number") return value ?? "não informado";
+    if (["Group_visits", "Promo_friends", "Partner", "Near_Location"].includes(feature)) {
+      return value === 1 ? "Sim" : "Não";
+    }
+
+    const unidade = obterUnidadeDriver(feature);
+    const numero = new Intl.NumberFormat("pt-BR", {
+      maximumFractionDigits: 2,
+      minimumFractionDigits: Number.isInteger(value) ? 0 : 1,
+    }).format(value);
+
+    return unidade ? `${numero} ${unidade}` : numero;
+  }
+
+  function obterTipoReferenciaDriver(feature) {
+    if (["Group_visits", "Promo_friends", "Partner", "Near_Location"].includes(feature)) {
+      return "opção mais comum";
+    }
+    return "mediana";
+  }
+
+  function obterLeituraDriver(direction) {
+    if (direction === "abaixo da referência") {
+      return "abaixo do perfil típico aprendido no treino";
+    }
+    if (direction === "acima da referência") {
+      return "acima do perfil típico aprendido no treino";
+    }
+    return "próximo do perfil típico aprendido no treino";
+  }
+
+  function descreverDriver(driver) {
+    const valor = formatarValorDriver(driver.value, driver.feature);
+    const referencia = formatarValorDriver(driver.reference_value, driver.feature);
+    const tipoReferencia = obterTipoReferenciaDriver(driver.feature);
+    const leitura = obterLeituraDriver(driver.direction);
+    const peso = new Intl.NumberFormat("pt-BR", {
+      maximumFractionDigits: 1,
+      minimumFractionDigits: 1,
+    }).format((driver.importance || 0) * 100);
+
+    return `Cliente: ${valor}. Referência do treino (${tipoReferencia} do CSV): ${referencia}. Leitura: ${leitura}. Peso geral da variável no modelo: ${peso}%.`;
+  }
+
+  function formatarNumeroCurto(value) {
     if (typeof value !== "number") return value;
     return new Intl.NumberFormat("pt-BR", {
       maximumFractionDigits: 2,
       minimumFractionDigits: Number.isInteger(value) ? 0 : 1,
     }).format(value);
-  }
-
-  function descreverDriver(driver) {
-    const valor = formatarValorDriver(driver.value);
-    const referencia = formatarValorDriver(driver.reference_value);
-    const direcao = driver.direction;
-
-    if (direcao === "abaixo da referência") {
-      return `Valor do cliente: ${valor}; referência da base: ${referencia}. Está abaixo do padrão usado pelo modelo.`;
-    }
-    if (direcao === "acima da referência") {
-      return `Valor do cliente: ${valor}; referência da base: ${referencia}. Está acima do padrão usado pelo modelo.`;
-    }
-    return `Valor do cliente: ${valor}; referência da base: ${referencia}. Está próximo do padrão da base, mas ainda pesou na previsão.`;
   }
 </script>
 
