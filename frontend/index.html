@@ -1587,32 +1587,67 @@
   function exibirMetricasTreino(metrics) {
     const metricsEl = document.getElementById("training-metrics");
     const rotulos = {
-      rows_used: "Linhas usadas",
-      test_rows: "Linhas de teste",
-      churn_rate: "Taxa de churn",
-      roc_auc: "ROC-AUC",
-      accuracy: "Accuracy",
-      precision: "Precision",
-      recall: "Recall",
+      rows_used: {
+        label: "Linhas usadas",
+        help: "Quantidade de registros do CSV que entraram no treino depois da limpeza.",
+      },
+      test_rows: {
+        label: "Linhas de teste",
+        help: "Parte da base separada para testar o modelo. Normalmente representa 20% dos dados.",
+      },
+      churn_rate: {
+        label: "Taxa de churn",
+        help: "Percentual de clientes da base que cancelaram. Exemplo: 0.2652 significa cerca de 26,5%.",
+      },
+      roc_auc: {
+        label: "ROC-AUC",
+        help: "Mede a capacidade do modelo de separar clientes que cancelam dos que ficam. Quanto mais perto de 1, melhor.",
+      },
+      accuracy: {
+        label: "Accuracy",
+        help: "Taxa geral de acerto do modelo no conjunto de teste.",
+      },
+      precision: {
+        label: "Precision",
+        help: "Entre os clientes marcados como risco de churn, mostra quantos realmente cancelaram.",
+      },
+      recall: {
+        label: "Recall",
+        help: "Entre todos os clientes que realmente cancelaram, mostra quantos o modelo conseguiu identificar.",
+      },
     };
 
     metricsEl.replaceChildren();
-    Object.entries(rotulos).forEach(([key, label]) => {
+    Object.entries(rotulos).forEach(([key, config]) => {
       const card = document.createElement("div");
+      const labelRow = document.createElement("div");
       const labelEl = document.createElement("div");
+      const infoBtn = document.createElement("button");
+      const infoEl = document.createElement("div");
       const valueEl = document.createElement("div");
       const captionEl = document.createElement("div");
 
       card.className = "metric-card";
+      labelRow.className = "metric-label-row";
       labelEl.className = "metric-label";
+      infoBtn.className = "info-btn";
+      infoEl.className = "metric-info";
       valueEl.className = "metric-value";
       captionEl.className = "metric-caption";
 
-      labelEl.textContent = label;
+      labelEl.textContent = config.label;
+      infoBtn.type = "button";
+      infoBtn.setAttribute("aria-label", `Explicar ${config.label}`);
+      infoBtn.textContent = "i";
+      infoBtn.addEventListener("click", () => {
+        infoEl.classList.toggle("active");
+      });
+      infoEl.textContent = config.help;
       valueEl.textContent = metrics[key];
       captionEl.textContent = "treino atual";
 
-      card.append(labelEl, valueEl, captionEl);
+      labelRow.append(labelEl, infoBtn);
+      card.append(labelRow, valueEl, captionEl, infoEl);
       metricsEl.appendChild(card);
     });
     metricsEl.className = "training-metrics active";
