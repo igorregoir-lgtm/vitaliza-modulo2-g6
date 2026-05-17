@@ -995,6 +995,29 @@
       padding: 16px;
     }
 
+    .doc-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 14px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--brand);
+      color: var(--text-on-accent);
+      font-size: 0.88rem;
+      font-weight: 800;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .doc-link:hover {
+      background: var(--brand-strong);
+    }
+
+    .doc-link:active {
+      transform: scale(0.98);
+    }
+
     @media (max-width: 900px) {
       body { padding: 16px; }
       .hero,
@@ -1446,6 +1469,21 @@
             Para a Semana 5, a prioridade é provar o fluxo ponta a ponta. Para a Semana 10, a evolução natural é
             persistir o modelo treinado, refinar a performance e adicionar LLM para explicabilidade e análise prescritiva.
           </p>
+        </article>
+
+        <article class="doc-card full">
+          <div class="doc-kicker">Evidência formal da EDA</div>
+          <h3>Notebook de análise exploratória</h3>
+          <p>
+            Além do Dashboard EDA interativo, a entrega inclui um notebook Jupyter com a análise formal da base:
+            carga do CSV, limpeza, estatísticas descritivas, gráficos, correlações e conclusão sobre as features usadas.
+          </p>
+          <div class="callout">
+            Arquivo no projeto: <strong>notebooks/eda_churn.ipynb</strong>. Abra pelo Cursor ou pelo Jupyter e execute as células em ordem com o CSV em <strong>dataset/gym_churn_us.csv</strong>.
+          </div>
+          <a class="doc-link" href="/notebooks/eda_churn.ipynb" target="_blank" rel="noopener">
+            Abrir notebook EDA
+          </a>
         </article>
       </div>
     </div>
