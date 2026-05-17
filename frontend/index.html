@@ -346,7 +346,8 @@
 
     /* BUTTON */
     #predict-btn,
-    #train-btn {
+    #train-btn,
+    #eda-btn {
       width: 100%;
       margin-top: 24px;
       padding: 14px 18px;
@@ -362,11 +363,14 @@
     }
 
     #predict-btn:hover,
-    #train-btn:hover  { background: var(--brand-strong); }
+    #train-btn:hover,
+    #eda-btn:hover  { background: var(--brand-strong); }
     #predict-btn:active,
-    #train-btn:active { transform: scale(0.98); }
+    #train-btn:active,
+    #eda-btn:active { transform: scale(0.98); }
     #predict-btn:disabled,
-    #train-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    #train-btn:disabled,
+    #eda-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     /* RESULT PANEL */
     .result-panel {
@@ -561,6 +565,141 @@
 
     .training-metrics.active {
       display: grid;
+    }
+
+    /* DASHBOARD EDA */
+    .eda-layout {
+      display: grid;
+      gap: 20px;
+    }
+
+    .eda-upload {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 220px;
+      gap: 16px;
+      align-items: end;
+    }
+
+    .eda-status {
+      border-radius: var(--radius-md);
+      display: none;
+      font-size: 0.9rem;
+      font-weight: 800;
+      line-height: 1.5;
+      padding: 14px 16px;
+    }
+
+    .eda-status.success {
+      background: var(--low-soft);
+      color: var(--low);
+      display: block;
+    }
+
+    .eda-status.error {
+      background: var(--high-soft);
+      color: var(--high);
+      display: block;
+    }
+
+    .eda-dashboard {
+      display: none;
+      gap: 20px;
+    }
+
+    .eda-dashboard.active {
+      display: grid;
+    }
+
+    .eda-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .chart-title {
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .bar-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .bar-row {
+      display: grid;
+      gap: 6px;
+    }
+
+    .bar-meta {
+      color: var(--muted-strong);
+      display: flex;
+      font-size: 0.82rem;
+      font-weight: 700;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .bar-track {
+      background: var(--border);
+      border-radius: 999px;
+      height: 10px;
+      overflow: hidden;
+    }
+
+    .bar-value {
+      background: var(--brand);
+      border-radius: 999px;
+      height: 100%;
+      min-width: 4px;
+    }
+
+    .bar-value.high-risk {
+      background: var(--high);
+    }
+
+    .comparison-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .comparison-row {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .comparison-row strong {
+      color: var(--text);
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+
+    .comparison-values {
+      color: var(--muted-strong);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
     }
 
     /* DOCUMENTAÇÃO */
@@ -800,9 +939,14 @@
       .doc-story,
       .layout,
       .upload-layout,
+      .eda-upload,
       .doc-grid,
+      .chart-grid,
       .flow-steps {
         grid-template-columns: 1fr;
+      }
+      .eda-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
       .result-panel {
         position: static;
@@ -823,7 +967,8 @@
         border-radius: 18px;
       }
       .metric-grid,
-      .field-group {
+      .field-group,
+      .eda-metrics {
         grid-template-columns: 1fr;
       }
     }
@@ -849,6 +994,7 @@
   <nav class="tab-nav" aria-label="Navegação da entrega">
     <button class="tab-btn active" type="button" data-tab-target="inference" onclick="trocarAba('inference')">Inferência</button>
     <button class="tab-btn" type="button" data-tab-target="upload" onclick="trocarAba('upload')">Upload CSV</button>
+    <button class="tab-btn" type="button" data-tab-target="eda" onclick="trocarAba('eda')">Dashboard EDA</button>
     <button class="tab-btn" type="button" data-tab-target="documentation" onclick="trocarAba('documentation')">Documentação</button>
   </nav>
 
@@ -1032,6 +1178,52 @@
     </div>
   </section>
 
+  <section class="tab-panel" id="tab-eda" aria-label="Dashboard de análise exploratória dos dados">
+    <div class="eda-layout">
+      <section class="card" aria-labelledby="eda-title">
+        <div class="section-label" id="eda-title">Dashboard EDA</div>
+        <p class="upload-help">
+          Envie o CSV para gerar visualizações reais da base: limpeza, distribuição de churn,
+          contratos, médias por grupo e features mais relacionadas ao cancelamento.
+        </p>
+        <div class="eda-upload">
+          <div class="field">
+            <label for="eda-file">Arquivo CSV para análise exploratória</label>
+            <input type="file" id="eda-file" accept=".csv,text/csv"/>
+          </div>
+          <button id="eda-btn" type="button" onclick="analisarEda()">Gerar dashboard</button>
+        </div>
+        <div class="eda-status" id="eda-status"></div>
+      </section>
+
+      <section class="eda-dashboard" id="eda-dashboard">
+        <div class="eda-metrics" id="eda-metrics"></div>
+
+        <div class="chart-grid">
+          <article class="chart-card">
+            <h3 class="chart-title">Distribuição de churn</h3>
+            <div class="bar-list" id="churn-chart"></div>
+          </article>
+
+          <article class="chart-card">
+            <h3 class="chart-title">Clientes por duração de contrato</h3>
+            <div class="bar-list" id="contract-chart"></div>
+          </article>
+
+          <article class="chart-card">
+            <h3 class="chart-title">Top features relacionadas ao churn</h3>
+            <div class="bar-list" id="correlation-chart"></div>
+          </article>
+
+          <article class="chart-card">
+            <h3 class="chart-title">Comparação: ficou vs cancelou</h3>
+            <div class="comparison-list" id="comparison-chart"></div>
+          </article>
+        </div>
+      </section>
+    </div>
+  </section>
+
   <section class="tab-panel" id="tab-documentation" aria-label="Documentação da entrega Semana 5">
     <div class="doc-layout">
       <section class="doc-story">
@@ -1046,6 +1238,7 @@
           </p>
           <div class="doc-pill-row">
             <span class="doc-pill">EDA</span>
+            <span class="doc-pill">Dashboard EDA</span>
             <span class="doc-pill">Upload CSV</span>
             <span class="doc-pill">RandomForest</span>
             <span class="doc-pill">FastAPI</span>
@@ -1063,8 +1256,8 @@
             <span>features usadas pelo modelo</span>
           </div>
           <div class="doc-summary-item">
-            <strong>3 abas</strong>
-            <span>upload, inferência e documentação</span>
+            <strong>4 abas</strong>
+            <span>inferência, upload, dashboard EDA e documentação</span>
           </div>
         </aside>
       </section>
@@ -1125,6 +1318,10 @@
         <article class="doc-card">
           <div class="doc-kicker">4. EDA</div>
           <h3>O que a exploração dos dados busca responder</h3>
+          <p>
+            A aba Dashboard EDA transforma o CSV enviado em visualizações reais da base, cobrindo limpeza,
+            distribuição de churn, contratos, médias por grupo e correlação das features com o cancelamento.
+          </p>
           <ul>
             <li>Qual é a proporção de clientes que cancelaram?</li>
             <li>Clientes com menor frequência recente cancelam mais?</li>
@@ -1298,6 +1495,188 @@
       metricsEl.appendChild(card);
     });
     metricsEl.className = "training-metrics active";
+  }
+
+  async function analisarEda() {
+    const fileInput = document.getElementById("eda-file");
+    const statusEl = document.getElementById("eda-status");
+    const dashboardEl = document.getElementById("eda-dashboard");
+    const btn = document.getElementById("eda-btn");
+
+    statusEl.className = "eda-status";
+    statusEl.textContent = "";
+    dashboardEl.className = "eda-dashboard";
+
+    if (!fileInput.files.length) {
+      statusEl.className = "eda-status error";
+      statusEl.textContent = "Selecione um arquivo CSV para gerar o dashboard.";
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    btn.disabled = true;
+    btn.textContent = "Gerando dashboard...";
+
+    try {
+      const res = await fetch(`${API_URL}/eda`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error(await obterMensagemErro(res));
+
+      const data = await res.json();
+      statusEl.className = "eda-status success";
+      statusEl.textContent = "Dashboard EDA gerado com sucesso a partir do CSV enviado.";
+      exibirDashboardEda(data);
+    } catch (err) {
+      statusEl.className = "eda-status error";
+      statusEl.textContent = `Erro ao gerar EDA: ${err.message}`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Gerar dashboard";
+    }
+  }
+
+  function criarMetricCard(label, value, caption) {
+    const card = document.createElement("div");
+    const labelEl = document.createElement("div");
+    const valueEl = document.createElement("div");
+    const captionEl = document.createElement("div");
+
+    card.className = "metric-card";
+    labelEl.className = "metric-label";
+    valueEl.className = "metric-value";
+    captionEl.className = "metric-caption";
+
+    labelEl.textContent = label;
+    valueEl.textContent = value;
+    captionEl.textContent = caption;
+
+    card.append(labelEl, valueEl, captionEl);
+    return card;
+  }
+
+  function exibirDashboardEda(data) {
+    const dashboardEl = document.getElementById("eda-dashboard");
+    const metricsEl = document.getElementById("eda-metrics");
+
+    metricsEl.replaceChildren(
+      criarMetricCard("Clientes", data.summary.customers, "linhas válidas após limpeza"),
+      criarMetricCard("Churn rate", `${Math.round(data.summary.churn_rate * 100)}%`, "clientes que cancelaram"),
+      criarMetricCard("Idade média", data.summary.avg_age, "anos"),
+      criarMetricCard("Frequência média", data.summary.avg_frequency_month, "aulas/semana no mês"),
+      criarMetricCard("Duplicados", data.cleaning.duplicates_removed, "removidos na limpeza"),
+      criarMetricCard("Nulos", data.cleaning.null_values, "valores ausentes encontrados"),
+      criarMetricCard("Lifetime médio", data.summary.avg_lifetime, "meses como cliente"),
+      criarMetricCard("Gastos extras", data.summary.avg_extra_charges, "média por cliente")
+    );
+
+    renderizarGraficoBarras(
+      "churn-chart",
+      data.distributions.churn.map(item => ({
+        label: item.label === "1" ? "Cancelou" : "Ficou",
+        value: item.count,
+        width: item.percentage,
+        caption: `${Math.round(item.percentage * 100)}%`,
+        danger: item.label === "1",
+      }))
+    );
+
+    renderizarGraficoBarras(
+      "contract-chart",
+      data.distributions.contract_period.map(item => ({
+        label: `${item.label} meses`,
+        value: item.count,
+        width: item.percentage,
+        caption: `${item.count} clientes`,
+      }))
+    );
+
+    renderizarGraficoBarras(
+      "correlation-chart",
+      data.top_correlations.map(item => ({
+        label: traduzirFeature(item.feature),
+        value: item.correlation,
+        width: item.strength,
+        caption: `corr. ${item.correlation}`,
+        danger: item.correlation > 0,
+      }))
+    );
+
+    renderizarComparacaoChurn(data.comparison_by_churn);
+    dashboardEl.className = "eda-dashboard active";
+  }
+
+  function renderizarGraficoBarras(containerId, rows) {
+    const container = document.getElementById(containerId);
+    const maxWidth = Math.max(...rows.map(row => row.width), 0.01);
+
+    container.replaceChildren();
+    rows.forEach(row => {
+      const item = document.createElement("div");
+      const meta = document.createElement("div");
+      const label = document.createElement("span");
+      const value = document.createElement("span");
+      const track = document.createElement("div");
+      const bar = document.createElement("div");
+
+      item.className = "bar-row";
+      meta.className = "bar-meta";
+      track.className = "bar-track";
+      bar.className = row.danger ? "bar-value high-risk" : "bar-value";
+
+      label.textContent = row.label;
+      value.textContent = row.caption ?? row.value;
+      bar.style.width = `${Math.max((row.width / maxWidth) * 100, 4)}%`;
+
+      meta.append(label, value);
+      track.appendChild(bar);
+      item.append(meta, track);
+      container.appendChild(item);
+    });
+  }
+
+  function renderizarComparacaoChurn(rows) {
+    const container = document.getElementById("comparison-chart");
+    container.replaceChildren();
+
+    rows.forEach(row => {
+      const item = document.createElement("div");
+      const title = document.createElement("strong");
+      const values = document.createElement("div");
+      const stayed = document.createElement("span");
+      const churned = document.createElement("span");
+
+      item.className = "comparison-row";
+      values.className = "comparison-values";
+      title.textContent = row.label;
+      stayed.textContent = `Ficou: ${row.stayed ?? "sem dados"}`;
+      churned.textContent = `Cancelou: ${row.churned ?? "sem dados"}`;
+
+      values.append(stayed, churned);
+      item.append(title, values);
+      container.appendChild(item);
+    });
+  }
+
+  function traduzirFeature(feature) {
+    const labels = {
+      Lifetime: "Tempo como cliente",
+      Avg_class_frequency_current_month: "Frequência no mês",
+      Age: "Idade",
+      Contract_period: "Duração do contrato",
+      Month_to_end_contract: "Meses até vencer",
+      Avg_class_frequency_total: "Frequência histórica",
+      Avg_additional_charges_total: "Gastos extras",
+      Group_visits: "Aulas em grupo",
+      Promo_friends: "Indicação de amigos",
+      Partner: "Empresa parceira",
+      Near_Location: "Mora perto",
+    };
+    return labels[feature] || feature;
   }
 
   function selecionarToggle(field, value, btn) {

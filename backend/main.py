@@ -36,6 +36,63 @@ FEATURES = [
     "Near_Location",
 ]
 
+BINARY_FEATURES = ["Group_visits", "Promo_friends", "Partner", "Near_Location"]
+
+
+async def read_uploaded_csv(file: UploadFile) -> pd.DataFrame:
+    if not file.filename.lower().endswith(".csv"):
+        raise HTTPException(status_code=400, detail="Envie um arquivo CSV válido.")
+
+    try:
+        contents = await file.read()
+        return pd.read_csv(BytesIO(contents))
+    except Exception as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Não foi possível ler o CSV: {exc}",
+        ) from exc
+
+
+def validate_required_columns(df: pd.DataFrame) -> None:
+    required_columns = FEATURES + ["Churn"]
+    missing_columns = [column for column in required_columns if column not in df.columns]
+    if missing_columns:
+        raise HTTPException(
+            status_code=400,
+            detail=f"CSV sem colunas obrigatórias: {', '.join(missing_columns)}",
+        )
+
+
+def clean_churn_dataset(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
+    validate_required_columns(df)
+
+    rows_original = int(len(df))
+    null_values = int(df[FEATURES + ["Churn"]].isna().sum().sum())
+    duplicated_rows = int(df.duplicated().sum())
+
+    # Mantém somente a superfície usada na Semana 5 e remove registros inválidos.
+    clean_df = df[FEATURES + ["Churn"]].drop_duplicates().dropna()
+
+    return clean_df, {
+        "rows_original": rows_original,
+        "rows_clean": int(len(clean_df)),
+        "duplicates_removed": duplicated_rows,
+        "null_values": null_values,
+    }
+
+
+def value_distribution(df: pd.DataFrame, column: str) -> list[dict]:
+    total = len(df)
+    counts = df[column].value_counts().sort_index()
+    return [
+        {
+            "label": str(label),
+            "count": int(count),
+            "percentage": round(float(count / total), 4),
+        }
+        for label, count in counts.items()
+    ]
+
 def load_model():
     if not MODEL_PATH.exists():
         return None
@@ -93,28 +150,8 @@ def health_check():
 async def train_from_csv(file: UploadFile = File(...)):
     global model, feature_defaults, last_training_info
 
-    if not file.filename.lower().endswith(".csv"):
-        raise HTTPException(status_code=400, detail="Envie um arquivo CSV válido.")
-
-    try:
-        contents = await file.read()
-        df = pd.read_csv(BytesIO(contents))
-    except Exception as exc:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Não foi possível ler o CSV: {exc}",
-        ) from exc
-
-    required_columns = FEATURES + ["Churn"]
-    missing_columns = [column for column in required_columns if column not in df.columns]
-    if missing_columns:
-        raise HTTPException(
-            status_code=400,
-            detail=f"CSV sem colunas obrigatórias: {', '.join(missing_columns)}",
-        )
-
-    # Limpa a base enviada e mantém somente as colunas usadas na primeira versão.
-    df = df[required_columns].drop_duplicates().dropna()
+    uploaded_df = await read_uploaded_csv(file)
+    df, _ = clean_churn_dataset(uploaded_df)
     if len(df) < 10:
         raise HTTPException(
             status_code=400,
@@ -180,6 +217,78 @@ async def train_from_csv(file: UploadFile = File(...)):
         "trained_at": last_training_info["trained_at"],
         "filename": file.filename,
         "metrics": metrics,
+    }
+
+@app.post("/eda")
+async def analyze_uploaded_csv(file: UploadFile = File(...)):
+    uploaded_df = await read_uploaded_csv(file)
+    df, cleaning = clean_churn_dataset(uploaded_df)
+
+    if len(df) < 2:
+        raise HTTPException(
+            status_code=400,
+            detail="CSV com poucos registros válidos para análise após limpeza.",
+        )
+
+    numeric_features = FEATURES + ["Churn"]
+    correlations = (
+        df[numeric_features]
+        .corr(numeric_only=True)["Churn"]
+        .drop("Churn")
+        .sort_values(key=lambda values: values.abs(), ascending=False)
+    )
+
+    top_correlations = [
+        {
+            "feature": feature,
+            "correlation": round(float(value), 4),
+            "strength": round(float(abs(value)), 4),
+        }
+        for feature, value in correlations.head(8).items()
+    ]
+
+    churn_means = df.groupby("Churn")[[
+        "Age",
+        "Lifetime",
+        "Avg_class_frequency_current_month",
+        "Avg_class_frequency_total",
+        "Avg_additional_charges_total",
+    ]].mean()
+
+    comparison = []
+    comparison_labels = {
+        "Age": "Idade média",
+        "Lifetime": "Tempo médio como cliente",
+        "Avg_class_frequency_current_month": "Freq. média no mês",
+        "Avg_class_frequency_total": "Freq. média histórica",
+        "Avg_additional_charges_total": "Gastos extras médios",
+    }
+    for feature, label in comparison_labels.items():
+        comparison.append({
+            "label": label,
+            "stayed": round(float(churn_means.loc[0, feature]), 2) if 0 in churn_means.index else None,
+            "churned": round(float(churn_means.loc[1, feature]), 2) if 1 in churn_means.index else None,
+        })
+
+    return {
+        "status": "analyzed",
+        "filename": file.filename,
+        "cleaning": cleaning,
+        "summary": {
+            "customers": int(len(df)),
+            "churn_rate": round(float(df["Churn"].mean()), 4),
+            "avg_age": round(float(df["Age"].mean()), 1),
+            "avg_lifetime": round(float(df["Lifetime"].mean()), 1),
+            "avg_frequency_month": round(float(df["Avg_class_frequency_current_month"].mean()), 2),
+            "avg_extra_charges": round(float(df["Avg_additional_charges_total"].mean()), 2),
+        },
+        "distributions": {
+            "churn": value_distribution(df, "Churn"),
+            "contract_period": value_distribution(df, "Contract_period"),
+            "group_visits": value_distribution(df, "Group_visits"),
+        },
+        "top_correlations": top_correlations,
+        "comparison_by_churn": comparison,
     }
 
 @app.post("/predict", response_model=PredictionResponse)
