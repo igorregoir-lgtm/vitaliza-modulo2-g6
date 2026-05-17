@@ -197,6 +197,57 @@
       margin-top: 4px;
     }
 
+    .metric-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .metric-label-row .metric-label {
+      margin-bottom: 0;
+    }
+
+    .info-btn {
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--brand);
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 800;
+      line-height: 1;
+      transition: background 0.2s, border-color 0.2s, transform 0.1s;
+    }
+
+    .info-btn:hover {
+      background: var(--brand-soft);
+      border-color: var(--brand);
+    }
+
+    .info-btn:active {
+      transform: scale(0.96);
+    }
+
+    .metric-info {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted-strong);
+      font-size: 0.78rem;
+      line-height: 1.6;
+    }
+
+    .metric-info.active {
+      display: block;
+    }
+
     /* ABAS */
     .tab-nav {
       display: flex;
@@ -1009,9 +1060,19 @@
         <div class="metric-caption">calculado da base</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">ROC-AUC</div>
+        <div class="metric-label-row">
+          <div class="metric-label">ROC-AUC</div>
+          <button class="info-btn" type="button" aria-label="Explicar ROC-AUC" onclick="alternarInfoRoc()">i</button>
+        </div>
         <div class="metric-value" id="hero-roc-auc">-</div>
         <div class="metric-caption">após treino</div>
+        <div class="metric-info" id="roc-info">
+          0.50 = aleatório, como chute<br/>
+          0.70 = razoável<br/>
+          0.85 = bom<br/>
+          0.90+ = muito bom<br/>
+          0.9703 = excelente
+        </div>
       </div>
     </div>
   </header>
@@ -1394,6 +1455,10 @@
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.tabTarget === nomeAba);
     });
+  }
+
+  function alternarInfoRoc() {
+    document.getElementById("roc-info").classList.toggle("active");
   }
 
   async function obterMensagemErro(res) {
