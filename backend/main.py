@@ -38,6 +38,20 @@ FEATURES = [
 
 BINARY_FEATURES = ["Group_visits", "Promo_friends", "Partner", "Near_Location"]
 
+FEATURE_LABELS = {
+    "Lifetime": "Tempo como cliente",
+    "Avg_class_frequency_current_month": "Frequência atual",
+    "Age": "Idade",
+    "Contract_period": "Duração do contrato",
+    "Month_to_end_contract": "Meses até vencer",
+    "Avg_class_frequency_total": "Frequência histórica",
+    "Avg_additional_charges_total": "Gastos extras",
+    "Group_visits": "Aulas em grupo",
+    "Promo_friends": "Indicação de amigos",
+    "Partner": "Empresa parceira",
+    "Near_Location": "Mora perto",
+}
+
 
 async def read_uploaded_csv(file: UploadFile) -> pd.DataFrame:
     if not file.filename.lower().endswith(".csv"):
@@ -98,6 +112,16 @@ def load_model():
         return None
     return joblib.load(MODEL_PATH)
 
+
+def extract_feature_importances(current_model) -> dict[str, float]:
+    if current_model is None or not hasattr(current_model, "feature_importances_"):
+        return {}
+
+    return {
+        feature: float(importance)
+        for feature, importance in zip(FEATURES, current_model.feature_importances_)
+    }
+
 # Valores de referência usados quando o usuário informa só parte dos campos.
 # Eles mantêm a predição possível, mas quanto menos dados reais, menor a confiança.
 DEFAULT_FEATURE_VALUES = {
@@ -116,6 +140,7 @@ DEFAULT_FEATURE_VALUES = {
 
 model = load_model()
 feature_defaults = DEFAULT_FEATURE_VALUES.copy()
+model_feature_importances = extract_feature_importances(model)
 last_training_info = None
 
 class CustomerData(BaseModel):
@@ -135,6 +160,7 @@ class PredictionResponse(BaseModel):
     churn_probability: float
     churn_label: str
     risk_level: str
+    top_3_drivers: list[dict]
 
 @app.get("/")
 def health_check():
@@ -148,7 +174,7 @@ def health_check():
 
 @app.post("/train")
 async def train_from_csv(file: UploadFile = File(...)):
-    global model, feature_defaults, last_training_info
+    global model, feature_defaults, model_feature_importances, last_training_info
 
     uploaded_df = await read_uploaded_csv(file)
     df, _ = clean_churn_dataset(uploaded_df)
@@ -204,6 +230,7 @@ async def train_from_csv(file: UploadFile = File(...)):
         feature_defaults[binary_feature] = int(X[binary_feature].mode().iloc[0])
 
     model = trained_model
+    model_feature_importances = extract_feature_importances(model)
     joblib.dump(model, MODEL_PATH)
     last_training_info = {
         "trained_at": datetime.now(timezone.utc).isoformat(),
@@ -291,6 +318,41 @@ async def analyze_uploaded_csv(file: UploadFile = File(...)):
         "comparison_by_churn": comparison,
     }
 
+
+def calculate_top_3_drivers(features: pd.DataFrame) -> list[dict]:
+    drivers = []
+
+    for feature in FEATURES:
+        value = float(features.loc[0, feature])
+        reference_value = float(feature_defaults.get(feature, DEFAULT_FEATURE_VALUES[feature]))
+        importance = float(model_feature_importances.get(feature, 0))
+        normalized_delta = abs(value - reference_value) / max(abs(reference_value), 1)
+        driver_score = importance * max(normalized_delta, 0.2)
+
+        if value > reference_value:
+            direction = "acima da referência"
+        elif value < reference_value:
+            direction = "abaixo da referência"
+        else:
+            direction = "na referência"
+
+        drivers.append({
+            "feature": feature,
+            "label": FEATURE_LABELS.get(feature, feature),
+            "value": round(value, 4),
+            "reference_value": round(reference_value, 4),
+            "importance": round(importance, 4),
+            "driver_score": round(driver_score, 4),
+            "direction": direction,
+        })
+
+    return sorted(
+        drivers,
+        key=lambda item: (item["driver_score"], item["importance"]),
+        reverse=True,
+    )[:3]
+
+
 @app.post("/predict", response_model=PredictionResponse)
 def predict(data: CustomerData):
     if model is None:
@@ -330,4 +392,5 @@ def predict(data: CustomerData):
         churn_probability=round(float(prob), 4),
         churn_label=label,
         risk_level=level,
+        top_3_drivers=calculate_top_3_drivers(features),
     )

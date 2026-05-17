@@ -764,6 +764,53 @@
       font-weight: 700;
     }
 
+    .eda-insights {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .eda-insights-header {
+      margin-bottom: 16px;
+    }
+
+    .eda-insights-header p {
+      color: var(--muted-strong);
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin-top: 6px;
+    }
+
+    .insight-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .insight-card {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+    }
+
+    .insight-card strong {
+      color: var(--text);
+      font-size: 0.92rem;
+      line-height: 1.35;
+    }
+
+    .insight-card span {
+      color: var(--muted-strong);
+      font-size: 0.84rem;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
     /* DOCUMENTAÇÃO */
     .doc-layout {
       display: grid;
@@ -1026,6 +1073,7 @@
       .upload-layout,
       .doc-grid,
       .chart-grid,
+      .insight-grid,
       .flow-steps {
         grid-template-columns: 1fr;
       }
@@ -1309,6 +1357,58 @@
             <div class="comparison-list" id="comparison-chart"></div>
           </article>
         </div>
+
+        <article class="eda-insights" aria-labelledby="eda-insights-title">
+          <div class="eda-insights-header">
+            <div class="section-label" id="eda-insights-title">10 insights acionáveis</div>
+            <p>
+              Síntese executiva baseada na EDA para transformar sinais de churn em ações de retenção.
+            </p>
+          </div>
+
+          <div class="insight-grid">
+            <div class="insight-card">
+              <strong>1. Queda de frequência recente é alerta prioritário.</strong>
+              <span>Clientes que reduzem presença no mês atual devem entrar em contato preventivo.</span>
+            </div>
+            <div class="insight-card">
+              <strong>2. Novos clientes precisam de onboarding.</strong>
+              <span>Os primeiros meses pedem acompanhamento, metas semanais e incentivo à rotina.</span>
+            </div>
+            <div class="insight-card">
+              <strong>3. Contratos curtos concentram risco.</strong>
+              <span>Planos mensais devem receber incentivo para migração a contratos mais longos.</span>
+            </div>
+            <div class="insight-card">
+              <strong>4. Proximidade física reduz atrito.</strong>
+              <span>Campanhas locais e parcerias de bairro podem aumentar recorrência de uso.</span>
+            </div>
+            <div class="insight-card">
+              <strong>5. Aulas em grupo criam vínculo social.</strong>
+              <span>Estimular a primeira aula coletiva ajuda a criar pertencimento e hábito.</span>
+            </div>
+            <div class="insight-card">
+              <strong>6. Indicação de amigos favorece retenção.</strong>
+              <span>Desafios em dupla e benefícios compartilhados reforçam o vínculo com a academia.</span>
+            </div>
+            <div class="insight-card">
+              <strong>7. Gastos extras indicam engajamento.</strong>
+              <span>Clientes sem consumo adicional podem receber ofertas simples de baixo atrito.</span>
+            </div>
+            <div class="insight-card">
+              <strong>8. Sleeping dogs precisam de reativação.</strong>
+              <span>Clientes antigos com baixa frequência merecem campanhas específicas para retomar rotina.</span>
+            </div>
+            <div class="insight-card">
+              <strong>9. Queda entre histórico e mês atual antecipa churn.</strong>
+              <span>Monitorar <code>ratio_freq_atual_vs_lifetime</code> ajuda a agir antes do cancelamento.</span>
+            </div>
+            <div class="insight-card">
+              <strong>10. Recall é métrica-chave para retenção.</strong>
+              <span>É melhor capturar mais clientes em risco do que perder cancelamentos reais.</span>
+            </div>
+          </div>
+        </article>
       </section>
     </div>
   </section>
@@ -1906,7 +2006,7 @@
     }
   }
 
-  function exibirResultado({ churn_probability, churn_label, risk_level }, payload) {
+  function exibirResultado({ churn_probability, churn_label, risk_level, top_3_drivers }, payload) {
     document.getElementById("placeholder").style.display = "none";
     const content = document.getElementById("result-content");
     content.style.display = "flex";
@@ -1933,22 +2033,30 @@
     };
     document.getElementById("verdict-sub").textContent = subtexts[risk_level];
 
-    // Barras de importância relativa baseadas na correlação do dataset.
-    const importanciaFeatures = [
+    const fallbackFeatures = [
       { key: "Lifetime",                           label: "Tempo como cliente",     importance: 0.438 },
       { key: "Avg_class_frequency_current_month",  label: "Frequência esse mês",    importance: 0.412 },
       { key: "Age",                                label: "Idade",                  importance: 0.404 },
       { key: "Contract_period",                    label: "Período do contrato",     importance: 0.390 },
       { key: "Month_to_end_contract",              label: "Meses até vencer",        importance: 0.381 },
     ];
+    const importanciaFeatures = Array.isArray(top_3_drivers) && top_3_drivers.length
+      ? top_3_drivers.map(driver => ({
+          label: driver.label,
+          importance: driver.driver_score || driver.importance || 0.1,
+          value: `${driver.value} (${driver.direction})`,
+        }))
+      : fallbackFeatures.map(feature => ({
+          ...feature,
+          value: typeof payload[feature.key] === "number" ? payload[feature.key] : "não informado",
+        }));
 
     const barsEl = document.getElementById("feature-bars");
     barsEl.replaceChildren();
 
-    const maiorImportancia = Math.max(...importanciaFeatures.map(f => f.importance));
+    const maiorImportancia = Math.max(...importanciaFeatures.map(f => f.importance), 0.01);
     importanciaFeatures.forEach(f => {
       const larguraPct = Math.round((f.importance / maiorImportancia) * 100);
-      const valor = payload[f.key];
       const linha = document.createElement("div");
       const meta = document.createElement("div");
       const rotulo = document.createElement("span");
@@ -1962,7 +2070,7 @@
       barra.className = "feat-bar-fill";
 
       rotulo.textContent = f.label;
-      valorEl.textContent = typeof valor === 'number' ? valor : 'não informado';
+      valorEl.textContent = f.value;
       barra.style.width = `${larguraPct}%`;
 
       meta.append(rotulo, valorEl);
