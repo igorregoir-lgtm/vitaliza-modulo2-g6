@@ -31,7 +31,12 @@ FEATURES = [
     "Near_Location",
 ]
 
-model = joblib.load(MODEL_PATH)
+def load_model():
+    if not MODEL_PATH.exists():
+        return None
+    return joblib.load(MODEL_PATH)
+
+model = load_model()
 
 # Valores de referência usados quando o usuário informa só parte dos campos.
 # Eles mantêm a predição possível, mas quanto menos dados reais, menor a confiança.
@@ -69,10 +74,20 @@ class PredictionResponse(BaseModel):
 
 @app.get("/")
 def health_check():
-    return {"status": "ok", "model": "gym-churn-v1"}
+    return {
+        "status": "ok",
+        "model": "gym-churn-v1",
+        "model_loaded": model is not None,
+    }
 
 @app.post("/predict", response_model=PredictionResponse)
 def predict(data: CustomerData):
+    if model is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Modelo não encontrado. Gere e envie o arquivo backend/model.pkl.",
+        )
+
     input_data = data.model_dump()
     informed_fields = sum(value is not None for value in input_data.values())
 
