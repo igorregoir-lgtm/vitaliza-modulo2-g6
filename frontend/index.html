@@ -2113,7 +2113,7 @@
         label: traduzirFeature(item.feature),
         value: item.correlation,
         width: item.strength,
-        caption: `corr. ${item.correlation}`,
+        caption: formatarCorrelacaoPercentual(item.correlation),
         danger: item.correlation > 0,
       }))
     );
@@ -2308,6 +2308,15 @@
       }
       container.appendChild(card);
     });
+  }
+
+  function formatarCorrelacaoPercentual(correlation) {
+    const percentual = new Intl.NumberFormat("pt-BR", {
+      maximumFractionDigits: 1,
+      minimumFractionDigits: 1,
+    }).format(Math.abs(correlation) * 100);
+    const direcao = correlation >= 0 ? "aumenta churn" : "reduz churn";
+    return `${percentual}% · ${direcao}`;
   }
 
   function traduzirFeature(feature) {
