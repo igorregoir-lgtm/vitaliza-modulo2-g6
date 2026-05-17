@@ -4,96 +4,228 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gym Churn Predictor</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --bg:       #0b0e13;
-      --surface:  #13171f;
-      --surface2: #1a1f2b;
-      --border:   #222838;
-      --teal:     #00c4a7;
-      --teal-dim: #009e86;
-      --text:     #e4e8f0;
-      --muted:    #5a6278;
-      --high:     #ff4d6d;
-      --med:      #ffb830;
-      --low:      #00c4a7;
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-muted: #f8fafc;
+      --surface-soft: #eef4ff;
+      --border: #dbe3ef;
+      --border-strong: #c7d2e3;
+      --text: #172033;
+      --muted: #64748b;
+      --muted-strong: #475569;
+      --brand: #2563eb;
+      --brand-strong: #1d4ed8;
+      --brand-soft: #dbeafe;
+      --high: #dc2626;
+      --high-soft: #fee2e2;
+      --med: #b45309;
+      --med-soft: #fef3c7;
+      --low: #047857;
+      --low-soft: #d1fae5;
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: var(--bg);
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 32%),
+        linear-gradient(180deg, #ffffff 0%, var(--bg) 280px);
       color: var(--text);
-      font-family: 'Syne', sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       min-height: 100vh;
-      padding: 48px 20px 80px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      padding: 24px;
     }
 
-    /* HEADER */
-    header {
+    button, input {
+      font: inherit;
+    }
+
+    .app-shell {
       width: 100%;
-      max-width: 800px;
-      margin-bottom: 40px;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    /* TOPO */
+    .topbar {
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 20px;
+      gap: 16px;
+      margin-bottom: 24px;
     }
-    .header-left .eyebrow {
-      font-family: 'Space Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      color: var(--teal);
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: var(--brand);
+      color: #ffffff;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
+    }
+
+    .brand-kicker {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
-      margin-bottom: 8px;
     }
-    .header-left h1 {
-      font-size: 2rem;
+
+    .brand-title {
+      font-size: 1.25rem;
       font-weight: 800;
       line-height: 1.1;
     }
-    .header-left h1 span { color: var(--teal); }
-    .header-right {
-      font-family: 'Space Mono', monospace;
-      font-size: 10px;
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .status-pill,
+    .ghost-btn {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--muted-strong);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 10px 14px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--low);
+      box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.12);
+    }
+
+    .hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 24px;
+      align-items: end;
+    }
+
+    .eyebrow {
+      color: var(--brand);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.7rem);
+      letter-spacing: -0.05em;
+      line-height: 0.95;
+      margin-bottom: 14px;
+    }
+
+    .hero-copy {
+      max-width: 640px;
+      color: var(--muted-strong);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .metric-card {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+
+    .metric-label {
       color: var(--muted);
-      text-align: right;
-      line-height: 1.8;
+      font-size: 0.76rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      color: var(--text);
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .metric-caption {
+      color: var(--muted);
+      font-size: 0.72rem;
+      margin-top: 4px;
     }
 
     /* LAYOUT */
     .layout {
       display: grid;
-      grid-template-columns: 1fr 320px;
+      grid-template-columns: minmax(0, 1.35fr) minmax(340px, 0.75fr);
       gap: 20px;
       width: 100%;
-      max-width: 800px;
     }
 
     /* CARDS */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 28px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 24px;
     }
 
     .section-label {
-      font-family: 'Space Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.2em;
-      color: var(--teal);
+      color: var(--text);
+      font-size: 0.86rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
-      margin-bottom: 20px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
     }
+
     .section-label::after {
       content: '';
       flex: 1;
@@ -102,83 +234,92 @@
     }
 
     /* FIELDS */
-    .fields { display: flex; flex-direction: column; gap: 14px; }
+    .fields { display: flex; flex-direction: column; gap: 16px; }
 
     .field-group {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 16px;
     }
 
-    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field { display: flex; flex-direction: column; gap: 8px; }
     .field.full { grid-column: span 2; }
 
     label {
-      font-size: 0.72rem;
-      color: var(--muted);
-      font-family: 'Space Mono', monospace;
-      letter-spacing: 0.05em;
+      color: var(--muted-strong);
+      font-size: 0.82rem;
+      font-weight: 700;
     }
 
     input, select {
-      background: var(--bg);
+      background: var(--surface-muted);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
       color: var(--text);
-      font-family: 'Space Mono', monospace;
-      font-size: 0.88rem;
-      transition: border-color 0.2s;
+      font-size: 0.92rem;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
       width: 100%;
     }
+
     input:focus, select:focus {
       outline: none;
-      border-color: var(--teal);
+      background: #ffffff;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
     }
+
     input::placeholder { color: var(--muted); }
 
     /* TOGGLE GROUP */
     .toggle-group {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-top: 2px;
+      gap: 8px;
     }
+
     .toggle-btn {
-      padding: 8px;
-      border-radius: 7px;
+      padding: 11px 12px;
+      border-radius: var(--radius-sm);
       border: 1px solid var(--border);
-      background: var(--bg);
-      color: var(--muted);
-      font-family: 'Space Mono', monospace;
-      font-size: 0.78rem;
+      background: var(--surface-muted);
+      color: var(--muted-strong);
+      font-size: 0.86rem;
+      font-weight: 800;
       cursor: pointer;
-      transition: all 0.15s;
+      transition: border-color 0.15s, color 0.15s, background 0.15s, box-shadow 0.15s;
       text-align: center;
     }
+
+    .toggle-btn:hover {
+      border-color: var(--border-strong);
+      background: #ffffff;
+    }
+
     .toggle-btn.active {
-      border-color: var(--teal);
-      color: var(--teal);
-      background: rgba(0,196,167,0.08);
+      border-color: var(--brand);
+      color: var(--brand);
+      background: var(--brand-soft);
+      box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.18);
     }
 
     /* BUTTON */
     #predict-btn {
       width: 100%;
-      margin-top: 20px;
-      padding: 13px;
-      background: var(--teal);
-      color: #0b0e13;
+      margin-top: 24px;
+      padding: 14px 18px;
+      background: var(--brand);
+      color: #ffffff;
       border: none;
-      border-radius: 9px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.95rem;
-      letter-spacing: 0.06em;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 0.96rem;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
     }
-    #predict-btn:hover  { background: var(--teal-dim); }
+
+    #predict-btn:hover  { background: var(--brand-strong); }
     #predict-btn:active { transform: scale(0.98); }
     #predict-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
@@ -187,6 +328,9 @@
       display: flex;
       flex-direction: column;
       gap: 20px;
+      position: sticky;
+      top: 24px;
+      align-self: start;
     }
 
     /* PROBABILITY RING */
@@ -195,13 +339,17 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px 0 10px;
+      padding: 18px 0 8px;
     }
+
     .ring-svg { width: 140px; height: 140px; transform: rotate(-90deg); }
+
     .ring-bg   { fill: none; stroke: var(--border); stroke-width: 10; }
+
     .ring-fill { fill: none; stroke-width: 10; stroke-linecap: round;
                  stroke-dasharray: 339.3; stroke-dashoffset: 339.3;
                  transition: stroke-dashoffset 0.8s cubic-bezier(.4,0,.2,1), stroke 0.3s; }
+
     .ring-center {
       position: absolute;
       display: flex;
@@ -209,64 +357,70 @@
       align-items: center;
     }
     .ring-wrap-inner { position: relative; display: flex; align-items: center; justify-content: center; }
+
     .ring-pct {
-      font-family: 'Space Mono', monospace;
-      font-size: 1.7rem;
-      font-weight: 700;
+      font-size: 2rem;
+      font-weight: 800;
       line-height: 1;
       color: var(--text);
+      letter-spacing: -0.06em;
     }
+
     .ring-sub {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.6rem;
+      font-size: 0.66rem;
+      font-weight: 800;
       color: var(--muted);
-      margin-top: 2px;
+      margin-top: 4px;
       letter-spacing: 0.08em;
     }
 
     /* VERDICT */
     .verdict {
-      text-align: center;
-      padding: 14px;
-      border-radius: 10px;
+      padding: 16px;
+      border-radius: var(--radius-md);
       border: 1px solid var(--border);
-      background: var(--surface2);
+      background: var(--surface-muted);
     }
+
     .verdict-label {
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
+      font-size: 1.05rem;
+      font-weight: 800;
     }
+
     .verdict-label.high   { color: var(--high); }
     .verdict-label.medium { color: var(--med);  }
     .verdict-label.low    { color: var(--low);  }
+
     .verdict-sub {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--muted);
+      font-size: 0.82rem;
+      color: var(--muted-strong);
       margin-top: 4px;
     }
 
     /* FEATURE BARS */
-    .feature-bars { display: flex; flex-direction: column; gap: 10px; }
-    .feat-row { display: flex; flex-direction: column; gap: 4px; }
+    .feature-bars { display: flex; flex-direction: column; gap: 12px; }
+    .feat-row { display: flex; flex-direction: column; gap: 6px; }
+
     .feat-meta {
       display: flex;
       justify-content: space-between;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.68rem;
-      color: var(--muted);
+      gap: 12px;
+      font-size: 0.78rem;
+      color: var(--muted-strong);
+      font-weight: 700;
     }
+
     .feat-bar-bg {
-      height: 4px;
+      height: 8px;
       background: var(--border);
-      border-radius: 4px;
+      border-radius: 999px;
       overflow: hidden;
     }
+
     .feat-bar-fill {
       height: 100%;
-      border-radius: 4px;
-      background: var(--teal);
+      border-radius: 999px;
+      background: var(--brand);
       width: 0%;
       transition: width 0.6s ease;
     }
@@ -278,170 +432,242 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      padding: 40px 20px;
+      gap: 14px;
+      padding: 52px 20px;
       text-align: center;
     }
-    .placeholder-icon { font-size: 2.5rem; opacity: 0.3; }
+
+    .placeholder-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      background: var(--surface-soft);
+      color: var(--brand);
+      font-size: 2rem;
+      font-weight: 800;
+    }
+
     .placeholder-text {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--muted);
+      font-size: 0.9rem;
+      color: var(--muted-strong);
       line-height: 1.6;
+      font-weight: 600;
     }
 
     .error-msg {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.75rem;
+      font-size: 0.86rem;
+      font-weight: 700;
       color: var(--high);
-      margin-top: 10px;
-      min-height: 16px;
+      margin-top: 12px;
+      min-height: 20px;
+    }
+
+    #result-content {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      body { padding: 16px; }
+      .hero,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .result-panel {
+        position: static;
+      }
     }
 
     @media (max-width: 640px) {
-      .layout { grid-template-columns: 1fr; }
-      header { flex-direction: column; align-items: flex-start; gap: 12px; }
-      .header-right { text-align: left; }
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .top-actions {
+        justify-content: flex-start;
+      }
+      .hero,
+      .card {
+        padding: 20px;
+        border-radius: 18px;
+      }
+      .metric-grid,
+      .field-group {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="header-left">
-    <div class="eyebrow">inteli MBA · Semana 5 · Churn Prediction</div>
-    <h1>Gym <span>Churn</span><br/>Predictor</h1>
-  </div>
-  <div class="header-right">
-    modelo · RandomForest<br/>
-    features · 11<br/>
-    dataset · 4 000 clientes
-  </div>
-</header>
-
-<div class="layout">
-
-  <!-- FORMULÁRIO -->
-  <div class="card">
-    <div class="section-label">dados do cliente</div>
-    <div class="fields">
-
-      <div class="field-group">
-        <div class="field">
-          <label>Tempo como cliente (meses)</label>
-          <input type="number" id="Lifetime" placeholder="ex: 12" min="0"/>
-        </div>
-        <div class="field">
-          <label>Idade</label>
-          <input type="number" id="Age" placeholder="ex: 32" min="16" max="80"/>
-        </div>
-      </div>
-
-      <div class="field-group">
-        <div class="field">
-          <label>Duração do contrato (meses)</label>
-          <input type="number" id="Contract_period" placeholder="1, 6 ou 12" min="1"/>
-        </div>
-        <div class="field">
-          <label>Meses até vencer o contrato</label>
-          <input type="number" id="Month_to_end_contract" placeholder="ex: 4" min="0" step="0.1"/>
-        </div>
-      </div>
-
-      <div class="field-group">
-        <div class="field">
-          <label>Freq. aulas — esse mês (por semana)</label>
-          <input type="number" id="Avg_class_frequency_current_month" placeholder="ex: 2.5" step="0.1" min="0"/>
-        </div>
-        <div class="field">
-          <label>Freq. aulas — histórico (por semana)</label>
-          <input type="number" id="Avg_class_frequency_total" placeholder="ex: 2.0" step="0.1" min="0"/>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Gastos extras na academia (R$)</label>
-        <input type="number" id="Avg_additional_charges_total" placeholder="ex: 150.00" step="0.01" min="0"/>
-      </div>
-
-      <div class="field-group">
-        <div class="field">
-          <label>Faz aulas em grupo?</label>
-          <div class="toggle-group">
-            <button class="toggle-btn" onclick="toggle('Group_visits', 1, this)">Sim</button>
-            <button class="toggle-btn" onclick="toggle('Group_visits', 0, this)">Não</button>
-          </div>
-        </div>
-        <div class="field">
-          <label>Veio por indicação?</label>
-          <div class="toggle-group">
-            <button class="toggle-btn" onclick="toggle('Promo_friends', 1, this)">Sim</button>
-            <button class="toggle-btn" onclick="toggle('Promo_friends', 0, this)">Não</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="field-group">
-        <div class="field">
-          <label>Empresa parceira?</label>
-          <div class="toggle-group">
-            <button class="toggle-btn" onclick="toggle('Partner', 1, this)">Sim</button>
-            <button class="toggle-btn" onclick="toggle('Partner', 0, this)">Não</button>
-          </div>
-        </div>
-        <div class="field">
-          <label>Mora perto da academia?</label>
-          <div class="toggle-group">
-            <button class="toggle-btn" onclick="toggle('Near_Location', 1, this)">Sim</button>
-            <button class="toggle-btn" onclick="toggle('Near_Location', 0, this)">Não</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <button id="predict-btn" onclick="predict()">Calcular probabilidade de churn</button>
-    <div class="error-msg" id="error-msg"></div>
-  </div>
-
-  <!-- RESULTADO -->
-  <div class="card result-panel" id="result-panel">
-    <div class="section-label">resultado</div>
-
-    <div id="placeholder" class="placeholder">
-      <div class="placeholder-icon">◎</div>
-      <div class="placeholder-text">preencha os dados<br/>e clique em calcular</div>
-    </div>
-
-    <div id="result-content" style="display:none; flex-direction:column; gap:20px;">
-
-      <div class="ring-wrap">
-        <div class="ring-wrap-inner">
-          <svg class="ring-svg" viewBox="0 0 120 120">
-            <circle class="ring-bg"   cx="60" cy="60" r="54"/>
-            <circle class="ring-fill" cx="60" cy="60" r="54" id="ring-fill"/>
-          </svg>
-          <div class="ring-center">
-            <div class="ring-pct" id="ring-pct">—</div>
-            <div class="ring-sub">CHURN PROB.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="verdict">
-        <div class="verdict-label" id="verdict-label">—</div>
-        <div class="verdict-sub" id="verdict-sub">—</div>
-      </div>
-
+<main class="app-shell">
+  <section class="topbar" aria-label="Status da aplicação">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">G</div>
       <div>
-        <div class="section-label">fatores de risco</div>
-        <div class="feature-bars" id="feature-bars"></div>
+        <div class="brand-kicker">Inteli MBA · Semana 5</div>
+        <div class="brand-title">Gym Churn Predictor</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <span class="status-pill"><span class="status-dot"></span>Modelo operacional</span>
+      <span class="ghost-btn">RandomForest · 11 features</span>
+    </div>
+  </section>
+
+  <header class="hero">
+    <div>
+      <div class="eyebrow">Churn analytics</div>
+      <h1>Predição de risco para retenção de clientes</h1>
+      <p class="hero-copy">
+        Informe o perfil do cliente e estime a probabilidade de churn com base no modelo treinado com a base americana de academias.
+      </p>
+    </div>
+    <div class="metric-grid" aria-label="Resumo do modelo">
+      <div class="metric-card">
+        <div class="metric-label">Clientes</div>
+        <div class="metric-value">4.000</div>
+        <div class="metric-caption">base histórica</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Features</div>
+        <div class="metric-value">11</div>
+        <div class="metric-caption">variáveis ativas</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Target</div>
+        <div class="metric-value">Churn</div>
+        <div class="metric-caption">0 ficou · 1 cancelou</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <!-- FORMULÁRIO -->
+    <section class="card" aria-labelledby="customer-data-title">
+      <div class="section-label" id="customer-data-title">Dados do cliente</div>
+      <div class="fields">
+
+        <div class="field-group">
+          <div class="field">
+            <label for="Lifetime">Tempo como cliente (meses)</label>
+            <input type="number" id="Lifetime" placeholder="ex: 12" min="0"/>
+          </div>
+          <div class="field">
+            <label for="Age">Idade</label>
+            <input type="number" id="Age" placeholder="ex: 32" min="16" max="80"/>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field">
+            <label for="Contract_period">Duração do contrato (meses)</label>
+            <input type="number" id="Contract_period" placeholder="1, 6 ou 12" min="1"/>
+          </div>
+          <div class="field">
+            <label for="Month_to_end_contract">Meses até vencer o contrato</label>
+            <input type="number" id="Month_to_end_contract" placeholder="ex: 4" min="0" step="0.1"/>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field">
+            <label for="Avg_class_frequency_current_month">Freq. aulas este mês (por semana)</label>
+            <input type="number" id="Avg_class_frequency_current_month" placeholder="ex: 2.5" step="0.1" min="0"/>
+          </div>
+          <div class="field">
+            <label for="Avg_class_frequency_total">Freq. aulas histórica (por semana)</label>
+            <input type="number" id="Avg_class_frequency_total" placeholder="ex: 2.0" step="0.1" min="0"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="Avg_additional_charges_total">Gastos extras na academia (US$)</label>
+          <input type="number" id="Avg_additional_charges_total" placeholder="ex: 150.00" step="0.01" min="0"/>
+        </div>
+
+        <div class="field-group">
+          <div class="field">
+            <label>Faz aulas em grupo?</label>
+            <div class="toggle-group">
+              <button class="toggle-btn" type="button" onclick="toggle('Group_visits', 1, this)">Sim</button>
+              <button class="toggle-btn" type="button" onclick="toggle('Group_visits', 0, this)">Não</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Veio por indicação?</label>
+            <div class="toggle-group">
+              <button class="toggle-btn" type="button" onclick="toggle('Promo_friends', 1, this)">Sim</button>
+              <button class="toggle-btn" type="button" onclick="toggle('Promo_friends', 0, this)">Não</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field">
+            <label>Empresa parceira?</label>
+            <div class="toggle-group">
+              <button class="toggle-btn" type="button" onclick="toggle('Partner', 1, this)">Sim</button>
+              <button class="toggle-btn" type="button" onclick="toggle('Partner', 0, this)">Não</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Mora perto da academia?</label>
+            <div class="toggle-group">
+              <button class="toggle-btn" type="button" onclick="toggle('Near_Location', 1, this)">Sim</button>
+              <button class="toggle-btn" type="button" onclick="toggle('Near_Location', 0, this)">Não</button>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-    </div>
-  </div>
+      <button id="predict-btn" type="button" onclick="predict()">Calcular probabilidade de churn</button>
+      <div class="error-msg" id="error-msg"></div>
+    </section>
 
-</div>
+    <!-- RESULTADO -->
+    <aside class="card result-panel" id="result-panel" aria-labelledby="result-title">
+      <div class="section-label" id="result-title">Resultado</div>
+
+      <div id="placeholder" class="placeholder">
+        <div class="placeholder-icon">%</div>
+        <div class="placeholder-text">Preencha os dados e clique em calcular para ver o risco estimado.</div>
+      </div>
+
+      <div id="result-content">
+
+        <div class="ring-wrap">
+          <div class="ring-wrap-inner">
+            <svg class="ring-svg" viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="ring-bg"   cx="60" cy="60" r="54"/>
+              <circle class="ring-fill" cx="60" cy="60" r="54" id="ring-fill"/>
+            </svg>
+            <div class="ring-center">
+              <div class="ring-pct" id="ring-pct">-</div>
+              <div class="ring-sub">CHURN PROB.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="verdict">
+          <div class="verdict-label" id="verdict-label">-</div>
+          <div class="verdict-sub" id="verdict-sub">-</div>
+        </div>
+
+        <div>
+          <div class="section-label">Fatores de risco</div>
+          <div class="feature-bars" id="feature-bars"></div>
+        </div>
+
+      </div>
+    </aside>
+  </div>
+</main>
 
 <script>
   // ==================================================
@@ -523,7 +749,7 @@
     const circumference = 339.3;
     const offset = circumference * (1 - churn_probability);
     const ring = document.getElementById("ring-fill");
-    const colors = { high: "#ff4d6d", medium: "#ffb830", low: "#00c4a7" };
+    const colors = { high: "#dc2626", medium: "#b45309", low: "#047857" };
     ring.style.strokeDashoffset = offset;
     ring.style.stroke = colors[risk_level];
     document.getElementById("ring-pct").textContent = `${pct}%`;
