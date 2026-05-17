@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EDA Churn - Relatorio Visual</title>
+<style>
+:root { --bg:#f6f8fb; --surface:#fff; --text:#111827; --muted:#64748b; --border:#e5e7eb; --brand:#2563eb; --high:#dc2626; }
+body { margin:0; padding:32px; background:var(--bg); color:var(--text); font-family:Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+main { max-width:1180px; margin:0 auto; display:grid; gap:24px; }
+.hero, .card { background:var(--surface); border:1px solid var(--border); border-radius:20px; box-shadow:0 16px 40px rgba(15,23,42,.08); padding:28px; }
+h1 { margin:0 0 8px; font-size:42px; letter-spacing:-.05em; }
+h2 { margin:0 0 16px; font-size:22px; }
+p { color:var(--muted); line-height:1.6; }
+.metrics, .grid, .insights { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
+.grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.metric, .compare-card, .insight { background:#f8fafc; border:1px solid var(--border); border-radius:16px; padding:16px; }
+.metric span, .insight span, .compare-card span { display:block; color:var(--muted); font-size:14px; margin-top:6px; line-height:1.5; }
+.metric strong { display:block; font-size:28px; margin-top:6px; }
+.bar-row { display:grid; gap:8px; margin-bottom:14px; }
+.bar-meta { display:flex; justify-content:space-between; gap:12px; color:var(--muted); font-size:14px; }
+.bar-meta strong { color:var(--text); }
+.bar-track { height:12px; background:#e5e7eb; border-radius:999px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:999px; }
+.insights { grid-template-columns:repeat(2,minmax(0,1fr)); }
+@media(max-width:800px) { body { padding:16px; } .metrics, .grid, .insights { grid-template-columns:1fr; } h1 { font-size:32px; } }
+</style>
+</head>
+<body>
+<main>
+<section class="hero"><h1>EDA Visual - Gym Churn</h1><p>Relatorio gerado diretamente do CSV <strong>notebooks/gym_churn_us.csv</strong>, com limpeza, metricas, graficos e insights acionaveis.</p></section>
+<section class="metrics"><div class="metric"><span>Clientes</span><strong>4.000</strong></div><div class="metric"><span>Churn rate</span><strong>26.5%</strong></div><div class="metric"><span>Idade media</span><strong>29.2</strong></div><div class="metric"><span>Lifetime medio</span><strong>3.7 meses</strong></div></section>
+<section class="grid">
+  <article class="card"><h2>Distribuicao de churn</h2>
+        <div class="bar-row">
+          <div class="bar-meta"><strong>Ficou</strong><span>73.5%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:100.0%;background:#2563eb"></div></div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-meta"><strong>Cancelou</strong><span>26.5%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:36.1%;background:#dc2626"></div></div>
+        </div></article>
+  <article class="card"><h2>Churn por duracao de contrato</h2>
+        <div class="bar-row">
+          <div class="bar-meta"><strong>1 meses</strong><span>42.3% churn</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:100.0%;background:#2563eb"></div></div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-meta"><strong>6 meses</strong><span>12.5% churn</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:29.5%;background:#2563eb"></div></div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-meta"><strong>12 meses</strong><span>2.4% churn</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:5.7%;background:#2563eb"></div></div>
+        </div></article>
+  <article class="card"><h2>Top correlacoes com churn</h2>
+        <div class="bar-row">
+          <div class="bar-meta"><strong>Usuario novo</strong><span>corr. 0.558</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:100.0%;background:#dc2626"></div></div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-meta"><strong>Tempo como cliente</strong><span>corr. -0.438</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:78.5%;background:#2563eb"></div></div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-meta"><strong>Ratio freq. atual/historica</strong><span>corr. -0.434</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:77.8%;background:#2563eb"></div></div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-meta"><strong>Frequencia atual</strong><span>corr. -0.412</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:73.9%;background:#2563eb"></div></div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-meta"><strong>Idade</strong><span>corr. -0.405</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:72.5%;background:#2563eb"></div></div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-meta"><strong>Duracao do contrato</strong><span>corr. -0.390</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:69.9%;background:#2563eb"></div></div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-meta"><strong>Meses ate vencer</strong><span>corr. -0.381</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:68.3%;background:#2563eb"></div></div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-meta"><strong>Frequencia historica</strong><span>corr. -0.250</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:44.8%;background:#2563eb"></div></div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-meta"><strong>Gastos extras</strong><span>corr. -0.199</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:35.6%;background:#2563eb"></div></div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-meta"><strong>Aulas em grupo</strong><span>corr. -0.175</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:31.4%;background:#2563eb"></div></div>
+        </div></article>
+  <article class="card"><h2>Comparacao: ficou vs cancelou</h2><div class="compare-card"><strong>Idade</strong><span>Ficou: 29.98</span><span>Cancelou: 26.99</span></div><div class="compare-card"><strong>Tempo como cliente</strong><span>Ficou: 4.71</span><span>Cancelou: 0.99</span></div><div class="compare-card"><strong>Frequencia atual</strong><span>Ficou: 2.03</span><span>Cancelou: 1.04</span></div><div class="compare-card"><strong>Frequencia historica</strong><span>Ficou: 2.02</span><span>Cancelou: 1.47</span></div><div class="compare-card"><strong>Gastos extras</strong><span>Ficou: 158.45</span><span>Cancelou: 115.08</span></div></article>
+</section>
+<section class="card"><h2>10 insights acionaveis</h2><div class="insights"><div class="insight"><strong>1. Queda de frequencia recente e alerta prioritario.</strong><span>Clientes que reduzem presenca no mes atual devem entrar em contato preventivo.</span></div><div class="insight"><strong>2. Novos clientes precisam de onboarding.</strong><span>Os primeiros meses pedem acompanhamento, metas semanais e incentivo a rotina.</span></div><div class="insight"><strong>3. Contratos curtos concentram risco.</strong><span>Planos mensais devem receber incentivo para migrar a contratos mais longos.</span></div><div class="insight"><strong>4. Proximidade fisica reduz atrito.</strong><span>Campanhas locais e parcerias de bairro podem aumentar recorrencia.</span></div><div class="insight"><strong>5. Aulas em grupo criam vinculo social.</strong><span>Estimular a primeira aula coletiva ajuda a criar pertencimento.</span></div><div class="insight"><strong>6. Indicacao de amigos favorece retencao.</strong><span>Desafios em dupla e beneficios compartilhados reforcam o vinculo.</span></div><div class="insight"><strong>7. Gastos extras indicam engajamento.</strong><span>Clientes sem consumo adicional podem receber ofertas simples.</span></div><div class="insight"><strong>8. Sleeping dogs precisam de reativacao.</strong><span>Clientes antigos com baixa frequencia merecem campanhas especificas.</span></div><div class="insight"><strong>9. Queda entre historico e mes atual antecipa churn.</strong><span>Monitorar ratio_freq_atual_vs_lifetime ajuda a agir antes do cancelamento.</span></div><div class="insight"><strong>10. Recall e metrica-chave para retencao.</strong><span>E melhor capturar mais clientes em risco do que perder cancelamentos reais.</span></div></div></section>
+</main>
+</body>
+</html>
