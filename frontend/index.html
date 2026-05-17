@@ -542,6 +542,7 @@
       font-size: 0.78rem;
       font-weight: 700;
       line-height: 1.45;
+      white-space: pre-line;
     }
 
     .feat-bar-bg {
@@ -1397,6 +1398,7 @@
           <p class="risk-help">
             Estes são os sinais que mais pesaram nesta previsão. A referência do treino é o valor típico
             do CSV enviado: mediana para campos numéricos e opção mais comum para campos Sim/Não.
+            Os percentuais abaixo são apenas ranking de explicação; eles não somam a probabilidade de churn.
           </p>
           <div class="feature-bars" id="feature-bars"></div>
         </div>
@@ -2626,7 +2628,7 @@
       explicacao.className = "feat-explain";
 
       rotulo.textContent = f.label;
-      valorEl.textContent = `Impacto relativo: ${larguraPct}%`;
+      valorEl.textContent = `Destaque no ranking: ${larguraPct}%`;
       explicacao.textContent = f.explanation;
       barra.style.width = `${larguraPct}%`;
 
@@ -2692,7 +2694,12 @@
       minimumFractionDigits: 1,
     }).format((driver.importance || 0) * 100);
 
-    return `Cliente: ${valor}. Referência do treino (${tipoReferencia} do CSV): ${referencia}. Leitura: ${leitura}. Peso geral da variável no modelo: ${peso}%.`;
+    return [
+      `Cliente: ${valor}.`,
+      `Referência do treino (${tipoReferencia} do CSV): ${referencia}.`,
+      `Leitura: ${leitura}.`,
+      `Importância global no modelo: ${peso}% (não soma para formar a probabilidade).`,
+    ].join("\n");
   }
 
   function formatarNumeroCurto(value) {
