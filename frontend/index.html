@@ -346,8 +346,7 @@
 
     /* BUTTON */
     #predict-btn,
-    #train-btn,
-    #eda-btn {
+    #train-btn {
       width: 100%;
       margin-top: 24px;
       padding: 14px 18px;
@@ -363,14 +362,11 @@
     }
 
     #predict-btn:hover,
-    #train-btn:hover,
-    #eda-btn:hover  { background: var(--brand-strong); }
+    #train-btn:hover  { background: var(--brand-strong); }
     #predict-btn:active,
-    #train-btn:active,
-    #eda-btn:active { transform: scale(0.98); }
+    #train-btn:active { transform: scale(0.98); }
     #predict-btn:disabled,
-    #train-btn:disabled,
-    #eda-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    #train-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     /* RESULT PANEL */
     .result-panel {
@@ -573,32 +569,28 @@
       gap: 20px;
     }
 
-    .eda-upload {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 220px;
-      gap: 16px;
-      align-items: end;
-    }
-
     .eda-status {
       border-radius: var(--radius-md);
-      display: none;
+      display: block;
       font-size: 0.9rem;
       font-weight: 800;
       line-height: 1.5;
       padding: 14px 16px;
     }
 
+    .eda-status.waiting {
+      background: var(--surface-soft);
+      color: var(--muted-strong);
+    }
+
     .eda-status.success {
       background: var(--low-soft);
       color: var(--low);
-      display: block;
     }
 
     .eda-status.error {
       background: var(--high-soft);
       color: var(--high);
-      display: block;
     }
 
     .eda-dashboard {
@@ -939,7 +931,6 @@
       .doc-story,
       .layout,
       .upload-layout,
-      .eda-upload,
       .doc-grid,
       .chart-grid,
       .flow-steps {
@@ -1183,17 +1174,12 @@
       <section class="card" aria-labelledby="eda-title">
         <div class="section-label" id="eda-title">Dashboard EDA</div>
         <p class="upload-help">
-          Envie o CSV para gerar visualizações reais da base: limpeza, distribuição de churn,
-          contratos, médias por grupo e features mais relacionadas ao cancelamento.
+          Esta aba usa o mesmo CSV enviado em <strong>Upload CSV</strong>. Após o treinamento do modelo,
+          os indicadores e gráficos da análise exploratória serão carregados automaticamente aqui.
         </p>
-        <div class="eda-upload">
-          <div class="field">
-            <label for="eda-file">Arquivo CSV para análise exploratória</label>
-            <input type="file" id="eda-file" accept=".csv,text/csv"/>
-          </div>
-          <button id="eda-btn" type="button" onclick="analisarEda()">Gerar dashboard</button>
+        <div class="eda-status waiting" id="eda-status">
+          Aguardando upload do CSV na aba Upload CSV.
         </div>
-        <div class="eda-status" id="eda-status"></div>
       </section>
 
       <section class="eda-dashboard" id="eda-dashboard">
@@ -1424,15 +1410,20 @@
     const statusEl = document.getElementById("upload-status");
     const metricsEl = document.getElementById("training-metrics");
     const btn = document.getElementById("train-btn");
+    const edaStatusEl = document.getElementById("eda-status");
+    const edaDashboardEl = document.getElementById("eda-dashboard");
 
     statusEl.className = "upload-status";
     statusEl.textContent = "";
     metricsEl.className = "training-metrics";
     metricsEl.replaceChildren();
+    edaDashboardEl.className = "eda-dashboard";
 
     if (!fileInput.files.length) {
       statusEl.className = "upload-status error";
       statusEl.textContent = "Selecione um arquivo CSV antes de treinar.";
+      edaStatusEl.className = "eda-status waiting";
+      edaStatusEl.textContent = "Aguardando upload do CSV na aba Upload CSV.";
       return;
     }
 
@@ -1441,6 +1432,8 @@
 
     btn.disabled = true;
     btn.textContent = "Treinando modelo...";
+    edaStatusEl.className = "eda-status waiting";
+    edaStatusEl.textContent = "Aguardando conclusão do treino para carregar o Dashboard EDA...";
 
     try {
       const res = await fetch(`${API_URL}/train`, {
@@ -1454,6 +1447,7 @@
       statusEl.className = "upload-status success";
       statusEl.textContent = "Modelo treinado com sucesso. A aba de inferência já pode usar este treinamento.";
       exibirMetricasTreino(data.metrics);
+      await carregarDashboardEda(fileInput.files[0]);
     } catch (err) {
       statusEl.className = "upload-status error";
       statusEl.textContent = `Erro ao treinar modelo: ${err.message}`;
@@ -1497,27 +1491,16 @@
     metricsEl.className = "training-metrics active";
   }
 
-  async function analisarEda() {
-    const fileInput = document.getElementById("eda-file");
+  async function carregarDashboardEda(file) {
     const statusEl = document.getElementById("eda-status");
     const dashboardEl = document.getElementById("eda-dashboard");
-    const btn = document.getElementById("eda-btn");
 
-    statusEl.className = "eda-status";
-    statusEl.textContent = "";
+    statusEl.className = "eda-status waiting";
+    statusEl.textContent = "Gerando Dashboard EDA com o CSV enviado...";
     dashboardEl.className = "eda-dashboard";
 
-    if (!fileInput.files.length) {
-      statusEl.className = "eda-status error";
-      statusEl.textContent = "Selecione um arquivo CSV para gerar o dashboard.";
-      return;
-    }
-
     const formData = new FormData();
-    formData.append("file", fileInput.files[0]);
-
-    btn.disabled = true;
-    btn.textContent = "Gerando dashboard...";
+    formData.append("file", file);
 
     try {
       const res = await fetch(`${API_URL}/eda`, {
@@ -1533,10 +1516,7 @@
       exibirDashboardEda(data);
     } catch (err) {
       statusEl.className = "eda-status error";
-      statusEl.textContent = `Erro ao gerar EDA: ${err.message}`;
-    } finally {
-      btn.disabled = false;
-      btn.textContent = "Gerar dashboard";
+      statusEl.textContent = `Modelo treinado, mas não foi possível gerar o Dashboard EDA: ${err.message}`;
     }
   }
 
