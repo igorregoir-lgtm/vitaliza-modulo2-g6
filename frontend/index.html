@@ -1000,18 +1000,18 @@
     <div class="metric-grid" aria-label="Resumo do modelo">
       <div class="metric-card">
         <div class="metric-label">Clientes</div>
-        <div class="metric-value">4.000</div>
-        <div class="metric-caption">base histórica</div>
+        <div class="metric-value" id="hero-customers">-</div>
+        <div class="metric-caption">após upload do CSV</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Features</div>
-        <div class="metric-value">11</div>
-        <div class="metric-caption">variáveis ativas</div>
+        <div class="metric-label">Churn rate</div>
+        <div class="metric-value" id="hero-churn-rate">-</div>
+        <div class="metric-caption">calculado da base</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Target</div>
-        <div class="metric-value">Churn</div>
-        <div class="metric-caption">0 ficou · 1 cancelou</div>
+        <div class="metric-label">ROC-AUC</div>
+        <div class="metric-value" id="hero-roc-auc">-</div>
+        <div class="metric-caption">após treino</div>
       </div>
     </div>
   </header>
@@ -1447,6 +1447,11 @@
       statusEl.className = "upload-status success";
       statusEl.textContent = "Modelo treinado com sucesso. A aba de inferência já pode usar este treinamento.";
       exibirMetricasTreino(data.metrics);
+      atualizarMetricasHeader({
+        customers: data.metrics.rows_used,
+        churnRate: data.metrics.churn_rate,
+        rocAuc: data.metrics.roc_auc,
+      });
       await carregarDashboardEda(fileInput.files[0]);
     } catch (err) {
       statusEl.className = "upload-status error";
@@ -1489,6 +1494,20 @@
       metricsEl.appendChild(card);
     });
     metricsEl.className = "training-metrics active";
+  }
+
+  function atualizarMetricasHeader({ customers, churnRate, rocAuc }) {
+    if (customers !== undefined) {
+      document.getElementById("hero-customers").textContent = customers ?? "-";
+    }
+    if (churnRate !== undefined) {
+      document.getElementById("hero-churn-rate").textContent =
+        typeof churnRate === "number" ? `${Math.round(churnRate * 100)}%` : "-";
+    }
+    if (rocAuc !== undefined) {
+      document.getElementById("hero-roc-auc").textContent =
+        typeof rocAuc === "number" ? rocAuc : "-";
+    }
   }
 
   async function carregarDashboardEda(file) {
@@ -1553,6 +1572,11 @@
       criarMetricCard("Lifetime médio", data.summary.avg_lifetime, "meses como cliente"),
       criarMetricCard("Gastos extras", data.summary.avg_extra_charges, "média por cliente")
     );
+
+    atualizarMetricasHeader({
+      customers: data.summary.customers,
+      churnRate: data.summary.churn_rate,
+    });
 
     renderizarGraficoBarras(
       "churn-chart",
