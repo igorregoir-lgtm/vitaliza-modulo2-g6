@@ -764,6 +764,74 @@
       font-weight: 700;
     }
 
+    .scatter-plot,
+    .line-plot {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface-muted);
+      height: 260px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .plot-caption {
+      color: var(--muted-strong);
+      font-size: 0.78rem;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-top: 10px;
+    }
+
+    .plot-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .legend-item {
+      align-items: center;
+      color: var(--muted-strong);
+      display: inline-flex;
+      font-size: 0.78rem;
+      font-weight: 800;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      border-radius: 999px;
+      display: inline-block;
+      height: 10px;
+      width: 10px;
+    }
+
+    .segment-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .segment-card {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .segment-card strong {
+      color: var(--text);
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+
+    .segment-card span {
+      color: var(--muted-strong);
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
     .eda-insights {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -1047,6 +1115,7 @@
       align-items: center;
       justify-content: center;
       margin-top: 14px;
+      margin-right: 8px;
       padding: 10px 14px;
       border-radius: 999px;
       background: var(--brand);
@@ -1356,6 +1425,36 @@
             <h3 class="chart-title">Comparação: ficou vs cancelou</h3>
             <div class="comparison-list" id="comparison-chart"></div>
           </article>
+
+          <article class="chart-card">
+            <h3 class="chart-title">Freq. histórica x freq. atual</h3>
+            <div class="scatter-plot" id="frequency-scatter"></div>
+            <p class="plot-caption">
+              Cada ponto representa um cliente. Pontos vermelhos indicam churn; o quadrante inferior direito evidencia sleeping dogs.
+            </p>
+            <div class="plot-legend">
+              <span class="legend-item"><span class="legend-dot" style="background: var(--brand);"></span>Ficou</span>
+              <span class="legend-item"><span class="legend-dot" style="background: var(--high);"></span>Cancelou</span>
+            </div>
+          </article>
+
+          <article class="chart-card">
+            <h3 class="chart-title">Sobrevivência por tempo de assinatura</h3>
+            <div class="line-plot" id="survival-chart"></div>
+            <p class="plot-caption">
+              Curva aproximada de permanência calculada a partir de Lifetime e Churn.
+            </p>
+          </article>
+
+          <article class="chart-card">
+            <h3 class="chart-title">Churn por coorte de relacionamento</h3>
+            <div class="bar-list" id="cohort-chart"></div>
+          </article>
+
+          <article class="chart-card">
+            <h3 class="chart-title">Segmentos diagnósticos do case</h3>
+            <div class="segment-grid" id="segment-chart"></div>
+          </article>
         </div>
 
         <article class="eda-insights" aria-labelledby="eda-insights-title">
@@ -1579,10 +1678,13 @@
             carga do CSV, limpeza, estatísticas descritivas, gráficos, correlações e conclusão sobre as features usadas.
           </p>
           <div class="callout">
-            Arquivo no projeto: <strong>notebooks/eda_churn.ipynb</strong>. Abra pelo Cursor ou pelo Jupyter e execute as células em ordem com o CSV em <strong>dataset/gym_churn_us.csv</strong>.
+            Arquivo no projeto: <strong>notebooks/eda_churn.ipynb</strong>. Abra pelo Cursor ou pelo Jupyter e execute as células em ordem com o CSV em <strong>notebooks/gym_churn_us.csv</strong>.
           </div>
           <a class="doc-link" href="/notebooks/eda_churn.ipynb" target="_blank" rel="noopener">
             Abrir notebook EDA
+          </a>
+          <a class="doc-link" href="/notebooks/eda_churn_visual.html" target="_blank" rel="noopener">
+            Abrir relatório visual EDA
           </a>
         </article>
       </div>
@@ -1868,6 +1970,19 @@
     );
 
     renderizarComparacaoChurn(data.comparison_by_churn);
+    renderizarScatterFrequencia(data.frequency_scatter || []);
+    renderizarCurvaSobrevivencia(data.survival_curve || []);
+    renderizarGraficoBarras(
+      "cohort-chart",
+      (data.cohort_churn || []).map(item => ({
+        label: item.label,
+        value: item.churn_rate,
+        width: item.churn_rate,
+        caption: `${Math.round(item.churn_rate * 100)}% churn · ${item.count} clientes`,
+        danger: item.churn_rate >= data.summary.churn_rate,
+      }))
+    );
+    renderizarSegmentosDiagnosticos(data.diagnostic_segments || []);
     dashboardEl.className = "eda-dashboard active";
   }
 
@@ -1923,6 +2038,129 @@
     });
   }
 
+  function criarSvgPlot(containerId) {
+    const container = document.getElementById(containerId);
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 320 220");
+    svg.setAttribute("role", "img");
+    svg.style.width = "100%";
+    svg.style.height = "100%";
+    container.replaceChildren(svg);
+    return svg;
+  }
+
+  function obterCorToken(nomeToken) {
+    return getComputedStyle(document.documentElement).getPropertyValue(nomeToken).trim();
+  }
+
+  function renderizarScatterFrequencia(rows) {
+    const svg = criarSvgPlot("frequency-scatter");
+    const brandColor = obterCorToken("--brand");
+    const highColor = obterCorToken("--high");
+    const padding = 28;
+    const width = 320 - padding * 2;
+    const height = 220 - padding * 2;
+    const maxX = Math.max(...rows.map(row => row.x), 1);
+    const maxY = Math.max(...rows.map(row => row.y), 1);
+
+    const axis = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    axis.setAttribute("d", `M ${padding} ${padding} V ${padding + height} H ${padding + width}`);
+    axis.setAttribute("fill", "none");
+    axis.setAttribute("stroke", "currentColor");
+    axis.setAttribute("opacity", "0.35");
+    svg.appendChild(axis);
+
+    const diagonal = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    diagonal.setAttribute("x1", padding);
+    diagonal.setAttribute("y1", padding + height);
+    diagonal.setAttribute("x2", padding + width);
+    diagonal.setAttribute("y2", padding);
+    diagonal.setAttribute("stroke", "currentColor");
+    diagonal.setAttribute("stroke-dasharray", "4 4");
+    diagonal.setAttribute("opacity", "0.25");
+    svg.appendChild(diagonal);
+
+    rows.forEach(row => {
+      const point = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      const x = padding + (row.x / maxX) * width;
+      const y = padding + height - (row.y / maxY) * height;
+      point.setAttribute("cx", x);
+      point.setAttribute("cy", y);
+      point.setAttribute("r", row.sleeping_dog ? 4 : 3);
+      point.setAttribute("fill", row.churn === 1 ? highColor : brandColor);
+      point.setAttribute("opacity", row.sleeping_dog ? "0.9" : "0.45");
+      svg.appendChild(point);
+    });
+  }
+
+  function renderizarCurvaSobrevivencia(rows) {
+    const svg = criarSvgPlot("survival-chart");
+    if (!rows.length) return;
+
+    const brandColor = obterCorToken("--brand");
+    const padding = 28;
+    const width = 320 - padding * 2;
+    const height = 220 - padding * 2;
+    const maxLifetime = Math.max(...rows.map(row => row.lifetime), 1);
+    const points = rows.map(row => {
+      const x = padding + (row.lifetime / maxLifetime) * width;
+      const y = padding + height - row.survival_probability * height;
+      return `${x},${y}`;
+    });
+
+    const axis = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    axis.setAttribute("d", `M ${padding} ${padding} V ${padding + height} H ${padding + width}`);
+    axis.setAttribute("fill", "none");
+    axis.setAttribute("stroke", "currentColor");
+    axis.setAttribute("opacity", "0.35");
+    svg.appendChild(axis);
+
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+    line.setAttribute("points", points.join(" "));
+    line.setAttribute("fill", "none");
+    line.setAttribute("stroke", brandColor);
+    line.setAttribute("stroke-width", "3");
+    line.setAttribute("stroke-linecap", "round");
+    line.setAttribute("stroke-linejoin", "round");
+    svg.appendChild(line);
+
+    rows.filter((_, index) => index % 3 === 0).forEach(row => {
+      const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      const x = padding + (row.lifetime / maxLifetime) * width;
+      const y = padding + height - row.survival_probability * height;
+      dot.setAttribute("cx", x);
+      dot.setAttribute("cy", y);
+      dot.setAttribute("r", "3");
+      dot.setAttribute("fill", brandColor);
+      svg.appendChild(dot);
+    });
+  }
+
+  function renderizarSegmentosDiagnosticos(rows) {
+    const container = document.getElementById("segment-chart");
+    container.replaceChildren();
+
+    rows.forEach(row => {
+      const card = document.createElement("div");
+      const title = document.createElement("strong");
+      const count = document.createElement("span");
+      const action = document.createElement("span");
+      const pipeline = document.createElement("span");
+
+      card.className = "segment-card";
+      title.textContent = row.label;
+      count.textContent = `${row.count} clientes · ${Math.round(row.percentage * 100)} ${row.reference}`;
+      action.textContent = row.action;
+
+      card.append(title, count, action);
+      if (row.estimated_pipeline !== undefined) {
+        pipeline.textContent = `Pipeline estimado: US$ ${Number(row.estimated_pipeline).toLocaleString("en-US")}`;
+        card.appendChild(pipeline);
+      }
+      container.appendChild(card);
+    });
+  }
+
   function traduzirFeature(feature) {
     const labels = {
       Lifetime: "Tempo como cliente",
@@ -1936,6 +2174,9 @@
       Promo_friends: "Indicação de amigos",
       Partner: "Empresa parceira",
       Near_Location: "Mora perto",
+      ratio_freq_atual_vs_lifetime: "Ratio freq. atual/histórica",
+      flag_early_user: "Usuário novo",
+      flag_sleeping_dog: "Sleeping dog",
     };
     return labels[feature] || feature;
   }

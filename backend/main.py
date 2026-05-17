@@ -107,6 +107,118 @@ def value_distribution(df: pd.DataFrame, column: str) -> list[dict]:
         for label, count in counts.items()
     ]
 
+
+def build_week5_eda_extensions(df: pd.DataFrame) -> dict:
+    df_eda = df.copy()
+    df_eda["ratio_freq_atual_vs_lifetime"] = (
+        df_eda["Avg_class_frequency_current_month"]
+        / df_eda["Avg_class_frequency_total"].replace(0, pd.NA)
+    ).fillna(0)
+    df_eda["flag_early_user"] = (df_eda["Lifetime"] <= 1).astype(int)
+    df_eda["flag_sleeping_dog"] = (
+        (df_eda["Lifetime"] > 6)
+        & (df_eda["Avg_class_frequency_current_month"] < 0.5)
+    ).astype(int)
+
+    scatter_sample = df_eda.sample(
+        n=min(len(df_eda), 300),
+        random_state=42,
+    )
+    frequency_scatter = [
+        {
+            "x": round(float(row["Avg_class_frequency_total"]), 3),
+            "y": round(float(row["Avg_class_frequency_current_month"]), 3),
+            "churn": int(row["Churn"]),
+            "sleeping_dog": int(row["flag_sleeping_dog"]),
+        }
+        for _, row in scatter_sample.iterrows()
+    ]
+
+    survival_probability = 1.0
+    survival_curve = []
+    for lifetime in sorted(df_eda["Lifetime"].unique()):
+        at_risk = df_eda[df_eda["Lifetime"] >= lifetime]
+        events = df_eda[
+            (df_eda["Lifetime"] == lifetime)
+            & (df_eda["Churn"] == 1)
+        ]
+        hazard = len(events) / len(at_risk) if len(at_risk) else 0
+        survival_probability *= 1 - hazard
+        survival_curve.append({
+            "lifetime": int(lifetime),
+            "survival_probability": round(float(survival_probability), 4),
+            "at_risk": int(len(at_risk)),
+            "events": int(len(events)),
+        })
+
+    cohort_bins = [-1, 1, 3, 6, 12, float("inf")]
+    cohort_labels = ["0-1 mês", "2-3 meses", "4-6 meses", "7-12 meses", "13+ meses"]
+    df_eda["cohort_lifetime"] = pd.cut(
+        df_eda["Lifetime"],
+        bins=cohort_bins,
+        labels=cohort_labels,
+        include_lowest=True,
+    )
+    cohort_group = df_eda.groupby("cohort_lifetime", observed=False)["Churn"].agg(["mean", "count"])
+    cohort_churn = [
+        {
+            "label": str(label),
+            "churn_rate": round(float(row["mean"]), 4) if pd.notna(row["mean"]) else 0,
+            "count": int(row["count"]),
+        }
+        for label, row in cohort_group.iterrows()
+    ]
+
+    early_droppers = df_eda[(df_eda["Lifetime"] <= 1) & (df_eda["Churn"] == 1)]
+    sleeping_dogs = df_eda[
+        (df_eda["Lifetime"] > 6)
+        & (df_eda["Avg_class_frequency_current_month"] < 0.5)
+    ]
+    annual_zero_usage = df_eda[
+        (df_eda["Contract_period"] == 12)
+        & (df_eda["Avg_class_frequency_current_month"] == 0)
+    ]
+
+    total_churn = max(int((df_eda["Churn"] == 1).sum()), 1)
+    total_base = max(int(len(df_eda)), 1)
+    estimated_monthly_ticket = 150
+    deferred_churn_pipeline = int(len(annual_zero_usage) * estimated_monthly_ticket * 12)
+
+    diagnostic_segments = [
+        {
+            "key": "early_droppers",
+            "label": "Early droppers",
+            "count": int(len(early_droppers)),
+            "percentage": round(float(len(early_droppers) / total_churn), 4),
+            "reference": "% do churn total",
+            "action": "Onboarding intensivo nos primeiros 30 dias.",
+        },
+        {
+            "key": "sleeping_dogs",
+            "label": "Sleeping dogs",
+            "count": int(len(sleeping_dogs)),
+            "percentage": round(float(len(sleeping_dogs) / total_base), 4),
+            "reference": "% da base total",
+            "action": "Reativação cuidadosa para evitar contato excessivo.",
+        },
+        {
+            "key": "annual_zero_usage",
+            "label": "Anuais com uso zero",
+            "count": int(len(annual_zero_usage)),
+            "percentage": round(float(len(annual_zero_usage) / total_base), 4),
+            "reference": "% da base total",
+            "action": "Monitorar vencimento e criar oferta de retomada.",
+            "estimated_pipeline": deferred_churn_pipeline,
+        },
+    ]
+
+    return {
+        "frequency_scatter": frequency_scatter,
+        "survival_curve": survival_curve,
+        "cohort_churn": cohort_churn,
+        "diagnostic_segments": diagnostic_segments,
+    }
+
 def load_model():
     if not MODEL_PATH.exists():
         return None
@@ -257,7 +369,23 @@ async def analyze_uploaded_csv(file: UploadFile = File(...)):
             detail="CSV com poucos registros válidos para análise após limpeza.",
         )
 
-    numeric_features = FEATURES + ["Churn"]
+    df = df.copy()
+    df["ratio_freq_atual_vs_lifetime"] = (
+        df["Avg_class_frequency_current_month"]
+        / df["Avg_class_frequency_total"].replace(0, pd.NA)
+    ).fillna(0)
+    df["flag_early_user"] = (df["Lifetime"] <= 1).astype(int)
+    df["flag_sleeping_dog"] = (
+        (df["Lifetime"] > 6)
+        & (df["Avg_class_frequency_current_month"] < 0.5)
+    ).astype(int)
+
+    derived_features = [
+        "ratio_freq_atual_vs_lifetime",
+        "flag_early_user",
+        "flag_sleeping_dog",
+    ]
+    numeric_features = FEATURES + derived_features + ["Churn"]
     correlations = (
         df[numeric_features]
         .corr(numeric_only=True)["Churn"]
@@ -297,6 +425,8 @@ async def analyze_uploaded_csv(file: UploadFile = File(...)):
             "churned": round(float(churn_means.loc[1, feature]), 2) if 1 in churn_means.index else None,
         })
 
+    week5_extensions = build_week5_eda_extensions(df)
+
     return {
         "status": "analyzed",
         "filename": file.filename,
@@ -316,6 +446,10 @@ async def analyze_uploaded_csv(file: UploadFile = File(...)):
         },
         "top_correlations": top_correlations,
         "comparison_by_churn": comparison,
+        "frequency_scatter": week5_extensions["frequency_scatter"],
+        "survival_curve": week5_extensions["survival_curve"],
+        "cohort_churn": week5_extensions["cohort_churn"],
+        "diagnostic_segments": week5_extensions["diagnostic_segments"],
     }
 
 
