@@ -694,27 +694,37 @@
     return parseFloat(document.getElementById(id)?.value);
   }
 
+  function getOptionalNumber(id) {
+    const value = getVal(id);
+    return Number.isNaN(value) ? null : value;
+  }
+
+  function getOptionalInt(id) {
+    const value = getVal(id);
+    return Number.isNaN(value) ? null : parseInt(value);
+  }
+
   async function predict() {
     const errorEl = document.getElementById("error-msg");
     errorEl.textContent = "";
 
     const payload = {
-      Lifetime:                             parseInt(getVal("Lifetime")),
-      Avg_class_frequency_current_month:    parseFloat(getVal("Avg_class_frequency_current_month")),
-      Age:                                  parseInt(getVal("Age")),
-      Contract_period:                      parseInt(getVal("Contract_period")),
-      Month_to_end_contract:                parseFloat(getVal("Month_to_end_contract")),
-      Avg_class_frequency_total:            parseFloat(getVal("Avg_class_frequency_total")),
-      Avg_additional_charges_total:         parseFloat(getVal("Avg_additional_charges_total")),
+      Lifetime:                             getOptionalInt("Lifetime"),
+      Avg_class_frequency_current_month:    getOptionalNumber("Avg_class_frequency_current_month"),
+      Age:                                  getOptionalInt("Age"),
+      Contract_period:                      getOptionalInt("Contract_period"),
+      Month_to_end_contract:                getOptionalNumber("Month_to_end_contract"),
+      Avg_class_frequency_total:            getOptionalNumber("Avg_class_frequency_total"),
+      Avg_additional_charges_total:         getOptionalNumber("Avg_additional_charges_total"),
       Group_visits:                         toggleValues.Group_visits,
       Promo_friends:                        toggleValues.Promo_friends,
       Partner:                              toggleValues.Partner,
       Near_Location:                        toggleValues.Near_Location,
     };
 
-    const missing = Object.entries(payload).filter(([k, v]) => v === null || isNaN(v));
-    if (missing.length > 0) {
-      errorEl.textContent = "Preencha todos os campos antes de calcular.";
+    const filledFields = Object.values(payload).filter(v => v !== null).length;
+    if (filledFields < 2) {
+      errorEl.textContent = "Informe pelo menos 2 campos para calcular.";
       return;
     }
 
@@ -787,7 +797,7 @@
       row.innerHTML = `
         <div class="feat-meta">
           <span>${f.label}</span>
-          <span>${typeof val === 'number' ? val : '—'}</span>
+          <span>${typeof val === 'number' ? val : 'não informado'}</span>
         </div>
         <div class="feat-bar-bg">
           <div class="feat-bar-fill" style="width:0%" data-width="${widthPct}%"></div>

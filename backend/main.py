@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import joblib
@@ -33,18 +33,34 @@ FEATURES = [
 
 model = joblib.load(MODEL_PATH)
 
+# Valores de referência usados quando o usuário informa só parte dos campos.
+# Eles mantêm a predição possível, mas quanto menos dados reais, menor a confiança.
+DEFAULT_FEATURE_VALUES = {
+    "Lifetime": 4,
+    "Avg_class_frequency_current_month": 2.0,
+    "Age": 29,
+    "Contract_period": 6,
+    "Month_to_end_contract": 4.0,
+    "Avg_class_frequency_total": 2.0,
+    "Avg_additional_charges_total": 150.0,
+    "Group_visits": 0,
+    "Promo_friends": 0,
+    "Partner": 0,
+    "Near_Location": 1,
+}
+
 class CustomerData(BaseModel):
-    Lifetime: int                              # meses como cliente
-    Avg_class_frequency_current_month: float   # aulas/semana esse mês
-    Age: int                                   # idade
-    Contract_period: int                       # duração do contrato (meses)
-    Month_to_end_contract: float               # meses até vencer o contrato
-    Avg_class_frequency_total: float           # aulas/semana histórico
-    Avg_additional_charges_total: float        # gastos extras (R$)
-    Group_visits: int                          # faz aulas em grupo? (0 ou 1)
-    Promo_friends: int                         # veio por indicação? (0 ou 1)
-    Partner: int                               # empresa parceira? (0 ou 1)
-    Near_Location: int                         # mora perto? (0 ou 1)
+    Lifetime: int | None = None                              # meses como cliente
+    Avg_class_frequency_current_month: float | None = None   # aulas/semana esse mês
+    Age: int | None = None                                   # idade
+    Contract_period: int | None = None                       # duração do contrato (meses)
+    Month_to_end_contract: float | None = None               # meses até vencer o contrato
+    Avg_class_frequency_total: float | None = None           # aulas/semana histórico
+    Avg_additional_charges_total: float | None = None        # gastos extras (US$)
+    Group_visits: int | None = None                          # faz aulas em grupo? (0 ou 1)
+    Promo_friends: int | None = None                         # veio por indicação? (0 ou 1)
+    Partner: int | None = None                               # empresa parceira? (0 ou 1)
+    Near_Location: int | None = None                         # mora perto? (0 ou 1)
 
 class PredictionResponse(BaseModel):
     churn_probability: float
@@ -57,20 +73,23 @@ def health_check():
 
 @app.post("/predict", response_model=PredictionResponse)
 def predict(data: CustomerData):
-    # Mantém a mesma ordem das features usada no treino do modelo.
-    features = pd.DataFrame([[
-        data.Lifetime,
-        data.Avg_class_frequency_current_month,
-        data.Age,
-        data.Contract_period,
-        data.Month_to_end_contract,
-        data.Avg_class_frequency_total,
-        data.Avg_additional_charges_total,
-        data.Group_visits,
-        data.Promo_friends,
-        data.Partner,
-        data.Near_Location,
-    ]], columns=FEATURES)
+    input_data = data.model_dump()
+    informed_fields = sum(value is not None for value in input_data.values())
+
+    if informed_fields < 2:
+        raise HTTPException(
+            status_code=400,
+            detail="Informe pelo menos 2 campos para calcular o risco de churn.",
+        )
+
+    # Completa campos ausentes com valores de referência e mantém a ordem do treino.
+    feature_values = [
+        input_data[field]
+        if input_data[field] is not None
+        else DEFAULT_FEATURE_VALUES[field]
+        for field in FEATURES
+    ]
+    features = pd.DataFrame([feature_values], columns=FEATURES)
 
     prob = model.predict_proba(features)[0][1]
 
