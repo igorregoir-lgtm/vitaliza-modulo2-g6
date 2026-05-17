@@ -196,6 +196,44 @@
       margin-top: 4px;
     }
 
+    /* ABAS */
+    .tab-nav {
+      display: inline-flex;
+      gap: 8px;
+      padding: 6px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .tab-btn {
+      border: none;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted-strong);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 800;
+      padding: 10px 16px;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--brand);
+      color: #ffffff;
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.22);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
     /* LAYOUT */
     .layout {
       display: grid;
@@ -470,10 +508,144 @@
       gap: 20px;
     }
 
+    /* DOCUMENTAÇÃO */
+    .doc-layout {
+      display: grid;
+      gap: 20px;
+    }
+
+    .doc-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .doc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .doc-card.full {
+      grid-column: 1 / -1;
+    }
+
+    .doc-kicker {
+      color: var(--brand);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .doc-card h2,
+    .doc-card h3 {
+      color: var(--text);
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+
+    .doc-card h2 {
+      font-size: 1.5rem;
+    }
+
+    .doc-card h3 {
+      font-size: 1.12rem;
+    }
+
+    .doc-card p,
+    .doc-card li {
+      color: var(--muted-strong);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .doc-card ul,
+    .doc-card ol {
+      display: grid;
+      gap: 8px;
+      padding-left: 20px;
+    }
+
+    .doc-pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .doc-pill {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface-muted);
+      color: var(--muted-strong);
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 8px 12px;
+    }
+
+    .flow-steps {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .flow-step {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+
+    .flow-step strong {
+      display: block;
+      color: var(--text);
+      font-size: 0.92rem;
+      margin-bottom: 6px;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .feature-list span {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted-strong);
+      font-size: 0.84rem;
+      font-weight: 700;
+      padding: 10px 12px;
+    }
+
+    .callout {
+      background: var(--brand-soft);
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius-md);
+      color: var(--muted-strong);
+      font-weight: 700;
+      margin-top: 16px;
+      padding: 16px;
+    }
+
     @media (max-width: 900px) {
       body { padding: 16px; }
       .hero,
-      .layout {
+      .layout,
+      .doc-grid,
+      .flow-steps {
         grid-template-columns: 1fr;
       }
       .result-panel {
@@ -545,6 +717,12 @@
     </div>
   </header>
 
+  <nav class="tab-nav" aria-label="Navegação da entrega">
+    <button class="tab-btn active" type="button" data-tab-target="inference" onclick="switchTab('inference')">Inferência</button>
+    <button class="tab-btn" type="button" data-tab-target="documentation" onclick="switchTab('documentation')">Documentação</button>
+  </nav>
+
+  <section class="tab-panel active" id="tab-inference" aria-label="Interface de inferência">
   <div class="layout">
 
     <!-- FORMULÁRIO -->
@@ -667,6 +845,124 @@
       </div>
     </aside>
   </div>
+  </section>
+
+  <section class="tab-panel" id="tab-documentation" aria-label="Documentação da entrega Semana 5">
+    <div class="doc-layout">
+      <article class="doc-card full">
+        <div class="doc-kicker">Entrega Semana 5</div>
+        <h2>Primeira versão funcional para predição de churn</h2>
+        <p>
+          Esta entrega cobre a análise exploratória da base de clientes e uma primeira versão funcional do sistema:
+          modelo preditivo, API de inferência e interface web simples para simular o risco de cancelamento.
+        </p>
+        <div class="doc-pill-row">
+          <span class="doc-pill">EDA</span>
+          <span class="doc-pill">RandomForest</span>
+          <span class="doc-pill">FastAPI</span>
+          <span class="doc-pill">Vercel + Render</span>
+          <span class="doc-pill">Inferência com mínimo de 2 campos</span>
+        </div>
+      </article>
+
+      <div class="doc-grid">
+        <article class="doc-card">
+          <div class="doc-kicker">Arquitetura</div>
+          <h3>Como o sistema funciona</h3>
+          <div class="flow-steps">
+            <div class="flow-step">
+              <strong>Dataset</strong>
+              <span>Base local em dataset/gym_churn_us.csv usada para análise e treino.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Treino</strong>
+              <span>train_model.py limpa os dados, treina o modelo e gera model.pkl.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Backend</strong>
+              <span>FastAPI no Render carrega model.pkl e expõe o endpoint /predict.</span>
+            </div>
+            <div class="flow-step">
+              <strong>Frontend</strong>
+              <span>Vercel envia os dados do formulário e exibe probabilidade e risco.</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="doc-card">
+          <div class="doc-kicker">Dataset</div>
+          <h3>Base utilizada</h3>
+          <ul>
+            <li>4.000 clientes de uma academia americana.</li>
+            <li>Target: Churn, em que 0 significa permaneceu e 1 significa cancelou.</li>
+            <li>Sem valores nulos, com limpeza de duplicados no pipeline.</li>
+            <li>gender e Phone foram descartadas por baixa correlação com churn.</li>
+          </ul>
+        </article>
+
+        <article class="doc-card">
+          <div class="doc-kicker">Features</div>
+          <h3>Variáveis usadas pelo modelo</h3>
+          <div class="feature-list">
+            <span>Lifetime</span>
+            <span>Avg_class_frequency_current_month</span>
+            <span>Age</span>
+            <span>Contract_period</span>
+            <span>Month_to_end_contract</span>
+            <span>Avg_class_frequency_total</span>
+            <span>Avg_additional_charges_total</span>
+            <span>Group_visits, Promo_friends, Partner, Near_Location</span>
+          </div>
+        </article>
+
+        <article class="doc-card">
+          <div class="doc-kicker">EDA</div>
+          <h3>Análises previstas</h3>
+          <ul>
+            <li>Distribuição da variável Churn para entender o desbalanceamento.</li>
+            <li>Comparação de idade, tempo como cliente e frequência entre churn e não churn.</li>
+            <li>Análise de contrato e meses até vencimento como sinais de retenção.</li>
+            <li>Correlação das features com Churn para justificar seleção de variáveis.</li>
+          </ul>
+        </article>
+
+        <article class="doc-card">
+          <div class="doc-kicker">Modelo</div>
+          <h3>Primeira versão preditiva</h3>
+          <p>
+            O modelo inicial é um RandomForestClassifier treinado com divisão estratificada de treino e teste.
+            A métrica principal para validação é ROC-AUC, acompanhada de precision, recall e classification report.
+          </p>
+          <div class="callout">
+            Quando o treino final for executado, inserir aqui o ROC-AUC e as principais métricas obtidas.
+          </div>
+        </article>
+
+        <article class="doc-card">
+          <div class="doc-kicker">Inferência</div>
+          <h3>Como interpretar o resultado</h3>
+          <ul>
+            <li>Baixo risco: probabilidade menor que 40%.</li>
+            <li>Risco médio: probabilidade entre 40% e 69%.</li>
+            <li>Alto risco: probabilidade a partir de 70%.</li>
+          </ul>
+          <div class="callout">
+            A tela permite calcular com pelo menos 2 campos. Os campos não informados são preenchidos com valores de referência, então a estimativa fica mais confiável quando mais dados reais são preenchidos.
+          </div>
+        </article>
+
+        <article class="doc-card">
+          <div class="doc-kicker">Limitações</div>
+          <h3>O que ainda será evoluído</h3>
+          <ul>
+            <li>Semana 10 deve trazer modelo final e explicabilidade com LLM.</li>
+            <li>Os valores de referência para campos ausentes são uma simplificação para a primeira versão.</li>
+            <li>O modelo ainda precisa ser validado com as métricas finais após o treino definitivo.</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
 </main>
 
 <script>
@@ -682,6 +978,16 @@
     Partner: null,
     Near_Location: null,
   };
+
+  function switchTab(tabName) {
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.classList.toggle('active', panel.id === `tab-${tabName}`);
+    });
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tabTarget === tabName);
+    });
+  }
 
   function toggle(field, value, btn) {
     toggleValues[field] = value;
