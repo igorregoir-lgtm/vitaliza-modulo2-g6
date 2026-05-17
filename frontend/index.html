@@ -1015,8 +1015,12 @@
           <div class="doc-kicker">Modelo</div>
           <h3>Primeira versão preditiva</h3>
           <p>
-            O modelo preditivo foi construído com RandomForest, e sua performance foi avaliada principalmente pelo ROC-AUC,
-            métrica adequada para medir a capacidade de diferenciar clientes com maior ou menor risco de churn.
+            Utilizamos o RandomForestClassifier, um algoritmo consolidado de machine learning disponível na biblioteca scikit-learn.
+            Ele combina múltiplas árvores de decisão para estimar a probabilidade de churn de cada cliente.
+          </p>
+          <p>
+            Sua performance foi avaliada principalmente pelo ROC-AUC, métrica adequada para medir a capacidade de diferenciar
+            clientes com maior ou menor risco de churn.
           </p>
           <div class="callout">
             O treino acontece após o upload do CSV, com divisão estratificada de treino e teste. As métricas do treino atual aparecem automaticamente na aba Upload CSV após o backend finalizar o treinamento.
