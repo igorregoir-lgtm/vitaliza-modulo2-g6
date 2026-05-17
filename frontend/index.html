@@ -1419,6 +1419,10 @@
           <article class="chart-card">
             <h3 class="chart-title">Top features relacionadas ao churn</h3>
             <div class="bar-list" id="correlation-chart"></div>
+            <p class="plot-caption">
+              O percentual mostra a força da relação estatística com churn. Não é taxa de cancelamento:
+              quanto maior, mais aquela variável ajuda a separar quem cancela de quem fica.
+            </p>
           </article>
 
           <article class="chart-card">
@@ -1430,7 +1434,8 @@
             <h3 class="chart-title">Freq. histórica x freq. atual</h3>
             <div class="scatter-plot" id="frequency-scatter"></div>
             <p class="plot-caption">
-              Cada ponto representa um cliente. Pontos vermelhos indicam churn; o quadrante inferior direito evidencia sleeping dogs.
+              Eixo X: média histórica de aulas por semana. Eixo Y: média de aulas por semana no mês atual.
+              Pontos vermelhos indicam churn; o quadrante inferior direito evidencia sleeping dogs.
             </p>
             <div class="plot-legend">
               <span class="legend-item"><span class="legend-dot" style="background: var(--brand);"></span>Ficou</span>
@@ -1442,7 +1447,8 @@
             <h3 class="chart-title">Sobrevivência por tempo de assinatura</h3>
             <div class="line-plot" id="survival-chart"></div>
             <p class="plot-caption">
-              Curva aproximada de permanência calculada a partir de Lifetime e Churn.
+              Eixo X: meses como cliente. Eixo Y: probabilidade estimada de permanência.
+              Curva aproximada calculada a partir de Lifetime e Churn.
             </p>
           </article>
 
@@ -2198,6 +2204,23 @@
     return svg;
   }
 
+  function adicionarTextoSvg(svg, texto, x, y, options = {}) {
+    const textEl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    textEl.textContent = texto;
+    textEl.setAttribute("x", x);
+    textEl.setAttribute("y", y);
+    textEl.setAttribute("fill", "currentColor");
+    textEl.setAttribute("font-size", options.size || "9");
+    textEl.setAttribute("font-weight", options.weight || "700");
+    textEl.setAttribute("text-anchor", options.anchor || "middle");
+    textEl.setAttribute("opacity", options.opacity || "0.72");
+    if (options.rotate) {
+      textEl.setAttribute("transform", `rotate(${options.rotate} ${x} ${y})`);
+    }
+    svg.appendChild(textEl);
+    return textEl;
+  }
+
   function obterCorToken(nomeToken) {
     return getComputedStyle(document.documentElement).getPropertyValue(nomeToken).trim();
   }
@@ -2206,33 +2229,42 @@
     const svg = criarSvgPlot("frequency-scatter");
     const brandColor = obterCorToken("--brand");
     const highColor = obterCorToken("--high");
-    const padding = 28;
-    const width = 320 - padding * 2;
-    const height = 220 - padding * 2;
+    const paddingLeft = 48;
+    const paddingTop = 18;
+    const paddingRight = 18;
+    const paddingBottom = 42;
+    const width = 320 - paddingLeft - paddingRight;
+    const height = 220 - paddingTop - paddingBottom;
     const maxX = Math.max(...rows.map(row => row.x), 1);
     const maxY = Math.max(...rows.map(row => row.y), 1);
 
     const axis = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    axis.setAttribute("d", `M ${padding} ${padding} V ${padding + height} H ${padding + width}`);
+    axis.setAttribute("d", `M ${paddingLeft} ${paddingTop} V ${paddingTop + height} H ${paddingLeft + width}`);
     axis.setAttribute("fill", "none");
     axis.setAttribute("stroke", "currentColor");
     axis.setAttribute("opacity", "0.35");
     svg.appendChild(axis);
 
     const diagonal = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    diagonal.setAttribute("x1", padding);
-    diagonal.setAttribute("y1", padding + height);
-    diagonal.setAttribute("x2", padding + width);
-    diagonal.setAttribute("y2", padding);
+    diagonal.setAttribute("x1", paddingLeft);
+    diagonal.setAttribute("y1", paddingTop + height);
+    diagonal.setAttribute("x2", paddingLeft + width);
+    diagonal.setAttribute("y2", paddingTop);
     diagonal.setAttribute("stroke", "currentColor");
     diagonal.setAttribute("stroke-dasharray", "4 4");
     diagonal.setAttribute("opacity", "0.25");
     svg.appendChild(diagonal);
 
+    adicionarTextoSvg(svg, "Frequência histórica", paddingLeft + width / 2, 212);
+    adicionarTextoSvg(svg, "Frequência atual", 14, paddingTop + height / 2, { rotate: -90 });
+    adicionarTextoSvg(svg, "0", paddingLeft - 8, paddingTop + height + 12, { anchor: "end", size: "8" });
+    adicionarTextoSvg(svg, maxX.toFixed(1), paddingLeft + width, paddingTop + height + 12, { size: "8" });
+    adicionarTextoSvg(svg, maxY.toFixed(1), paddingLeft - 8, paddingTop + 4, { anchor: "end", size: "8" });
+
     rows.forEach(row => {
       const point = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      const x = padding + (row.x / maxX) * width;
-      const y = padding + height - (row.y / maxY) * height;
+      const x = paddingLeft + (row.x / maxX) * width;
+      const y = paddingTop + height - (row.y / maxY) * height;
       point.setAttribute("cx", x);
       point.setAttribute("cy", y);
       point.setAttribute("r", row.sleeping_dog ? 4 : 3);
@@ -2247,22 +2279,31 @@
     if (!rows.length) return;
 
     const brandColor = obterCorToken("--brand");
-    const padding = 28;
-    const width = 320 - padding * 2;
-    const height = 220 - padding * 2;
+    const paddingLeft = 48;
+    const paddingTop = 18;
+    const paddingRight = 18;
+    const paddingBottom = 42;
+    const width = 320 - paddingLeft - paddingRight;
+    const height = 220 - paddingTop - paddingBottom;
     const maxLifetime = Math.max(...rows.map(row => row.lifetime), 1);
     const points = rows.map(row => {
-      const x = padding + (row.lifetime / maxLifetime) * width;
-      const y = padding + height - row.survival_probability * height;
+      const x = paddingLeft + (row.lifetime / maxLifetime) * width;
+      const y = paddingTop + height - row.survival_probability * height;
       return `${x},${y}`;
     });
 
     const axis = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    axis.setAttribute("d", `M ${padding} ${padding} V ${padding + height} H ${padding + width}`);
+    axis.setAttribute("d", `M ${paddingLeft} ${paddingTop} V ${paddingTop + height} H ${paddingLeft + width}`);
     axis.setAttribute("fill", "none");
     axis.setAttribute("stroke", "currentColor");
     axis.setAttribute("opacity", "0.35");
     svg.appendChild(axis);
+
+    adicionarTextoSvg(svg, "Lifetime (meses)", paddingLeft + width / 2, 212);
+    adicionarTextoSvg(svg, "Permanência estimada", 14, paddingTop + height / 2, { rotate: -90 });
+    adicionarTextoSvg(svg, "0%", paddingLeft - 8, paddingTop + height + 4, { anchor: "end", size: "8" });
+    adicionarTextoSvg(svg, "100%", paddingLeft - 8, paddingTop + 4, { anchor: "end", size: "8" });
+    adicionarTextoSvg(svg, String(maxLifetime), paddingLeft + width, paddingTop + height + 12, { size: "8" });
 
     const line = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
     line.setAttribute("points", points.join(" "));
@@ -2275,8 +2316,8 @@
 
     rows.filter((_, index) => index % 3 === 0).forEach(row => {
       const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      const x = padding + (row.lifetime / maxLifetime) * width;
-      const y = padding + height - row.survival_probability * height;
+      const x = paddingLeft + (row.lifetime / maxLifetime) * width;
+      const y = paddingTop + height - row.survival_probability * height;
       dot.setAttribute("cx", x);
       dot.setAttribute("cy", y);
       dot.setAttribute("r", "3");
@@ -2315,8 +2356,8 @@
       maximumFractionDigits: 1,
       minimumFractionDigits: 1,
     }).format(Math.abs(correlation) * 100);
-    const direcao = correlation >= 0 ? "aumenta churn" : "reduz churn";
-    return `${percentual}% · ${direcao}`;
+    const direcao = correlation >= 0 ? "associado a mais churn" : "associado a menos churn";
+    return `Força da relação: ${percentual}% · ${direcao}`;
   }
 
   function traduzirFeature(feature) {
