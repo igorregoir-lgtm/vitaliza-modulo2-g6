@@ -1,5 +1,6 @@
 model.pkl
 data/
+dataset/
 *.csv
 __pycache__/
 .env

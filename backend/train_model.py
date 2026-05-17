@@ -12,7 +12,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, roc_auc_score
 
 BASE_DIR = Path(__file__).resolve().parent
-DATA_PATH = BASE_DIR.parent / "data" / "gym_churn_us.csv"
+DATA_PATH = BASE_DIR.parent / "dataset" / "gym_churn_us.csv"
 MODEL_PATH = BASE_DIR / "model.pkl"
 
 # --------------------------------------------------

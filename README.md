@@ -11,7 +11,7 @@ churn-project/
 │   └── model.pkl          ← gerado pelo train_model.py (não sobe no git!)
 ├── frontend/
 │   └── index.html         ← interface (deploy na Vercel)
-└── data/
+└── dataset/
     └── gym_churn_us.csv   ← sua base (não sobe no git!)
 ```
 
@@ -22,8 +22,8 @@ churn-project/
 ### 1. Organizar pastas localmente
 
 ```
-mkdir data
-mv gym_churn_us.csv data/
+mkdir dataset
+mv gym_churn_us.csv dataset/
 ```
 
 ### 2. Treinar o modelo
@@ -52,7 +52,7 @@ git remote add origin https://github.com/SEU_USER/SEU_REPO.git
 git push -u origin main
 ```
 
-> ⚠️ Não suba `data/` nem `model.pkl` — crie um `.gitignore`
+> ⚠️ Não suba `dataset/` nem `model.pkl` — crie um `.gitignore`
 
 ### 5. Deploy do backend no Render
 
@@ -92,7 +92,7 @@ vercel
 
 ```
 model.pkl
-data/
+dataset/
 *.csv
 __pycache__/
 .env
