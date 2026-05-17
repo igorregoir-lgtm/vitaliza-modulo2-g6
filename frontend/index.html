@@ -14,6 +14,7 @@
       --border: #dbe3ef;
       --border-strong: #c7d2e3;
       --text: #172033;
+      --text-on-accent: #ffffff;
       --muted: #64748b;
       --muted-strong: #475569;
       --brand: #2563eb;
@@ -75,7 +76,7 @@
       display: grid;
       place-items: center;
       background: var(--brand);
-      color: #ffffff;
+      color: var(--text-on-accent);
       font-weight: 800;
       box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
     }
@@ -224,7 +225,7 @@
 
     .tab-btn.active {
       background: var(--brand);
-      color: #ffffff;
+      color: var(--text-on-accent);
       box-shadow: 0 10px 20px rgba(37, 99, 235, 0.22);
     }
 
@@ -350,7 +351,7 @@
       margin-top: 24px;
       padding: 14px 18px;
       background: var(--brand);
-      color: #ffffff;
+      color: var(--text-on-accent);
       border: none;
       border-radius: 12px;
       font-weight: 800;
@@ -773,9 +774,9 @@
   </header>
 
   <nav class="tab-nav" aria-label="Navegação da entrega">
-    <button class="tab-btn active" type="button" data-tab-target="inference" onclick="switchTab('inference')">Inferência</button>
-    <button class="tab-btn" type="button" data-tab-target="upload" onclick="switchTab('upload')">Upload CSV</button>
-    <button class="tab-btn" type="button" data-tab-target="documentation" onclick="switchTab('documentation')">Documentação</button>
+    <button class="tab-btn active" type="button" data-tab-target="inference" onclick="trocarAba('inference')">Inferência</button>
+    <button class="tab-btn" type="button" data-tab-target="upload" onclick="trocarAba('upload')">Upload CSV</button>
+    <button class="tab-btn" type="button" data-tab-target="documentation" onclick="trocarAba('documentation')">Documentação</button>
   </nav>
 
   <section class="tab-panel active" id="tab-inference" aria-label="Interface de inferência">
@@ -828,15 +829,15 @@
           <div class="field">
             <label>Faz aulas em grupo?</label>
             <div class="toggle-group">
-              <button class="toggle-btn" type="button" onclick="toggle('Group_visits', 1, this)">Sim</button>
-              <button class="toggle-btn" type="button" onclick="toggle('Group_visits', 0, this)">Não</button>
+              <button class="toggle-btn" type="button" onclick="selecionarToggle('Group_visits', 1, this)">Sim</button>
+              <button class="toggle-btn" type="button" onclick="selecionarToggle('Group_visits', 0, this)">Não</button>
             </div>
           </div>
           <div class="field">
             <label>Veio por indicação?</label>
             <div class="toggle-group">
-              <button class="toggle-btn" type="button" onclick="toggle('Promo_friends', 1, this)">Sim</button>
-              <button class="toggle-btn" type="button" onclick="toggle('Promo_friends', 0, this)">Não</button>
+              <button class="toggle-btn" type="button" onclick="selecionarToggle('Promo_friends', 1, this)">Sim</button>
+              <button class="toggle-btn" type="button" onclick="selecionarToggle('Promo_friends', 0, this)">Não</button>
             </div>
           </div>
         </div>
@@ -845,22 +846,22 @@
           <div class="field">
             <label>Empresa parceira?</label>
             <div class="toggle-group">
-              <button class="toggle-btn" type="button" onclick="toggle('Partner', 1, this)">Sim</button>
-              <button class="toggle-btn" type="button" onclick="toggle('Partner', 0, this)">Não</button>
+              <button class="toggle-btn" type="button" onclick="selecionarToggle('Partner', 1, this)">Sim</button>
+              <button class="toggle-btn" type="button" onclick="selecionarToggle('Partner', 0, this)">Não</button>
             </div>
           </div>
           <div class="field">
             <label>Mora perto da academia?</label>
             <div class="toggle-group">
-              <button class="toggle-btn" type="button" onclick="toggle('Near_Location', 1, this)">Sim</button>
-              <button class="toggle-btn" type="button" onclick="toggle('Near_Location', 0, this)">Não</button>
+              <button class="toggle-btn" type="button" onclick="selecionarToggle('Near_Location', 1, this)">Sim</button>
+              <button class="toggle-btn" type="button" onclick="selecionarToggle('Near_Location', 0, this)">Não</button>
             </div>
           </div>
         </div>
 
       </div>
 
-      <button id="predict-btn" type="button" onclick="predict()">Calcular probabilidade de churn</button>
+      <button id="predict-btn" type="button" onclick="calcularPredicao()">Calcular probabilidade de churn</button>
       <div class="error-msg" id="error-msg"></div>
     </section>
 
@@ -917,7 +918,7 @@
           <input type="file" id="csv-file" accept=".csv,text/csv"/>
         </div>
 
-        <button id="train-btn" type="button" onclick="trainModel()">Treinar modelo com CSV</button>
+        <button id="train-btn" type="button" onclick="treinarModelo()">Treinar modelo com CSV</button>
         <div class="upload-status" id="upload-status"></div>
       </section>
 
@@ -1068,17 +1069,17 @@
     Near_Location: null,
   };
 
-  function switchTab(tabName) {
+  function trocarAba(nomeAba) {
     document.querySelectorAll('.tab-panel').forEach(panel => {
-      panel.classList.toggle('active', panel.id === `tab-${tabName}`);
+      panel.classList.toggle('active', panel.id === `tab-${nomeAba}`);
     });
 
     document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.tabTarget === tabName);
+      btn.classList.toggle('active', btn.dataset.tabTarget === nomeAba);
     });
   }
 
-  async function getErrorMessage(res) {
+  async function obterMensagemErro(res) {
     try {
       const data = await res.json();
       return data.detail || `Erro ${res.status}`;
@@ -1087,7 +1088,7 @@
     }
   }
 
-  async function trainModel() {
+  async function treinarModelo() {
     const fileInput = document.getElementById("csv-file");
     const statusEl = document.getElementById("upload-status");
     const metricsEl = document.getElementById("training-metrics");
@@ -1096,7 +1097,7 @@
     statusEl.className = "upload-status";
     statusEl.textContent = "";
     metricsEl.className = "training-metrics";
-    metricsEl.innerHTML = "";
+    metricsEl.replaceChildren();
 
     if (!fileInput.files.length) {
       statusEl.className = "upload-status error";
@@ -1116,12 +1117,12 @@
         body: formData,
       });
 
-      if (!res.ok) throw new Error(await getErrorMessage(res));
+      if (!res.ok) throw new Error(await obterMensagemErro(res));
 
       const data = await res.json();
       statusEl.className = "upload-status success";
       statusEl.textContent = "Modelo treinado com sucesso. A aba de inferência já pode usar este treinamento.";
-      showTrainingMetrics(data.metrics);
+      exibirMetricasTreino(data.metrics);
     } catch (err) {
       statusEl.className = "upload-status error";
       statusEl.textContent = `Erro ao treinar modelo: ${err.message}`;
@@ -1131,9 +1132,9 @@
     }
   }
 
-  function showTrainingMetrics(metrics) {
+  function exibirMetricasTreino(metrics) {
     const metricsEl = document.getElementById("training-metrics");
-    const labels = {
+    const rotulos = {
       rows_used: "Linhas usadas",
       test_rows: "Linhas de teste",
       churn_rate: "Taxa de churn",
@@ -1143,49 +1144,61 @@
       recall: "Recall",
     };
 
-    metricsEl.innerHTML = Object.entries(labels).map(([key, label]) => `
-      <div class="metric-card">
-        <div class="metric-label">${label}</div>
-        <div class="metric-value">${metrics[key]}</div>
-        <div class="metric-caption">treino atual</div>
-      </div>
-    `).join("");
+    metricsEl.replaceChildren();
+    Object.entries(rotulos).forEach(([key, label]) => {
+      const card = document.createElement("div");
+      const labelEl = document.createElement("div");
+      const valueEl = document.createElement("div");
+      const captionEl = document.createElement("div");
+
+      card.className = "metric-card";
+      labelEl.className = "metric-label";
+      valueEl.className = "metric-value";
+      captionEl.className = "metric-caption";
+
+      labelEl.textContent = label;
+      valueEl.textContent = metrics[key];
+      captionEl.textContent = "treino atual";
+
+      card.append(labelEl, valueEl, captionEl);
+      metricsEl.appendChild(card);
+    });
     metricsEl.className = "training-metrics active";
   }
 
-  function toggle(field, value, btn) {
+  function selecionarToggle(field, value, btn) {
     toggleValues[field] = value;
     const group = btn.closest('.toggle-group');
     group.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
   }
 
-  function getVal(id) {
+  function obterValor(id) {
     return parseFloat(document.getElementById(id)?.value);
   }
 
-  function getOptionalNumber(id) {
-    const value = getVal(id);
+  function obterNumeroOpcional(id) {
+    const value = obterValor(id);
     return Number.isNaN(value) ? null : value;
   }
 
-  function getOptionalInt(id) {
-    const value = getVal(id);
+  function obterInteiroOpcional(id) {
+    const value = obterValor(id);
     return Number.isNaN(value) ? null : parseInt(value);
   }
 
-  async function predict() {
+  async function calcularPredicao() {
     const errorEl = document.getElementById("error-msg");
     errorEl.textContent = "";
 
     const payload = {
-      Lifetime:                             getOptionalInt("Lifetime"),
-      Avg_class_frequency_current_month:    getOptionalNumber("Avg_class_frequency_current_month"),
-      Age:                                  getOptionalInt("Age"),
-      Contract_period:                      getOptionalInt("Contract_period"),
-      Month_to_end_contract:                getOptionalNumber("Month_to_end_contract"),
-      Avg_class_frequency_total:            getOptionalNumber("Avg_class_frequency_total"),
-      Avg_additional_charges_total:         getOptionalNumber("Avg_additional_charges_total"),
+      Lifetime:                             obterInteiroOpcional("Lifetime"),
+      Avg_class_frequency_current_month:    obterNumeroOpcional("Avg_class_frequency_current_month"),
+      Age:                                  obterInteiroOpcional("Age"),
+      Contract_period:                      obterInteiroOpcional("Contract_period"),
+      Month_to_end_contract:                obterNumeroOpcional("Month_to_end_contract"),
+      Avg_class_frequency_total:            obterNumeroOpcional("Avg_class_frequency_total"),
+      Avg_additional_charges_total:         obterNumeroOpcional("Avg_additional_charges_total"),
       Group_visits:                         toggleValues.Group_visits,
       Promo_friends:                        toggleValues.Promo_friends,
       Partner:                              toggleValues.Partner,
@@ -1208,9 +1221,9 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error(await getErrorMessage(res));
+      if (!res.ok) throw new Error(await obterMensagemErro(res));
       const data = await res.json();
-      showResult(data, payload);
+      exibirResultado(data, payload);
     } catch (err) {
       errorEl.textContent = `Erro ao conectar com a API: ${err.message}`;
     } finally {
@@ -1219,7 +1232,7 @@
     }
   }
 
-  function showResult({ churn_probability, churn_label, risk_level }, payload) {
+  function exibirResultado({ churn_probability, churn_label, risk_level }, payload) {
     document.getElementById("placeholder").style.display = "none";
     const content = document.getElementById("result-content");
     content.style.display = "flex";
@@ -1246,8 +1259,8 @@
     };
     document.getElementById("verdict-sub").textContent = subtexts[risk_level];
 
-    // Feature bars — importância relativa baseada na correlação do dataset
-    const featureImportance = [
+    // Barras de importância relativa baseadas na correlação do dataset.
+    const importanciaFeatures = [
       { key: "Lifetime",                           label: "Tempo como cliente",     importance: 0.438 },
       { key: "Avg_class_frequency_current_month",  label: "Frequência esse mês",    importance: 0.412 },
       { key: "Age",                                label: "Idade",                  importance: 0.404 },
@@ -1256,31 +1269,33 @@
     ];
 
     const barsEl = document.getElementById("feature-bars");
-    barsEl.innerHTML = "";
+    barsEl.replaceChildren();
 
-    const maxImp = Math.max(...featureImportance.map(f => f.importance));
-    featureImportance.forEach(f => {
-      const widthPct = Math.round((f.importance / maxImp) * 100);
-      const val = payload[f.key];
-      const row = document.createElement("div");
-      row.className = "feat-row";
-      row.innerHTML = `
-        <div class="feat-meta">
-          <span>${f.label}</span>
-          <span>${typeof val === 'number' ? val : 'não informado'}</span>
-        </div>
-        <div class="feat-bar-bg">
-          <div class="feat-bar-fill" style="width:0%" data-width="${widthPct}%"></div>
-        </div>`;
-      barsEl.appendChild(row);
+    const maiorImportancia = Math.max(...importanciaFeatures.map(f => f.importance));
+    importanciaFeatures.forEach(f => {
+      const larguraPct = Math.round((f.importance / maiorImportancia) * 100);
+      const valor = payload[f.key];
+      const linha = document.createElement("div");
+      const meta = document.createElement("div");
+      const rotulo = document.createElement("span");
+      const valorEl = document.createElement("span");
+      const barraFundo = document.createElement("div");
+      const barra = document.createElement("div");
+
+      linha.className = "feat-row";
+      meta.className = "feat-meta";
+      barraFundo.className = "feat-bar-bg";
+      barra.className = "feat-bar-fill";
+
+      rotulo.textContent = f.label;
+      valorEl.textContent = typeof valor === 'number' ? valor : 'não informado';
+      barra.style.width = `${larguraPct}%`;
+
+      meta.append(rotulo, valorEl);
+      barraFundo.appendChild(barra);
+      linha.append(meta, barraFundo);
+      barsEl.appendChild(linha);
     });
-
-    // Anima barras
-    setTimeout(() => {
-      barsEl.querySelectorAll('.feat-bar-fill').forEach(bar => {
-        bar.style.width = bar.dataset.width;
-      });
-    }, 50);
   }
 </script>
 
