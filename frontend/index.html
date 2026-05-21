@@ -124,9 +124,13 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: var(--low);
-      box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.12);
+      background: var(--muted-strong);
+      box-shadow: 0 0 0 4px rgba(100,116,139,0.12);
+      transition: background 0.3s, box-shadow 0.3s;
     }
+    .status-dot.online  { background: var(--low);  box-shadow: 0 0 0 4px rgba(4,120,87,0.12); }
+    .status-dot.offline { background: var(--high); box-shadow: 0 0 0 4px rgba(220,38,38,0.12); }
+    .status-dot.waking  { background: #f59e0b;     box-shadow: 0 0 0 4px rgba(245,158,11,0.12); }
 
     .hero {
       background: var(--surface);
@@ -1697,8 +1701,8 @@
       </div>
     </div>
     <div class="top-actions">
-      <span class="status-pill"><span class="status-dot"></span>Modelo operacional</span>
-      <span class="ghost-btn">RandomForest · 11 features</span>
+      <span class="status-pill" id="backend-status-pill"><span class="status-dot" id="backend-status-dot"></span><span id="backend-status-text">Verificando backend…</span></span>
+      <span class="ghost-btn">6 algoritmos · 11 features</span>
     </div>
   </section>
 
@@ -1706,8 +1710,7 @@
     <button class="tab-btn active" type="button" data-tab-target="upload" onclick="trocarAba('upload')">Upload CSV</button>
     <button class="tab-btn" type="button" data-tab-target="inference" onclick="trocarAba('inference')">Inferência</button>
     <button class="tab-btn" type="button" data-tab-target="eda" onclick="trocarAba('eda')">Dashboard EDA</button>
-    <button class="tab-btn" type="button" data-tab-target="segmentation" onclick="trocarAba('segmentation')">Segmentação</button>
-    <button class="tab-btn" type="button" data-tab-target="personas" onclick="trocarAba('personas')">Personas</button>
+    <button class="tab-btn" type="button" data-tab-target="segmentation" onclick="trocarAba('segmentation')">Segmentação / Personas</button>
     <button class="tab-btn" type="button" data-tab-target="prioritization" onclick="trocarAba('prioritization')">Priorização</button>
     <button class="tab-btn" type="button" data-tab-target="deck" onclick="trocarAba('deck')">Deck Executivo</button>
     <button class="tab-btn" type="button" data-tab-target="documentation" onclick="trocarAba('documentation')">Documentação</button>
@@ -2087,182 +2090,164 @@
     </div>
   </section>
 
-  <section class="tab-panel" id="tab-documentation" aria-label="Documentação da entrega Semana 5">
+  <section class="tab-panel" id="tab-documentation" aria-label="Documentação técnica do Vitaliza">
     <div class="doc-layout">
       <section class="doc-story">
         <article class="doc-hero">
-          <div class="doc-kicker">Entrega Semana 5</div>
-          <h2>Da análise exploratória à primeira inferência de churn</h2>
+          <div class="doc-kicker">Módulo 2 · Grupo 6 · Inteli MBA</div>
+          <h2>Vitaliza — A Arquitetura da Retenção Preditiva</h2>
           <p>
-            A proposta desta semana é demonstrar uma primeira versão funcional: entender a base de clientes,
-            treinar um modelo preditivo e disponibilizar uma interface simples para estimar o risco de cancelamento.
-            O fluxo foi desenhado para ser demonstrável em sala: o usuário envia o CSV, o backend treina o modelo
-            e a tela de inferência passa a usar esse treinamento.
+            Plataforma de análise preditiva de churn para academias. A partir de um CSV com histórico de clientes,
+            o sistema executa limpeza de dados, análise exploratória, segmentação por algoritmo selecionado,
+            geração de personas, priorização de segmentos e síntese em deck executivo — tudo em uma única análise.
           </p>
           <div class="doc-pill-row">
-            <span class="doc-pill">EDA</span>
-            <span class="doc-pill">Dashboard EDA</span>
-            <span class="doc-pill">Upload CSV</span>
-            <span class="doc-pill">RandomForest</span>
+            <span class="doc-pill">K-Means</span>
+            <span class="doc-pill">Random Forest</span>
+            <span class="doc-pill">XGBoost</span>
+            <span class="doc-pill">LightGBM</span>
+            <span class="doc-pill">Regressão Logística</span>
+            <span class="doc-pill">Regras de Negócio</span>
             <span class="doc-pill">FastAPI</span>
             <span class="doc-pill">Vercel + Render</span>
           </div>
         </article>
 
         <aside class="doc-summary" aria-label="Resumo da entrega">
-          <div class="doc-summary-item">
-            <strong>4.000</strong>
-            <span>clientes na base original</span>
-          </div>
-          <div class="doc-summary-item">
-            <strong>11</strong>
-            <span>features usadas pelo modelo</span>
-          </div>
-          <div class="doc-summary-item">
-            <strong>4 abas</strong>
-            <span>inferência, upload, dashboard EDA e documentação</span>
-          </div>
+          <div class="doc-summary-item"><strong>~4.000</strong><span>clientes na base</span></div>
+          <div class="doc-summary-item"><strong>11</strong><span>features no modelo</span></div>
+          <div class="doc-summary-item"><strong>6</strong><span>algoritmos disponíveis</span></div>
+          <div class="doc-summary-item"><strong>7 abas</strong><span>pipeline completo em uma tela</span></div>
         </aside>
       </section>
 
       <div class="doc-grid">
         <article class="doc-card accent">
-          <div class="doc-kicker">1. Contexto do problema</div>
+          <div class="doc-kicker">1. Problema</div>
           <h3>Por que prever churn em academias?</h3>
           <p>
-            Academias dependem de recorrência. Quando um cliente reduz frequência, está perto do fim do contrato
-            ou interage pouco com a operação, o risco de cancelamento aumenta. O objetivo do projeto é transformar
-            esses sinais em uma probabilidade de churn para apoiar ações de retenção.
+            Academias dependem de mensalidades recorrentes. Quando um cliente reduz frequência,
+            está próximo do fim do contrato ou interage pouco com a operação, o risco de cancelamento aumenta.
+            O objetivo é transformar esses sinais comportamentais em probabilidade de churn para apoiar ações de retenção.
           </p>
         </article>
 
         <article class="doc-card">
-          <div class="doc-kicker">2. Dados utilizados</div>
-          <h3>O que existe na base</h3>
+          <div class="doc-kicker">2. Dados</div>
+          <h3>Base utilizada</h3>
           <ul>
-            <li>4.000 clientes de uma academia americana.</li>
-            <li>Target: Churn, em que 0 significa permaneceu e 1 significa cancelou.</li>
-            <li>Sem valores nulos, com limpeza de duplicados no pipeline.</li>
-            <li>gender e Phone foram descartadas por baixa relação com o cancelamento.</li>
+            <li>~4.000 clientes de uma academia americana.</li>
+            <li>Target: <strong>Churn</strong> — 0 (permaneceu) ou 1 (cancelou).</li>
+            <li>Sem valores nulos; duplicados removidos no pipeline de limpeza.</li>
+            <li><strong>gender</strong> e <strong>Phone</strong> descartadas por baixa relação com o cancelamento.</li>
           </ul>
         </article>
 
         <article class="doc-card full">
-          <div class="doc-kicker">3. Jornada técnica</div>
-          <h3>Como a solução funciona na prática</h3>
+          <div class="doc-kicker">3. Pipeline de análise</div>
+          <h3>Do upload ao deck executivo em uma única execução</h3>
           <div class="story-steps">
-            <div class="story-step">
-              <div>
-                <strong>Upload da base</strong>
-                <span>O usuário envia o arquivo gym_churn_us.csv pela aba Upload CSV.</span>
-              </div>
-            </div>
-            <div class="story-step">
-              <div>
-                <strong>Validação e limpeza</strong>
-                <span>O backend confere se existem Churn e as 11 features, remove duplicados e linhas inválidas.</span>
-              </div>
-            </div>
-            <div class="story-step">
-              <div>
-                <strong>Treino do modelo</strong>
-                <span>A FastAPI treina um RandomForest, calcula métricas e mantém o modelo disponível em runtime.</span>
-              </div>
-            </div>
-            <div class="story-step">
-              <div>
-                <strong>Inferência</strong>
-                <span>A tela envia os dados do cliente para o Render e recebe probabilidade, rótulo e nível de risco.</span>
-              </div>
-            </div>
+            <div class="story-step"><div>
+              <strong>Upload e limpeza</strong>
+              <span>CSV enviado via aba Upload CSV. Backend valida colunas, remove duplicados e linhas inválidas.</span>
+            </div></div>
+            <div class="story-step"><div>
+              <strong>EDA automática</strong>
+              <span>Distribuições, correlações, curva de sobrevivência, coorte de churn e segmentos diagnósticos.</span>
+            </div></div>
+            <div class="story-step"><div>
+              <strong>Algoritmo selecionado</strong>
+              <span>K-Means agrupa por padrão comportamental. Modelos supervisionados estimam probabilidade de churn individual.</span>
+            </div></div>
+            <div class="story-step"><div>
+              <strong>Segmentação e Personas</strong>
+              <span>K-Means gera personas comportamentais. Algoritmos supervisionados geram perfis de risco de churn complementares.</span>
+            </div></div>
+            <div class="story-step"><div>
+              <strong>Priorização</strong>
+              <span>Segmentos classificados em três zonas: ação imediata, investimento estratégico e base âncora.</span>
+            </div></div>
+            <div class="story-step"><div>
+              <strong>Deck executivo</strong>
+              <span>Síntese navegável com contexto, achados, perfis e recomendações — pronto para apresentação.</span>
+            </div></div>
           </div>
         </article>
 
         <article class="doc-card">
-          <div class="doc-kicker">4. EDA</div>
-          <h3>O que a exploração dos dados busca responder</h3>
-          <p>
-            A aba Dashboard EDA transforma o CSV enviado em visualizações reais da base, cobrindo limpeza,
-            distribuição de churn, contratos, médias por grupo e correlação das features com o cancelamento.
-          </p>
+          <div class="doc-kicker">4. Dashboard EDA</div>
+          <h3>O que a análise exploratória responde</h3>
           <ul>
             <li>Qual é a proporção de clientes que cancelaram?</li>
             <li>Clientes com menor frequência recente cancelam mais?</li>
-            <li>Tempo como cliente e contrato longo ajudam na retenção?</li>
-            <li>Quais variáveis parecem mais relacionadas ao churn?</li>
+            <li>Contratos longos e maior tempo como cliente ajudam na retenção?</li>
+            <li>Quais variáveis têm maior correlação com o churn?</li>
           </ul>
+          <div class="callout">A aba Dashboard EDA exibe as visualizações calculadas sobre o CSV enviado — nenhum dado é pré-carregado.</div>
         </article>
 
         <article class="doc-card" id="doc-model-card">
-          <div class="doc-kicker">5. Modelo</div>
-          <h3>RandomForest + ROC-AUC</h3>
-          <p>
-            Utilizamos o RandomForestClassifier, um algoritmo consolidado de machine learning disponível na biblioteca scikit-learn.
-            Ele combina múltiplas árvores de decisão para estimar a probabilidade de churn de cada cliente.
-          </p>
-          <p>
-            Sua performance foi avaliada principalmente pelo ROC-AUC, métrica adequada para medir a capacidade de diferenciar
-            clientes com maior ou menor risco de churn.
-          </p>
-          <div class="callout">
-            O treino acontece após o upload do CSV, com divisão estratificada de treino e teste. As métricas do treino atual aparecem automaticamente na aba Upload CSV após o backend finalizar o treinamento.
-          </div>
+          <div class="doc-kicker">5. Algoritmos</div>
+          <h3>Seis abordagens, um pipeline unificado</h3>
+          <ul>
+            <li><strong>K-Means</strong> — segmentação não supervisionada por similaridade comportamental. Não usa a coluna Churn.</li>
+            <li><strong>Random Forest</strong> — ensemble de árvores. Alta precisão e boa interpretabilidade via importância de features.</li>
+            <li><strong>Regressão Logística</strong> — modelo linear probabilístico. Ideal para explicar decisões a stakeholders.</li>
+            <li><strong>XGBoost</strong> — gradient boosting otimizado para dados tabulares estruturados.</li>
+            <li><strong>LightGBM</strong> — boosting eficiente, especialmente em bases maiores.</li>
+            <li><strong>Regras de Negócio</strong> — lógica auditável sem ML, usada como baseline comparável.</li>
+          </ul>
+          <div class="callout">Execute a análise para ver as métricas do algoritmo selecionado atualizadas neste card.</div>
         </article>
 
         <article class="doc-card">
-          <div class="doc-kicker">6. Features usadas</div>
-          <h3>Quais sinais alimentam a previsão</h3>
+          <div class="doc-kicker">6. Features</div>
+          <h3>Sinais que alimentam a previsão</h3>
           <div class="feature-list">
-            <span>Tempo como cliente: Lifetime</span>
-            <span>Frequência recente: Avg_class_frequency_current_month</span>
-            <span>Idade: Age</span>
-            <span>Contrato: Contract_period e Month_to_end_contract</span>
-            <span>Histórico de uso: Avg_class_frequency_total</span>
-            <span>Gastos extras: Avg_additional_charges_total</span>
-            <span>Vínculo e contexto: Group_visits, Promo_friends, Partner, Near_Location</span>
+            <span>Tempo como cliente: <strong>Lifetime</strong></span>
+            <span>Frequência recente: <strong>Avg_class_frequency_current_month</strong></span>
+            <span>Idade: <strong>Age</strong></span>
+            <span>Contrato: <strong>Contract_period</strong>, <strong>Month_to_end_contract</strong></span>
+            <span>Histórico total: <strong>Avg_class_frequency_total</strong></span>
+            <span>Gastos extras: <strong>Avg_additional_charges_total</strong></span>
+            <span>Vínculos sociais: <strong>Group_visits</strong>, <strong>Promo_friends</strong>, <strong>Partner</strong>, <strong>Near_Location</strong></span>
           </div>
         </article>
 
         <article class="doc-card">
-          <div class="doc-kicker">7. Como interpretar</div>
+          <div class="doc-kicker">7. Interpretação</div>
           <h3>Da probabilidade para a ação</h3>
           <ul>
-            <li>Baixo risco: probabilidade menor que 40%, cliente aparentemente estável.</li>
-            <li>Risco médio: probabilidade entre 40% e 69%, cliente merece acompanhamento.</li>
-            <li>Alto risco: probabilidade a partir de 70%, ação de retenção recomendada.</li>
+            <li><strong>Baixo risco</strong>: probabilidade &lt; 40% — cliente aparentemente estável.</li>
+            <li><strong>Risco médio</strong>: probabilidade 40–69% — monitorar e engajar.</li>
+            <li><strong>Alto risco</strong>: probabilidade ≥ 70% — ação de retenção imediata recomendada.</li>
           </ul>
           <div class="callout">
-            A inferência funciona com pelo menos 2 campos. Os campos ausentes são completados com valores de referência derivados do treinamento.
+            A aba Inferência estima o risco individual com pelo menos 2 campos preenchidos.
+            Campos ausentes são completados com a mediana calculada do CSV de treino.
           </div>
         </article>
 
-        <article class="doc-card full">
-          <div class="doc-kicker">Evidência formal da EDA</div>
-          <h3>Notebook de análise exploratória</h3>
-          <p>
-            Além do Dashboard EDA interativo, a entrega inclui um notebook Jupyter com a análise formal da base:
-            carga do CSV, limpeza, estatísticas descritivas, gráficos, correlações e conclusão sobre as features usadas.
-          </p>
-          <div class="callout">
-            Arquivo no projeto: <strong>notebooks/eda_churn.ipynb</strong>. Abra pelo Cursor ou pelo Jupyter e execute as células em ordem com o CSV em <strong>notebooks/gym_churn_us.csv</strong>.
-          </div>
-          <a class="doc-link" href="/notebooks/eda_churn.ipynb" target="_blank" rel="noopener">
-            Abrir notebook EDA
-          </a>
-          <a class="doc-link" href="/notebooks/eda_churn_visual.html" target="_blank" rel="noopener">
-            Abrir relatório visual EDA
-          </a>
+        <article class="doc-card">
+          <div class="doc-kicker">8. Arquitetura de deploy</div>
+          <h3>Como o sistema está implantado</h3>
+          <ul>
+            <li><strong>Frontend</strong>: SPA estática (HTML/CSS/JS puro) hospedada no Vercel — zero build.</li>
+            <li><strong>Backend</strong>: FastAPI em Python 3.11 hospedado no Render (plano free).</li>
+            <li><strong>Endpoints</strong>: <code>GET /</code> health · <code>POST /train</code> treino isolado · <code>POST /eda</code> análise exploratória · <code>POST /analyze</code> pipeline completo · <code>POST /predict</code> inferência individual.</li>
+            <li><strong>Atenção</strong>: o plano free do Render hiberna após inatividade. A primeira requisição pode levar 30–90s para o servidor acordar — o indicador no topo da tela reflete o estado atual.</li>
+          </ul>
         </article>
 
         <article class="doc-card full">
-          <div class="doc-kicker">8. Limitações metodológicas</div>
+          <div class="doc-kicker">9. Limitações metodológicas</div>
           <h3>O que não podemos afirmar</h3>
           <div class="limitations-list" id="doc-limitations">
-            <div class="limitation-item"><span>Não temos o motivo declarado de cancelamento.</span></div>
-            <div class="limitation-item"><span>Os dados representam um snapshot mensal sem granularidade temporal.</span></div>
+            <div class="limitation-item"><span>Não temos o motivo declarado de cancelamento — apenas o comportamento observado.</span></div>
+            <div class="limitation-item"><span>Os dados representam um snapshot mensal sem granularidade temporal contínua.</span></div>
             <div class="limitation-item"><span>Correlação identificada não implica causalidade.</span></div>
             <div class="limitation-item"><span>As hipóteses de driver por segmento precisam de validação experimental.</span></div>
-            <div class="limitation-item"><span>O modelo foi treinado em base americana — pode não generalizar sem calibração local.</span></div>
+            <div class="limitation-item"><span>O modelo foi treinado em base americana — pode não generalizar sem recalibração local.</span></div>
           </div>
         </article>
 
@@ -2270,18 +2255,18 @@
           <div class="doc-kicker">5.1 Convergência dos algoritmos</div>
           <h3>Quando algoritmos diferentes chegam ao mesmo lugar</h3>
           <div class="convergence-block" id="doc-convergence">
-            Execute a análise completa para ver o texto de convergência gerado dinamicamente para o algoritmo selecionado.
+            Execute a análise completa para ver a síntese de convergência gerada dinamicamente para o algoritmo selecionado.
           </div>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- ── SEGMENTAÇÃO ────────────────────────────────────────── -->
-  <section class="tab-panel" id="tab-segmentation" aria-label="Segmentação de clientes">
+  <!-- ── SEGMENTAÇÃO / PERSONAS ───────────────────────────── -->
+  <section class="tab-panel" id="tab-segmentation" aria-label="Segmentação e Personas">
     <div class="seg-layout">
       <div class="analysis-placeholder" id="seg-placeholder">
-        Execute a análise na aba <strong>Upload CSV</strong> para ver a segmentação de clientes.
+        Execute a análise na aba <strong>Upload CSV</strong> para ver a segmentação e as personas.
       </div>
       <div id="seg-content" style="display:none;">
         <div class="seg-summary" id="seg-summary"></div>
@@ -2295,18 +2280,10 @@
           <div class="section-label" id="seg-cards-title">Segmentos identificados</div>
           <div id="seg-cards"></div>
         </section>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── PERSONAS ───────────────────────────────────────────── -->
-  <section class="tab-panel" id="tab-personas" aria-label="Personas de clientes">
-    <div class="persona-layout">
-      <div class="analysis-placeholder" id="personas-placeholder">
-        Execute a análise na aba <strong>Upload CSV</strong> para gerar as personas.
-      </div>
-      <div id="personas-content" style="display:none;">
-        <div class="persona-grid" id="personas-grid"></div>
+        <section class="card" aria-labelledby="personas-section-title" style="margin-top:16px;">
+          <div id="personas-section-desc"></div>
+          <div class="persona-grid" id="personas-grid"></div>
+        </section>
       </div>
     </div>
   </section>
@@ -2411,14 +2388,19 @@
 
     btn.disabled = true;
     btn.textContent = "Treinando modelo...";
+    statusEl.textContent = "Enviando… O servidor pode levar até 60s na primeira requisição (Render free tier hiberna por inatividade).";
     edaStatusEl.className = "eda-status waiting";
     edaStatusEl.textContent = "Aguardando conclusão do treino para carregar o Dashboard EDA...";
 
+    const trainController = new AbortController();
+    const trainTimeoutId = setTimeout(() => trainController.abort(), 120000);
     try {
       const res = await fetch(`${API_URL}/train`, {
         method: "POST",
         body: formData,
+        signal: trainController.signal,
       });
+      clearTimeout(trainTimeoutId);
 
       if (!res.ok) throw new Error(await obterMensagemErro(res));
 
@@ -2433,8 +2415,13 @@
       });
       await carregarDashboardEda(fileInput.files[0]);
     } catch (err) {
+      clearTimeout(trainTimeoutId);
       statusEl.className = "upload-status error";
-      statusEl.textContent = `Erro ao treinar modelo: ${err.message}`;
+      if (err.name === "AbortError") {
+        statusEl.textContent = "Tempo esgotado (2 min). Aguarde 30s e tente novamente.";
+      } else {
+        statusEl.textContent = `Erro de conexão com o backend (${err.message}). Verifique se o serviço no Render está ativo.`;
+      }
     } finally {
       btn.disabled = false;
       btn.textContent = "Treinar modelo com CSV";
@@ -3355,7 +3342,7 @@
       return;
     }
 
-    statusEl.textContent = "Enviando e processando…";
+    statusEl.textContent = "Enviando… O servidor pode levar até 60s para responder na primeira requisição (Render free tier hiberna por inatividade).";
     statusEl.style.color = "var(--muted-strong)";
     btn.disabled = true;
     btn.textContent = "Processando…";
@@ -3367,15 +3354,23 @@
     form.append("algorithm", algo);
     form.append("n_clusters", nClusters);
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 120000);
     try {
-      const res = await fetch(`${API_URL}/analyze`, { method: "POST", body: form });
+      const res = await fetch(`${API_URL}/analyze`, { method: "POST", body: form, signal: controller.signal });
+      clearTimeout(timeoutId);
       if (!res.ok) throw new Error(await obterMensagemErro(res));
       const data = await res.json();
       exibirResultadoAnalise(data);
       statusEl.textContent = "Análise concluída com sucesso.";
       statusEl.style.color = "var(--low)";
     } catch (err) {
-      statusEl.textContent = `Erro: ${err.message}`;
+      clearTimeout(timeoutId);
+      if (err.name === "AbortError") {
+        statusEl.textContent = "Tempo esgotado (2 min). O servidor pode estar sobrecarregado — aguarde 30s e tente novamente.";
+      } else {
+        statusEl.textContent = `Erro de conexão com o backend (${err.message}). Verifique se o serviço no Render está ativo e tente novamente.`;
+      }
       statusEl.style.color = "var(--high)";
     } finally {
       btn.disabled = false;
@@ -3516,15 +3511,10 @@
     });
   }
 
-  // ── PERSONAS ───────────────────────────────────────────────
+  // ── PERSONAS (dentro da aba Segmentação / Personas) ────────
   function exibirPersonas(personas, algorithm) {
-    const placeholder = document.getElementById("personas-placeholder");
-    const content = document.getElementById("personas-content");
     const grid = document.getElementById("personas-grid");
-
-    const show = personas.length > 0;
-    placeholder.style.display = show ? "none" : "";
-    content.style.display = show ? "" : "none";
+    if (!grid) return;
     grid.replaceChildren();
 
     const isKmeans = algorithm === "kmeans";
@@ -3768,7 +3758,7 @@
 
   // ── LIMPAR ANÁLISE ─────────────────────────────────────────
   function limparAnalise() {
-    ["seg", "personas", "priority", "deck"].forEach(id => {
+    ["seg", "priority", "deck"].forEach(id => {
       const placeholder = document.getElementById(`${id}-placeholder`);
       const content = document.getElementById(`${id}-content`);
       if (placeholder) placeholder.style.display = "";
@@ -3798,6 +3788,35 @@
 
     trocarAba("upload");
   }
+
+  // ── BACKEND HEALTH CHECK / PRE-WARM ────────────────────────
+  async function verificarBackend() {
+    const dot  = document.getElementById("backend-status-dot");
+    const text = document.getElementById("backend-status-text");
+    if (!dot || !text) return;
+
+    dot.className  = "status-dot waking";
+    text.textContent = "Acordando servidor…";
+
+    try {
+      const ctrl = new AbortController();
+      const tid  = setTimeout(() => ctrl.abort(), 90000);
+      const res  = await fetch(`${API_URL}/`, { signal: ctrl.signal });
+      clearTimeout(tid);
+      if (res.ok) {
+        dot.className  = "status-dot online";
+        text.textContent = "Backend operacional";
+      } else {
+        dot.className  = "status-dot offline";
+        text.textContent = "Backend com erro";
+      }
+    } catch {
+      dot.className  = "status-dot offline";
+      text.textContent = "Backend indisponível";
+    }
+  }
+
+  verificarBackend();
 </script>
 
 </body>
