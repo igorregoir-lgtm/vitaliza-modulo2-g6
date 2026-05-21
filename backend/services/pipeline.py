@@ -56,7 +56,7 @@ def run_analysis_pipeline(
     model_result = module.run(df_clean, params)
 
     # Extract internal objects not safe for JSON serialisation
-    model_result.pop("_model", None)
+    trained_model = model_result.pop("_model", None)
     feature_defaults = model_result.pop("_feature_defaults", None)
 
     personas = build_personas(model_result.get("segments", []), algorithm)
@@ -77,4 +77,6 @@ def run_analysis_pipeline(
         "documentation": documentation,
         "deck_sections": deck,
         "feature_defaults": feature_defaults,
+        "_trained_model": trained_model,    # NOT JSON-safe; caller must pop
+        "_feature_defaults": feature_defaults,
     }

@@ -1892,10 +1892,6 @@
           <strong>"Executar análise completa"</strong>. Este botão treina o modelo, executa a EDA,
           gera segmentos, personas, priorização e deck executivo — todas as abas são preenchidas de uma vez.
         </p>
-        <div style="background:var(--brand-soft);border:1px solid var(--brand);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:var(--brand-strong);margin-bottom:14px;">
-          Use <strong>"Executar análise completa"</strong> para preencher todas as abas. O botão <em>"Treinar modelo"</em> mais abaixo serve apenas para a aba Inferência individual.
-        </div>
-
         <div class="field">
           <label for="csv-file">Arquivo CSV com a coluna Churn e as 11 features</label>
           <input type="file" id="csv-file" accept=".csv,text/csv"/>
@@ -1927,24 +1923,13 @@
         </button>
         <div class="upload-status" id="upload-status"></div>
 
-        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
-          <div class="section-label" style="margin-bottom:8px;font-size:0.78rem;">Treino isolado para inferência</div>
-          <p class="upload-help" style="margin-bottom:10px;">
-            Treina o modelo selecionado e disponibiliza a aba de <strong>Inferência individual</strong>.
-          </p>
-          <div style="margin-bottom:10px;">
-            <label for="train-algo-select" style="font-size:0.82rem;font-weight:700;color:var(--muted-strong);display:block;margin-bottom:6px;">
-              Algoritmo de classificação
-            </label>
-            <select id="train-algo-select" class="algo-select" style="max-width:320px;">
-              <option value="random_forest" selected>Random Forest</option>
-              <option value="logistic_regression">Regressão Logística</option>
-              <option value="xgboost">XGBoost</option>
-              <option value="lightgbm">LightGBM</option>
-            </select>
-          </div>
-          <button id="train-btn" type="button" onclick="treinarModelo()">Treinar modelo com CSV</button>
-        </div>
+        <!-- select oculto para compatibilidade com treinarModelo() (aba Inferência) -->
+        <select id="train-algo-select" style="display:none;">
+          <option value="random_forest" selected>Random Forest</option>
+          <option value="logistic_regression">Regressão Logística</option>
+          <option value="xgboost">XGBoost</option>
+          <option value="lightgbm">LightGBM</option>
+        </select>
       </section>
 
       <aside class="card" aria-labelledby="training-title">
@@ -3387,11 +3372,15 @@
       statusEl.style.color = "var(--low)";
     } catch (err) {
       clearTimeout(timeoutId);
+      let msg;
       if (err.name === "AbortError") {
-        statusEl.textContent = "Tempo esgotado (2 min). O servidor pode estar sobrecarregado — aguarde 30s e tente novamente.";
+        msg = "Tempo esgotado (2 min). Aguarde 30s e tente novamente.";
+      } else if (err.message.includes("Not Found") || err.message.includes("404")) {
+        msg = "Backend desatualizado: o endpoint /analyze ainda não existe no Render. Acesse dashboard.render.com, encontre o serviço, clique em 'Manual Deploy → Deploy latest commit' e aguarde o redeploy.";
       } else {
-        statusEl.textContent = `Erro de conexão com o backend (${err.message}). Verifique se o serviço no Render está ativo e tente novamente.`;
+        msg = `Erro de conexão com o backend (${err.message}). Verifique se o serviço no Render está ativo.`;
       }
+      statusEl.textContent = msg;
       statusEl.style.color = "var(--high)";
     } finally {
       btn.disabled = false;

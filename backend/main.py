@@ -202,6 +202,8 @@ async def analyze_with_algorithm(
     algorithm: str = Form("random_forest"),
     n_clusters: int = Form(4),
 ):
+    global model, feature_defaults, model_feature_importances
+
     if algorithm not in VALID_ALGORITHMS:
         raise HTTPException(
             status_code=400,
@@ -211,6 +213,17 @@ async def analyze_with_algorithm(
     uploaded_df = await read_uploaded_csv(file)
     params = {"n_clusters": n_clusters}
     result = run_analysis_pipeline(uploaded_df, algorithm, params)
+
+    # Update inference model so /predict works right after /analyze
+    trained_model = result.pop("_trained_model", None)
+    feature_defs = result.pop("_feature_defaults", None)
+    if trained_model is not None:
+        model = trained_model
+        if feature_defs:
+            feature_defaults = feature_defs
+        model_feature_importances = _extract_importances(model)
+        joblib.dump(model, MODEL_PATH)
+
     result["status"] = "analyzed"
     result["filename"] = file.filename
     return result
