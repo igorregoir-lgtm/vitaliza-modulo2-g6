@@ -1888,10 +1888,13 @@
       <section class="card" aria-labelledby="upload-title">
         <div class="section-label" id="upload-title">Análise completa</div>
         <p class="upload-help">
-          Envie a base <strong>gym_churn_us.csv</strong>, escolha o algoritmo e clique em
-          <strong>Executar análise</strong>. O backend treina, segmenta, gera personas, priorização
-          e deck executivo automaticamente.
+          Envie o arquivo <strong>gym_churn_us.csv</strong>, escolha o algoritmo e clique em
+          <strong>"Executar análise completa"</strong>. Este botão treina o modelo, executa a EDA,
+          gera segmentos, personas, priorização e deck executivo — todas as abas são preenchidas de uma vez.
         </p>
+        <div style="background:var(--brand-soft);border:1px solid var(--brand);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:var(--brand-strong);margin-bottom:14px;">
+          Use <strong>"Executar análise completa"</strong> para preencher todas as abas. O botão <em>"Treinar modelo"</em> mais abaixo serve apenas para a aba Inferência individual.
+        </div>
 
         <div class="field">
           <label for="csv-file">Arquivo CSV com a coluna Churn e as 11 features</label>
@@ -2266,7 +2269,13 @@
   <section class="tab-panel" id="tab-segmentation" aria-label="Segmentação e Personas">
     <div class="seg-layout">
       <div class="analysis-placeholder" id="seg-placeholder">
-        Execute a análise na aba <strong>Upload CSV</strong> para ver a segmentação e as personas.
+        <div style="margin-bottom:12px;">Nenhuma análise executada ainda.</div>
+        <div style="font-size:0.84rem;color:var(--muted-strong);margin-bottom:16px;">
+          Vá para a aba <strong>Upload CSV</strong>, envie o arquivo CSV, escolha o algoritmo e clique em <strong>"Executar análise completa"</strong>.
+        </div>
+        <button type="button" onclick="trocarAba('upload')" style="padding:8px 20px;border-radius:8px;border:none;background:var(--brand);color:#fff;font-weight:700;cursor:pointer;font-size:0.88rem;">
+          Ir para Upload CSV →
+        </button>
       </div>
       <div id="seg-content" style="display:none;">
         <div class="seg-summary" id="seg-summary"></div>
@@ -2292,7 +2301,13 @@
   <section class="tab-panel" id="tab-prioritization" aria-label="Priorização de segmentos">
     <div class="priority-layout">
       <div class="analysis-placeholder" id="priority-placeholder">
-        Execute a análise na aba <strong>Upload CSV</strong> para ver a priorização de segmentos.
+        <div style="margin-bottom:12px;">Nenhuma análise executada ainda.</div>
+        <div style="font-size:0.84rem;color:var(--muted-strong);margin-bottom:16px;">
+          Vá para a aba <strong>Upload CSV</strong>, envie o arquivo CSV, escolha o algoritmo e clique em <strong>"Executar análise completa"</strong>.
+        </div>
+        <button type="button" onclick="trocarAba('upload')" style="padding:8px 20px;border-radius:8px;border:none;background:var(--brand);color:#fff;font-weight:700;cursor:pointer;font-size:0.88rem;">
+          Ir para Upload CSV →
+        </button>
       </div>
       <div id="priority-content" style="display:none;">
         <div class="priority-zones" id="priority-zones"></div>
@@ -2304,7 +2319,13 @@
   <section class="tab-panel" id="tab-deck" aria-label="Deck executivo">
     <div class="deck-layout">
       <div class="analysis-placeholder" id="deck-placeholder">
-        Execute a análise na aba <strong>Upload CSV</strong> para gerar o deck executivo.
+        <div style="margin-bottom:12px;">Nenhuma análise executada ainda.</div>
+        <div style="font-size:0.84rem;color:var(--muted-strong);margin-bottom:16px;">
+          Vá para a aba <strong>Upload CSV</strong>, envie o arquivo CSV, escolha o algoritmo e clique em <strong>"Executar análise completa"</strong>.
+        </div>
+        <button type="button" onclick="trocarAba('upload')" style="padding:8px 20px;border-radius:8px;border:none;background:var(--brand);color:#fff;font-weight:700;cursor:pointer;font-size:0.88rem;">
+          Ir para Upload CSV →
+        </button>
       </div>
       <div id="deck-content" style="display:none;">
         <div class="deck-nav">
