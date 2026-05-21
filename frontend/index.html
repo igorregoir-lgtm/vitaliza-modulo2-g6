@@ -3430,12 +3430,17 @@
     const clearBtn = document.getElementById("clear-btn");
     if (clearBtn) clearBtn.style.display = "";
 
-    if (data.eda) exibirDashboardEda({ ...data.eda, cleaning: data.eda.cleaning || {} });
-    exibirSegmentacao(data);
-    exibirPersonas(data.personas || [], data.algorithm);
-    exibirPriorizacao(data.segments || [], data.algorithm);
-    exibirDeck(data.deck_sections || []);
-    atualizarDocumentacaoDinamica(data.documentation || {}, data.metrics || {});
+    const renderSteps = [
+      () => data.eda && exibirDashboardEda({ ...data.eda, cleaning: data.eda.cleaning || {} }),
+      () => exibirSegmentacao(data),
+      () => exibirPersonas(data.personas || [], data.algorithm),
+      () => exibirPriorizacao(data.segments || [], data.algorithm),
+      () => exibirDeck(data.deck_sections || []),
+      () => atualizarDocumentacaoDinamica(data.documentation || {}, data.metrics || {}),
+    ];
+    renderSteps.forEach((fn, i) => {
+      try { fn(); } catch (e) { console.error(`Render step ${i} failed:`, e); }
+    });
   }
 
   // ── SEGMENTAÇÃO ────────────────────────────────────────────
@@ -3535,7 +3540,7 @@
       descEl = document.createElement("div");
       descEl.id = "personas-section-desc";
       descEl.style.marginBottom = "20px";
-      content.insertBefore(descEl, grid);
+      grid.parentNode.insertBefore(descEl, grid);
     }
     if (isKmeans) {
       descEl.innerHTML = `
