@@ -1,0 +1,7 @@
+backend/
+notebooks/
+.pycache/
+*.pyc
+*.pyo
+cursorrules
+eda_report.md

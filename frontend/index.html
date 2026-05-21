@@ -1215,6 +1215,474 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* ── ALGORITHM SELECTOR ─────────────────────────────── */
+    .algo-select-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .algo-select {
+      appearance: none;
+      background: var(--surface-muted) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 14px center;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 11px 40px 11px 14px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+      width: 100%;
+    }
+
+    .algo-select:focus { outline: none; border-color: var(--brand); }
+
+    .algo-help {
+      background: var(--brand-soft);
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius-sm);
+      color: var(--muted-strong);
+      font-size: 0.82rem;
+      font-weight: 600;
+      line-height: 1.5;
+      padding: 12px 14px;
+      display: none;
+    }
+
+    .algo-help.visible { display: block; }
+
+    .cluster-field {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .cluster-field.visible { display: flex; }
+
+    .cluster-field label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--muted-strong);
+    }
+
+    .cluster-field input {
+      width: 120px;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font: inherit;
+      font-size: 0.9rem;
+    }
+
+    .analyze-btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px 18px;
+      background: var(--brand);
+      color: var(--text-on-accent);
+      border: none;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 0.96rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
+    }
+
+    .analyze-btn:hover   { background: var(--brand-strong); }
+    .analyze-btn:active  { transform: scale(0.98); }
+    .analyze-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── SEGMENTAÇÃO ────────────────────────────────────── */
+    .seg-layout { display: grid; gap: 20px; }
+
+    .seg-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .seg-card {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      position: relative;
+    }
+
+    .seg-card-label {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .seg-card-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--text);
+    }
+
+    .seg-card-caption {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .heatmap-wrap {
+      overflow-x: auto;
+    }
+
+    .heatmap-table {
+      border-collapse: collapse;
+      font-size: 0.78rem;
+      width: 100%;
+      min-width: 400px;
+    }
+
+    .heatmap-table th {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      color: var(--muted-strong);
+      font-weight: 700;
+      padding: 8px 10px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .heatmap-table th:first-child { text-align: left; }
+
+    .heatmap-table td {
+      border: 1px solid var(--border);
+      padding: 7px 10px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .heatmap-table td:first-child { text-align: left; color: var(--muted-strong); }
+
+    .hm-cell {
+      border-radius: 6px;
+      display: inline-block;
+      min-width: 50px;
+      padding: 3px 6px;
+    }
+
+    /* ── PERSONAS ──────────────────────────────────────── */
+    .persona-layout { display: grid; gap: 20px; }
+
+    .persona-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .persona-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .persona-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .persona-name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.25;
+    }
+
+    .persona-segment-badge {
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .badge-high   { background: var(--high-soft);  color: var(--high); }
+    .badge-medium { background: var(--med-soft);   color: var(--med);  }
+    .badge-low    { background: var(--low-soft);   color: var(--low);  }
+    .badge-cluster { background: var(--brand-soft); color: var(--brand); }
+
+    .persona-row {
+      display: grid;
+      gap: 2px;
+    }
+
+    .persona-row-label {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .persona-row-text {
+      font-size: 0.84rem;
+      color: var(--muted-strong);
+      line-height: 1.5;
+    }
+
+    .persona-evidence {
+      background: var(--brand-soft);
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      color: var(--brand);
+      font-size: 0.82rem;
+      font-weight: 800;
+      padding: 8px 12px;
+      text-align: center;
+    }
+
+    /* ── PRIORIZAÇÃO ────────────────────────────────────── */
+    .priority-layout { display: grid; gap: 20px; }
+
+    .priority-zones {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .priority-zone {
+      border-radius: var(--radius-md);
+      border: 1.5px solid;
+      padding: 20px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .priority-zone.immediate {
+      background: var(--high-soft);
+      border-color: #fca5a5;
+    }
+
+    .priority-zone.strategic {
+      background: var(--med-soft);
+      border-color: #fcd34d;
+    }
+
+    .priority-zone.monitor {
+      background: var(--low-soft);
+      border-color: #6ee7b7;
+    }
+
+    .priority-zone-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .immediate .priority-zone-label { color: var(--high); }
+    .strategic .priority-zone-label { color: var(--med);  }
+    .monitor   .priority-zone-label { color: var(--low);  }
+
+    .priority-zone-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.25;
+    }
+
+    .priority-zone-desc {
+      font-size: 0.84rem;
+      color: var(--muted-strong);
+      line-height: 1.5;
+    }
+
+    .priority-zone-segments { display: grid; gap: 6px; }
+
+    .priority-seg-item {
+      background: rgba(255,255,255,0.7);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 8px 10px;
+      color: var(--text);
+    }
+
+    @media (max-width: 900px) {
+      .priority-zones, .seg-summary { grid-template-columns: 1fr; }
+    }
+
+    /* ── DECK EXECUTIVO ─────────────────────────────────── */
+    .deck-layout { display: grid; gap: 20px; }
+
+    .deck-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+    }
+
+    .deck-counter {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--muted-strong);
+    }
+
+    .deck-nav-btns { display: flex; gap: 8px; }
+
+    .deck-nav-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted-strong);
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 800;
+      padding: 8px 14px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .deck-nav-btn:hover:not(:disabled) { border-color: var(--brand); color: var(--brand); }
+    .deck-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .deck-slide {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      min-height: 380px;
+      padding: 36px 40px;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 16px;
+    }
+
+    .slide-tag {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--brand);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .slide-header { display: grid; gap: 6px; }
+
+    .slide-title {
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+    }
+
+    .slide-subtitle {
+      font-size: 1rem;
+      color: var(--muted-strong);
+      font-weight: 500;
+    }
+
+    .slide-content {
+      font-size: 0.96rem;
+      color: var(--muted-strong);
+      line-height: 1.7;
+      align-self: end;
+    }
+
+    .slide-content strong { color: var(--text); }
+
+    .deck-thumbnails {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .deck-thumb {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 6px 10px;
+      color: var(--muted-strong);
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .deck-thumb.active { border-color: var(--brand); color: var(--brand); background: var(--brand-soft); }
+    .deck-thumb:hover:not(.active) { border-color: var(--border-strong); }
+
+    /* ── LIMITAÇÕES ─────────────────────────────────────── */
+    .limitations-list {
+      display: grid;
+      gap: 8px;
+      counter-reset: lim-counter;
+    }
+
+    .limitation-item {
+      counter-increment: lim-counter;
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .limitation-item::before {
+      content: counter(lim-counter);
+      background: var(--high-soft);
+      border-radius: 8px;
+      color: var(--high);
+      display: grid;
+      font-size: 0.78rem;
+      font-weight: 800;
+      height: 32px;
+      place-items: center;
+      width: 32px;
+    }
+
+    .limitation-item span {
+      font-size: 0.88rem;
+      color: var(--muted-strong);
+      line-height: 1.55;
+      padding-top: 6px;
+    }
+
+    /* ── CONVERGÊNCIA ───────────────────────────────────── */
+    .convergence-block {
+      background: var(--surface-soft);
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      font-size: 0.9rem;
+      color: var(--muted-strong);
+      line-height: 1.7;
+    }
+
+    .convergence-block strong { color: var(--text); }
+
+    /* ── PLACEHOLDER UNIVERSAL ──────────────────────────── */
+    .analysis-placeholder {
+      padding: 48px 24px;
+      text-align: center;
+      color: var(--muted-strong);
+      font-size: 0.9rem;
+      font-weight: 600;
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body>
@@ -1224,8 +1692,8 @@
     <div class="brand">
       <div class="brand-mark" aria-hidden="true">G</div>
       <div>
-        <div class="brand-kicker">Inteli MBA · Semana 5</div>
-        <div class="brand-title">Gym Churn Predictor</div>
+        <div class="brand-kicker">Inteli MBA · Módulo 2</div>
+        <div class="brand-title">Vitaliza</div>
       </div>
     </div>
     <div class="top-actions">
@@ -1238,15 +1706,19 @@
     <button class="tab-btn active" type="button" data-tab-target="upload" onclick="trocarAba('upload')">Upload CSV</button>
     <button class="tab-btn" type="button" data-tab-target="inference" onclick="trocarAba('inference')">Inferência</button>
     <button class="tab-btn" type="button" data-tab-target="eda" onclick="trocarAba('eda')">Dashboard EDA</button>
+    <button class="tab-btn" type="button" data-tab-target="segmentation" onclick="trocarAba('segmentation')">Segmentação</button>
+    <button class="tab-btn" type="button" data-tab-target="personas" onclick="trocarAba('personas')">Personas</button>
+    <button class="tab-btn" type="button" data-tab-target="prioritization" onclick="trocarAba('prioritization')">Priorização</button>
+    <button class="tab-btn" type="button" data-tab-target="deck" onclick="trocarAba('deck')">Deck Executivo</button>
     <button class="tab-btn" type="button" data-tab-target="documentation" onclick="trocarAba('documentation')">Documentação</button>
   </nav>
 
   <header class="hero">
     <div>
-      <div class="eyebrow">Churn analytics</div>
-      <h1>Predição de risco para retenção de clientes</h1>
+      <div class="eyebrow">A Arquitetura da Retenção Preditiva</div>
+      <h1>Segmentação e predição de churn para academias</h1>
       <p class="hero-copy">
-        Informe o perfil do cliente e estime a probabilidade de churn com base no modelo treinado com a base americana de academias.
+        Envie o CSV, escolha o algoritmo e obtenha EDA, segmentação, personas, priorização e deck executivo em uma única análise.
       </p>
     </div>
     <div class="metric-grid" aria-label="Resumo do modelo">
@@ -1408,13 +1880,14 @@
   </div>
   </section>
 
-  <section class="tab-panel active" id="tab-upload" aria-label="Upload de CSV para treino do modelo">
+  <section class="tab-panel active" id="tab-upload" aria-label="Upload de CSV e execução de análise">
     <div class="upload-layout">
       <section class="card" aria-labelledby="upload-title">
-        <div class="section-label" id="upload-title">Upload CSV</div>
+        <div class="section-label" id="upload-title">Análise completa</div>
         <p class="upload-help">
-          Envie a base <strong>gym_churn_us.csv</strong> para treinar o modelo no backend. Depois do treino,
-          a aba de inferência passa a usar este modelo imediatamente.
+          Envie a base <strong>gym_churn_us.csv</strong>, escolha o algoritmo e clique em
+          <strong>Executar análise</strong>. O backend treina, segmenta, gera personas, priorização
+          e deck executivo automaticamente.
         </p>
 
         <div class="field">
@@ -1422,14 +1895,57 @@
           <input type="file" id="csv-file" accept=".csv,text/csv"/>
         </div>
 
-        <button id="train-btn" type="button" onclick="treinarModelo()">Treinar modelo com CSV</button>
+        <div class="algo-select-wrap">
+          <label for="algo-select" style="font-size:0.82rem;font-weight:700;color:var(--muted-strong);">
+            Escolher algoritmo de análise
+          </label>
+          <select id="algo-select" class="algo-select" onchange="aoMudarAlgoritmo()">
+            <option value="kmeans">K-Means (segmentação)</option>
+            <option value="random_forest" selected>Random Forest (classificação)</option>
+            <option value="logistic_regression">Regressão Logística</option>
+            <option value="xgboost">XGBoost</option>
+            <option value="lightgbm">LightGBM</option>
+            <option value="business_rules_baseline">Baseline por Regra de Negócio</option>
+          </select>
+
+          <div class="cluster-field" id="cluster-field">
+            <label for="n-clusters">Número de clusters (K)</label>
+            <input type="number" id="n-clusters" value="4" min="2" max="6" step="1"/>
+          </div>
+
+          <div class="algo-help" id="algo-help"></div>
+        </div>
+
+        <button class="analyze-btn" id="analyze-btn" type="button" onclick="executarAnalise()">
+          Executar análise completa
+        </button>
         <div class="upload-status" id="upload-status"></div>
+
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+          <div class="section-label" style="margin-bottom:8px;font-size:0.78rem;">Treino isolado para inferência</div>
+          <p class="upload-help" style="margin-bottom:10px;">
+            Treina o modelo selecionado e disponibiliza a aba de <strong>Inferência individual</strong>.
+          </p>
+          <div style="margin-bottom:10px;">
+            <label for="train-algo-select" style="font-size:0.82rem;font-weight:700;color:var(--muted-strong);display:block;margin-bottom:6px;">
+              Algoritmo de classificação
+            </label>
+            <select id="train-algo-select" class="algo-select" style="max-width:320px;">
+              <option value="random_forest" selected>Random Forest</option>
+              <option value="logistic_regression">Regressão Logística</option>
+              <option value="xgboost">XGBoost</option>
+              <option value="lightgbm">LightGBM</option>
+            </select>
+          </div>
+          <button id="train-btn" type="button" onclick="treinarModelo()">Treinar modelo com CSV</button>
+        </div>
       </section>
 
       <aside class="card" aria-labelledby="training-title">
-        <div class="section-label" id="training-title">Resultado do treino</div>
-        <p class="upload-help">
-          As métricas aparecem aqui após o backend validar o CSV, limpar os dados e treinar o RandomForest.
+        <div class="section-label" id="training-title">Resultado</div>
+        <p class="upload-help" id="result-help-text">
+          Após executar a análise, os resultados aparecem aqui e nas abas Segmentação, Personas,
+          Priorização e Deck Executivo.
         </p>
         <div class="training-metrics" id="training-metrics"></div>
       </aside>
@@ -1671,7 +2187,7 @@
           </ul>
         </article>
 
-        <article class="doc-card">
+        <article class="doc-card" id="doc-model-card">
           <div class="doc-kicker">5. Modelo</div>
           <h3>RandomForest + ROC-AUC</h3>
           <p>
@@ -1731,9 +2247,96 @@
             Abrir relatório visual EDA
           </a>
         </article>
+
+        <article class="doc-card full">
+          <div class="doc-kicker">8. Limitações metodológicas</div>
+          <h3>O que não podemos afirmar</h3>
+          <div class="limitations-list" id="doc-limitations">
+            <div class="limitation-item"><span>Não temos o motivo declarado de cancelamento.</span></div>
+            <div class="limitation-item"><span>Os dados representam um snapshot mensal sem granularidade temporal.</span></div>
+            <div class="limitation-item"><span>Correlação identificada não implica causalidade.</span></div>
+            <div class="limitation-item"><span>As hipóteses de driver por segmento precisam de validação experimental.</span></div>
+            <div class="limitation-item"><span>O modelo foi treinado em base americana — pode não generalizar sem calibração local.</span></div>
+          </div>
+        </article>
+
+        <article class="doc-card full">
+          <div class="doc-kicker">5.1 Convergência dos algoritmos</div>
+          <h3>Quando algoritmos diferentes chegam ao mesmo lugar</h3>
+          <div class="convergence-block" id="doc-convergence">
+            Execute a análise completa para ver o texto de convergência gerado dinamicamente para o algoritmo selecionado.
+          </div>
+        </article>
       </div>
     </div>
   </section>
+
+  <!-- ── SEGMENTAÇÃO ────────────────────────────────────────── -->
+  <section class="tab-panel" id="tab-segmentation" aria-label="Segmentação de clientes">
+    <div class="seg-layout">
+      <div class="analysis-placeholder" id="seg-placeholder">
+        Execute a análise na aba <strong>Upload CSV</strong> para ver a segmentação de clientes.
+      </div>
+      <div id="seg-content" style="display:none;">
+        <div class="seg-summary" id="seg-summary"></div>
+        <section class="card" aria-labelledby="seg-heatmap-title" style="margin-top:0;">
+          <div class="section-label" id="seg-heatmap-title">Heatmap de segmentos</div>
+          <div class="heatmap-wrap">
+            <table class="heatmap-table" id="seg-heatmap"></table>
+          </div>
+        </section>
+        <section class="card" aria-labelledby="seg-cards-title">
+          <div class="section-label" id="seg-cards-title">Segmentos identificados</div>
+          <div id="seg-cards"></div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PERSONAS ───────────────────────────────────────────── -->
+  <section class="tab-panel" id="tab-personas" aria-label="Personas de clientes">
+    <div class="persona-layout">
+      <div class="analysis-placeholder" id="personas-placeholder">
+        Execute a análise na aba <strong>Upload CSV</strong> para gerar as personas.
+      </div>
+      <div id="personas-content" style="display:none;">
+        <div class="persona-grid" id="personas-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PRIORIZAÇÃO ────────────────────────────────────────── -->
+  <section class="tab-panel" id="tab-prioritization" aria-label="Priorização de segmentos">
+    <div class="priority-layout">
+      <div class="analysis-placeholder" id="priority-placeholder">
+        Execute a análise na aba <strong>Upload CSV</strong> para ver a priorização de segmentos.
+      </div>
+      <div id="priority-content" style="display:none;">
+        <div class="priority-zones" id="priority-zones"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DECK EXECUTIVO ─────────────────────────────────────── -->
+  <section class="tab-panel" id="tab-deck" aria-label="Deck executivo">
+    <div class="deck-layout">
+      <div class="analysis-placeholder" id="deck-placeholder">
+        Execute a análise na aba <strong>Upload CSV</strong> para gerar o deck executivo.
+      </div>
+      <div id="deck-content" style="display:none;">
+        <div class="deck-nav">
+          <div class="deck-counter" id="deck-counter">Slide 1 de 10</div>
+          <div class="deck-nav-btns">
+            <button class="deck-nav-btn" type="button" id="deck-prev" onclick="navegarSlide(-1)" disabled>← Anterior</button>
+            <button class="deck-nav-btn" type="button" id="deck-next" onclick="navegarSlide(1)">Próximo →</button>
+          </div>
+        </div>
+        <div class="deck-slide" id="deck-slide"></div>
+        <div class="deck-thumbnails" id="deck-thumbnails"></div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <script>
@@ -1795,8 +2398,10 @@
       return;
     }
 
+    const trainAlgo = document.getElementById("train-algo-select")?.value || "random_forest";
     const formData = new FormData();
     formData.append("file", fileInput.files[0]);
+    formData.append("algorithm", trainAlgo);
 
     btn.disabled = true;
     btn.textContent = "Treinando modelo...";
@@ -2708,6 +3313,448 @@
       maximumFractionDigits: 2,
       minimumFractionDigits: Number.isInteger(value) ? 0 : 1,
     }).format(value);
+  }
+
+  // ── ALGO SELECTOR ──────────────────────────────────────────
+  const ALGO_HELP_TEXTS = {
+    kmeans: "Segmentação não supervisionada por similaridade comportamental. Não usa a coluna Churn para treino — agrupa por padrão de uso.",
+    random_forest: "Ensemble de árvores de decisão. Alta precisão, boa interpretabilidade via importância de features. Padrão recomendado.",
+    logistic_regression: "Modelo linear probabilístico. Alta interpretabilidade via coeficientes — ideal para explicar decisões a stakeholders.",
+    xgboost: "Gradient boosting otimizado. Alta performance preditiva em dados tabulares estruturados.",
+    lightgbm: "Gradient boosting eficiente. Rápido e preciso, especialmente em bases com mais de 10 mil registros.",
+    business_rules_baseline: "Lógica auditável sem ML. Classifica risco por pontuação de fatores — útil como referência interpretável e comparável.",
+  };
+
+  function aoMudarAlgoritmo() {
+    const algo = document.getElementById("algo-select").value;
+    const helpEl = document.getElementById("algo-help");
+    const clusterEl = document.getElementById("cluster-field");
+    helpEl.textContent = ALGO_HELP_TEXTS[algo] || "";
+    helpEl.classList.toggle("visible", Boolean(ALGO_HELP_TEXTS[algo]));
+    clusterEl.classList.toggle("visible", algo === "kmeans");
+  }
+
+  // ── ANÁLISE COMPLETA ───────────────────────────────────────
+  let _deckSlides = [];
+  let _deckIndex = 0;
+
+  async function executarAnalise() {
+    const fileEl = document.getElementById("csv-file");
+    const statusEl = document.getElementById("upload-status");
+    const btn = document.getElementById("analyze-btn");
+
+    if (!fileEl.files.length) {
+      statusEl.textContent = "Selecione um arquivo CSV antes de executar.";
+      statusEl.style.color = "var(--high)";
+      return;
+    }
+
+    statusEl.textContent = "Enviando e processando…";
+    statusEl.style.color = "var(--muted-strong)";
+    btn.disabled = true;
+    btn.textContent = "Processando…";
+
+    const algo = document.getElementById("algo-select").value;
+    const nClusters = parseInt(document.getElementById("n-clusters").value) || 4;
+    const form = new FormData();
+    form.append("file", fileEl.files[0]);
+    form.append("algorithm", algo);
+    form.append("n_clusters", nClusters);
+
+    try {
+      const res = await fetch(`${API_URL}/analyze`, { method: "POST", body: form });
+      if (!res.ok) throw new Error(await obterMensagemErro(res));
+      const data = await res.json();
+      exibirResultadoAnalise(data);
+      statusEl.textContent = "Análise concluída com sucesso.";
+      statusEl.style.color = "var(--low)";
+    } catch (err) {
+      statusEl.textContent = `Erro: ${err.message}`;
+      statusEl.style.color = "var(--high)";
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Executar análise completa";
+    }
+  }
+
+  function exibirResultadoAnalise(data) {
+    const summary = (data.eda || {}).summary || {};
+    if (summary.customers) {
+      document.getElementById("hero-customers").textContent = Number(summary.customers).toLocaleString("pt-BR");
+    }
+    if (summary.churn_rate != null) {
+      document.getElementById("hero-churn-rate").textContent = `${(summary.churn_rate * 100).toFixed(1)}%`;
+    }
+
+    const metricsEl = document.getElementById("training-metrics");
+    const metrics = data.metrics || {};
+    const rotulos = {
+      rows_used: "Linhas usadas", test_rows: "Linhas de teste",
+      churn_rate: "Taxa de churn", roc_auc: "ROC-AUC",
+      accuracy: "Accuracy", precision: "Precision", recall: "Recall",
+      silhouette: "Silhouette", inertia: "Inertia",
+      f1_score: "F1 Score", log_loss: "Log Loss",
+    };
+    metricsEl.replaceChildren();
+    Object.entries(metrics).forEach(([k, v]) => {
+      const card = document.createElement("div");
+      const lbl = document.createElement("div");
+      const val = document.createElement("div");
+      const cap = document.createElement("div");
+      card.className = "metric-card";
+      lbl.className = "metric-label";
+      val.className = "metric-value";
+      cap.className = "metric-caption";
+      lbl.textContent = rotulos[k] || k.replace(/_/g, " ");
+      val.textContent = typeof v === "number" ? v.toFixed(4) : v;
+      cap.textContent = "análise atual";
+      card.append(lbl, val, cap);
+      metricsEl.appendChild(card);
+    });
+    if (Object.keys(metrics).length) metricsEl.className = "training-metrics active";
+
+    const helpText = document.getElementById("result-help-text");
+    if (helpText) helpText.style.display = "none";
+
+    if (data.eda) exibirDashboardEda({ ...data.eda, cleaning: data.eda.cleaning || {} });
+    exibirSegmentacao(data);
+    exibirPersonas(data.personas || [], data.algorithm);
+    exibirPriorizacao(data.segments || [], data.algorithm);
+    exibirDeck(data.deck_sections || []);
+    atualizarDocumentacaoDinamica(data.documentation || {}, data.metrics || {});
+  }
+
+  // ── SEGMENTAÇÃO ────────────────────────────────────────────
+  function exibirSegmentacao(data) {
+    const placeholder = document.getElementById("seg-placeholder");
+    const content = document.getElementById("seg-content");
+    const segments = data.segments || [];
+    const heatmap = data.heatmap || [];
+
+    placeholder.style.display = "none";
+    content.style.display = "";
+
+    const summaryEl = document.getElementById("seg-summary");
+    summaryEl.replaceChildren();
+    const totalClients = segments.reduce((a, s) => a + (s.count || 0), 0);
+    const highRiskCount = segments.filter(s => (s.churn_rate || 0) >= 0.6).reduce((a, s) => a + (s.count || 0), 0);
+    const avgChurn = segments.length ? segments.reduce((a, s) => a + (s.churn_rate || 0), 0) / segments.length : 0;
+    [
+      { label: "Segmentos", value: segments.length, caption: "identificados pelo algoritmo" },
+      { label: "Alto risco", value: highRiskCount.toLocaleString("pt-BR"), caption: "clientes com churn ≥ 60%" },
+      { label: "Churn médio", value: `${(avgChurn * 100).toFixed(1)}%`, caption: "média entre segmentos" },
+    ].forEach(({ label, value, caption }) => {
+      const card = document.createElement("div");
+      card.className = "seg-card";
+      card.innerHTML = `<div class="seg-card-label">${label}</div><div class="seg-card-value">${value}</div><div class="seg-card-caption">${caption}</div>`;
+      summaryEl.appendChild(card);
+    });
+
+    const table = document.getElementById("seg-heatmap");
+    table.replaceChildren();
+    if (heatmap.length) {
+      const features = Object.keys(heatmap[0]).filter(k => k !== "segment" && k !== "label" && k !== "churn_rate");
+      const thead = table.createTHead();
+      const hr = thead.insertRow();
+      const thLbl = document.createElement("th");
+      thLbl.textContent = "Segmento";
+      hr.appendChild(thLbl);
+      features.forEach(feat => {
+        const th = document.createElement("th");
+        th.textContent = traduzirFeature(feat);
+        hr.appendChild(th);
+      });
+      const tbody = table.createTBody();
+      heatmap.forEach(row => {
+        const tr = tbody.insertRow();
+        const td = tr.insertCell();
+        td.textContent = row.label || row.segment || "—";
+        features.forEach(feat => {
+          const cell = tr.insertCell();
+          const val = row[feat];
+          const span = document.createElement("span");
+          span.className = "hm-cell";
+          span.textContent = typeof val === "number" ? val.toFixed(2) : (val ?? "—");
+          if (typeof val === "number") {
+            const intensity = Math.min(Math.abs(val), 1);
+            span.style.background = `rgba(37,99,235,${(intensity * 0.38).toFixed(2)})`;
+            span.style.color = intensity > 0.6 ? "#fff" : "inherit";
+          }
+          cell.appendChild(span);
+        });
+      });
+    }
+
+    const cardsEl = document.getElementById("seg-cards");
+    cardsEl.replaceChildren();
+    cardsEl.style.cssText = "display:grid;gap:12px;";
+    segments.forEach(seg => {
+      const card = document.createElement("div");
+      card.className = "segment-card";
+      const churnStr = seg.churn_rate != null ? ` · ${(seg.churn_rate * 100).toFixed(1)}% churn` : "";
+      const riskLabel = seg.risk_label || seg.label || "Segmento";
+      const countStr = (seg.count || 0).toLocaleString("pt-BR");
+      card.innerHTML = `<strong>${riskLabel}</strong><span>${countStr} clientes${churnStr}</span>`;
+      if (seg.features && Object.keys(seg.features).length) {
+        const featEl = document.createElement("span");
+        featEl.style.fontSize = "0.78rem";
+        featEl.textContent = Object.entries(seg.features)
+          .map(([k, v]) => `${traduzirFeature(k)}: ${typeof v === "number" ? v.toFixed(2) : v}`)
+          .join(" · ");
+        card.appendChild(featEl);
+      }
+      cardsEl.appendChild(card);
+    });
+  }
+
+  // ── PERSONAS ───────────────────────────────────────────────
+  function exibirPersonas(personas, algorithm) {
+    const placeholder = document.getElementById("personas-placeholder");
+    const content = document.getElementById("personas-content");
+    const grid = document.getElementById("personas-grid");
+
+    const show = personas.length > 0;
+    placeholder.style.display = show ? "none" : "";
+    content.style.display = show ? "" : "none";
+    grid.replaceChildren();
+
+    const isKmeans = algorithm === "kmeans";
+
+    // Section header block (create or reuse)
+    let descEl = document.getElementById("personas-section-desc");
+    if (!descEl) {
+      descEl = document.createElement("div");
+      descEl.id = "personas-section-desc";
+      descEl.style.marginBottom = "20px";
+      content.insertBefore(descEl, grid);
+    }
+    if (isKmeans) {
+      descEl.innerHTML = `
+        <div class="section-label">Personas Comportamentais</div>
+        <p style="font-size:0.88rem;color:var(--muted-strong);margin-top:6px;line-height:1.55;">
+          Perfis derivados da segmentação <strong>K-Means</strong>. Cada persona representa um padrão de uso e vínculo com a academia — quem é o cliente, não só o risco que representa.
+        </p>`;
+    } else {
+      const algoLabels = {
+        random_forest: "Random Forest",
+        logistic_regression: "Regressão Logística",
+        xgboost: "XGBoost",
+        lightgbm: "LightGBM",
+        business_rules_baseline: "Baseline por Regra de Negócio",
+      };
+      descEl.innerHTML = `
+        <div class="section-label">Perfis de Risco de Churn</div>
+        <p style="font-size:0.88rem;color:var(--muted-strong);margin-top:6px;line-height:1.55;">
+          Perfis gerados pelo modelo <strong>${algoLabels[algorithm] || algorithm}</strong>, baseados na probabilidade de churn prevista.
+          Complementam as personas comportamentais do K-Means: enquanto o K-Means responde <em>"quem é o cliente"</em>, este modelo responde <em>"qual o risco de ele cancelar"</em>.
+        </p>`;
+    }
+
+    personas.forEach(p => {
+      const churnPct = p.churn_rate != null ? p.churn_rate * 100 : null;
+      const riskLevel = churnPct == null ? "low" : churnPct >= 65 ? "high" : churnPct >= 35 ? "medium" : "low";
+      const badgeClass = isKmeans ? "badge-cluster" : `badge-${riskLevel}`;
+
+      const card = document.createElement("article");
+      card.className = "persona-card";
+
+      const header = document.createElement("div");
+      header.className = "persona-header";
+      const nameEl = document.createElement("div");
+      nameEl.className = "persona-name";
+      nameEl.textContent = p.name || "Perfil";
+      const badge = document.createElement("span");
+      badge.className = `persona-segment-badge ${badgeClass}`;
+      badge.textContent = p.segment_label || "Segmento";
+      header.append(nameEl, badge);
+      card.appendChild(header);
+
+      const rowDefs = isKmeans
+        ? [
+            { label: "Contexto", text: p.setup },
+            { label: "Conflito", text: p.conflict },
+            { label: "Resolução", text: p.resolution },
+          ]
+        : [
+            { label: "Perfil de risco", text: p.setup },
+            { label: "Sinal de alerta", text: p.conflict },
+            { label: "Recomendação", text: p.resolution },
+          ];
+
+      rowDefs.forEach(({ label, text }) => {
+        if (!text) return;
+        const row = document.createElement("div");
+        row.className = "persona-row";
+        row.innerHTML = `<div class="persona-row-label">${label}</div><div class="persona-row-text">${text}</div>`;
+        card.appendChild(row);
+      });
+
+      if (p.evidence) {
+        const ev = document.createElement("div");
+        ev.className = "persona-evidence";
+        ev.textContent = p.evidence;
+        card.appendChild(ev);
+      }
+
+      [
+        { label: "Decisão", text: p.decision },
+        { label: "Limite", text: p.limit },
+      ].forEach(({ label, text }) => {
+        if (!text) return;
+        const row = document.createElement("div");
+        row.className = "persona-row";
+        row.innerHTML = `<div class="persona-row-label">${label}</div><div class="persona-row-text">${text}</div>`;
+        card.appendChild(row);
+      });
+
+      grid.appendChild(card);
+    });
+  }
+
+  // ── PRIORIZAÇÃO ────────────────────────────────────────────
+  function exibirPriorizacao(segments, algorithm) {
+    const placeholder = document.getElementById("priority-placeholder");
+    const content = document.getElementById("priority-content");
+    const zonesEl = document.getElementById("priority-zones");
+
+    placeholder.style.display = "none";
+    content.style.display = "";
+    zonesEl.replaceChildren();
+
+    const sorted = [...segments].sort((a, b) => (b.churn_rate || 0) - (a.churn_rate || 0));
+    const zones = [
+      {
+        cls: "immediate",
+        label: "Ação Imediata",
+        title: "Alto risco — intervir agora",
+        desc: "Clientes com contrato próximo do vencimento, queda de frequência e baixo vínculo. Cada semana sem contato aumenta o risco de cancelamento.",
+        segs: sorted.filter(s => (s.churn_rate || 0) >= 0.55),
+      },
+      {
+        cls: "strategic",
+        label: "Investimento Estratégico",
+        title: "Risco médio — fidelizar",
+        desc: "Potencial de retenção via onboarding estruturado, aulas em grupo e benefícios de indicação de amigos.",
+        segs: sorted.filter(s => (s.churn_rate || 0) >= 0.3 && (s.churn_rate || 0) < 0.55),
+      },
+      {
+        cls: "monitor",
+        label: "Monitorar e Preservar",
+        title: "Baixo risco — base âncora",
+        desc: "Clientes estáveis e engajados. Sustentam o negócio e servem como referência de comportamento ideal.",
+        segs: sorted.filter(s => (s.churn_rate || 0) < 0.3),
+      },
+    ];
+
+    zones.forEach(({ cls, label, title, desc, segs }) => {
+      const zone = document.createElement("div");
+      zone.className = `priority-zone ${cls}`;
+      const segItems = segs.map(s => {
+        const churnStr = s.churn_rate != null ? ` · ${(s.churn_rate * 100).toFixed(1)}% churn` : "";
+        const segLabel = s.risk_label || s.label || "Segmento";
+        return `<div class="priority-seg-item">${segLabel} · ${(s.count || 0).toLocaleString("pt-BR")} clientes${churnStr}</div>`;
+      }).join("") || `<div class="priority-seg-item" style="opacity:0.5">Nenhum segmento nesta faixa</div>`;
+      zone.innerHTML = `
+        <div class="priority-zone-label">${label}</div>
+        <div class="priority-zone-title">${title}</div>
+        <div class="priority-zone-desc">${desc}</div>
+        <div class="priority-zone-segments">${segItems}</div>`;
+      zonesEl.appendChild(zone);
+    });
+  }
+
+  // ── DECK EXECUTIVO ─────────────────────────────────────────
+  function exibirDeck(slides) {
+    const placeholder = document.getElementById("deck-placeholder");
+    const content = document.getElementById("deck-content");
+    if (!slides.length) {
+      placeholder.style.display = "";
+      content.style.display = "none";
+      return;
+    }
+    placeholder.style.display = "none";
+    content.style.display = "";
+    _deckSlides = slides;
+    _deckIndex = 0;
+
+    const thumbsEl = document.getElementById("deck-thumbnails");
+    thumbsEl.replaceChildren();
+    slides.forEach((slide, i) => {
+      const btn = document.createElement("button");
+      btn.className = "deck-thumb" + (i === 0 ? " active" : "");
+      btn.type = "button";
+      btn.textContent = `${slide.number}. ${slide.tag}`;
+      btn.onclick = () => { _deckIndex = i; renderizarSlide(); };
+      thumbsEl.appendChild(btn);
+    });
+    renderizarSlide();
+  }
+
+  function renderizarSlide() {
+    const slide = _deckSlides[_deckIndex];
+    if (!slide) return;
+    const total = _deckSlides.length;
+    document.getElementById("deck-counter").textContent = `Slide ${_deckIndex + 1} de ${total}`;
+    document.getElementById("deck-prev").disabled = _deckIndex === 0;
+    document.getElementById("deck-next").disabled = _deckIndex === total - 1;
+    const slideEl = document.getElementById("deck-slide");
+    slideEl.innerHTML = `
+      <div class="slide-tag">${slide.tag}</div>
+      <div class="slide-header">
+        <div class="slide-title">${slide.title}</div>
+        <div class="slide-subtitle">${slide.subtitle || ""}</div>
+      </div>
+      <div class="slide-content">${(slide.content || "").replace(/\n/g, "<br>")}</div>`;
+    document.querySelectorAll(".deck-thumb").forEach((btn, i) => {
+      btn.classList.toggle("active", i === _deckIndex);
+    });
+  }
+
+  function navegarSlide(dir) {
+    _deckIndex = Math.max(0, Math.min(_deckSlides.length - 1, _deckIndex + dir));
+    renderizarSlide();
+  }
+
+  // ── DOCUMENTAÇÃO DINÂMICA ──────────────────────────────────
+  function atualizarDocumentacaoDinamica(documentation, metrics) {
+    const card = document.getElementById("doc-model-card");
+    if (card) {
+      const name = documentation.algorithm_name || "Algoritmo";
+      const section = documentation.model_section || {};
+      const metricsHtml = Object.entries(metrics)
+        .filter(([, v]) => typeof v === "number" || typeof v === "string")
+        .map(([k, v]) => {
+          const label = k.replace(/_/g, " ");
+          const formatted = typeof v === "number" ? v.toFixed(4) : v;
+          return `<li><strong>${label}</strong>: ${formatted}</li>`;
+        }).join("");
+      card.innerHTML = `
+        <div class="doc-kicker">5. Modelo</div>
+        <h3>${section.title || name}</h3>
+        <p>${section.text || ""}</p>
+        ${metricsHtml ? `<ul style="margin-top:12px;">${metricsHtml}</ul>` : ""}
+        <div class="callout" style="margin-top:12px;">
+          O treino acontece após o upload do CSV com divisão estratificada de treino e teste.
+        </div>`;
+    }
+
+    const convergenceEl = document.getElementById("doc-convergence");
+    if (convergenceEl && documentation.convergence) {
+      convergenceEl.innerHTML = `<strong>Síntese:</strong> ${documentation.convergence}`;
+    }
+
+    const limEl = document.getElementById("doc-limitations");
+    if (limEl && Array.isArray(documentation.limitations) && documentation.limitations.length) {
+      limEl.replaceChildren();
+      documentation.limitations.forEach(lim => {
+        const item = document.createElement("div");
+        item.className = "limitation-item";
+        const span = document.createElement("span");
+        span.textContent = lim;
+        item.appendChild(span);
+        limEl.appendChild(item);
+      });
+    }
   }
 </script>
 

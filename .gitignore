@@ -3,6 +3,13 @@ data/
 dataset/
 *.csv
 __pycache__/
+.pycache/
+**/__pycache__/
+*.pyc
+*.pyo
 .env
 .vercel
+cursorrules
+.python-version
+*.egg-info/
 .DS_Store
