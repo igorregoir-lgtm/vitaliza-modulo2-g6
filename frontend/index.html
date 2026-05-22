@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Gym Churn Predictor</title>
+  <title>Vitaliza · Retenção Preditiva</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     :root {
@@ -124,13 +124,9 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: var(--muted-strong);
-      box-shadow: 0 0 0 4px rgba(100,116,139,0.12);
-      transition: background 0.3s, box-shadow 0.3s;
+      background: var(--low);
+      box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.12);
     }
-    .status-dot.online  { background: var(--low);  box-shadow: 0 0 0 4px rgba(4,120,87,0.12); }
-    .status-dot.offline { background: var(--high); box-shadow: 0 0 0 4px rgba(220,38,38,0.12); }
-    .status-dot.waking  { background: #f59e0b;     box-shadow: 0 0 0 4px rgba(245,158,11,0.12); }
 
     .hero {
       background: var(--surface);
@@ -1220,472 +1216,321 @@
       }
     }
 
-    /* ── ALGORITHM SELECTOR ─────────────────────────────── */
-    .algo-select-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 16px;
-    }
+    /* ── NEW COMPONENT STYLES ── */
 
-    .algo-select {
-      appearance: none;
-      background: var(--surface-muted) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 14px center;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text);
-      font: inherit;
-      font-size: 0.9rem;
-      font-weight: 600;
-      padding: 11px 40px 11px 14px;
-      cursor: pointer;
-      transition: border-color 0.15s;
-      width: 100%;
-    }
-
-    .algo-select:focus { outline: none; border-color: var(--brand); }
-
-    .algo-help {
-      background: var(--brand-soft);
-      border: 1px solid #bfdbfe;
-      border-radius: var(--radius-sm);
-      color: var(--muted-strong);
-      font-size: 0.82rem;
-      font-weight: 600;
-      line-height: 1.5;
-      padding: 12px 14px;
-      display: none;
-    }
-
-    .algo-help.visible { display: block; }
-
-    .cluster-field {
-      display: none;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .cluster-field.visible { display: flex; }
-
-    .cluster-field label {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--muted-strong);
-    }
-
-    .cluster-field input {
-      width: 120px;
-      padding: 9px 12px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      font: inherit;
-      font-size: 0.9rem;
-    }
-
-    .analyze-btn {
-      width: 100%;
-      margin-top: 20px;
-      padding: 14px 18px;
-      background: var(--brand);
-      color: var(--text-on-accent);
+    .danger-btn {
+      background: var(--high);
+      color: #fff;
       border: none;
       border-radius: 12px;
       font-weight: 800;
-      font-size: 0.96rem;
+      font-size: 0.88rem;
+      padding: 10px 16px;
       cursor: pointer;
-      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
-      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
+      transition: background 0.2s, transform 0.1s;
+    }
+    .danger-btn:hover { background: #b91c1c; }
+    .danger-btn:active { transform: scale(0.98); }
+
+    .secondary-btn {
+      background: var(--surface-muted);
+      color: var(--muted-strong);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 0.88rem;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .secondary-btn:hover { background: var(--border); border-color: var(--border-strong); }
+
+    .upload-btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+      align-items: stretch;
+    }
+    .upload-btn-row #train-btn {
+      flex: 1;
+      min-width: 200px;
+      margin-top: 0;
     }
 
-    .analyze-btn:hover   { background: var(--brand-strong); }
-    .analyze-btn:active  { transform: scale(0.98); }
-    .analyze-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    /* SEG STATUS */
+    .seg-status {
+      border-radius: var(--radius-md);
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 800;
+      line-height: 1.5;
+      padding: 14px 16px;
+    }
+    .seg-status.waiting { background: var(--surface-soft); color: var(--muted-strong); }
+    .seg-status.success { background: var(--low-soft); color: var(--low); }
+    .seg-status.error   { background: var(--high-soft); color: var(--high); }
 
-    /* ── SEGMENTAÇÃO ────────────────────────────────────── */
-    .seg-layout { display: grid; gap: 20px; }
+    .seg-dashboard { display: none; gap: 20px; }
+    .seg-dashboard.active { display: grid; }
 
-    .seg-summary {
+    /* CLUSTER CARDS */
+    .cluster-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
     }
-
-    .seg-card {
+    .cluster-card {
       background: var(--surface-muted);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       padding: 16px;
-      position: relative;
     }
+    .cluster-card.c0 { border-top: 3px solid var(--high); }
+    .cluster-card.c1 { border-top: 3px solid var(--low); }
+    .cluster-card.c2 { border-top: 3px solid var(--brand); }
+    .cluster-card.c3 { border-top: 3px solid var(--med); }
+    .cluster-name { font-size: 0.76rem; font-weight: 800; color: var(--muted-strong); margin-bottom: 6px; }
+    .cluster-churn { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.04em; }
+    .cluster-churn.high { color: var(--high); }
+    .cluster-churn.low  { color: var(--low); }
+    .cluster-churn.brand{ color: var(--brand); }
+    .cluster-churn.med  { color: var(--med); }
+    .cluster-caption { font-size: 0.74rem; color: var(--muted); font-weight: 700; margin-top: 4px; }
 
-    .seg-card-label {
-      font-size: 0.78rem;
-      font-weight: 800;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-bottom: 6px;
-    }
-
-    .seg-card-value {
-      font-size: 1.6rem;
-      font-weight: 800;
-      line-height: 1;
-      color: var(--text);
-    }
-
-    .seg-card-caption {
-      font-size: 0.78rem;
-      color: var(--muted);
-      margin-top: 4px;
-    }
-
-    .heatmap-wrap {
-      overflow-x: auto;
-    }
-
+    /* HEATMAP */
+    .heatmap-wrap { overflow-x: auto; }
     .heatmap-table {
-      border-collapse: collapse;
-      font-size: 0.78rem;
       width: 100%;
-      min-width: 400px;
+      border-collapse: collapse;
+      font-size: 0.8rem;
     }
-
     .heatmap-table th {
       background: var(--surface-muted);
       border: 1px solid var(--border);
-      color: var(--muted-strong);
-      font-weight: 700;
       padding: 8px 10px;
-      text-align: center;
+      font-weight: 800;
+      text-align: left;
+      color: var(--muted-strong);
       white-space: nowrap;
     }
-
-    .heatmap-table th:first-child { text-align: left; }
-
     .heatmap-table td {
       border: 1px solid var(--border);
-      padding: 7px 10px;
+      padding: 6px 8px;
       text-align: center;
       font-weight: 700;
+      font-size: 0.76rem;
     }
+    .heat-cell { border-radius: 5px; padding: 3px 7px; display: inline-block; }
 
-    .heatmap-table td:first-child { text-align: left; color: var(--muted-strong); }
-
-    .hm-cell {
-      border-radius: 6px;
-      display: inline-block;
-      min-width: 50px;
-      padding: 3px 6px;
-    }
-
-    /* ── PERSONAS ──────────────────────────────────────── */
-    .persona-layout { display: grid; gap: 20px; }
-
-    .persona-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 16px;
-    }
-
-    .persona-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow);
-      padding: 20px;
-      display: grid;
-      gap: 12px;
-    }
-
-    .persona-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .persona-name {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--text);
-      line-height: 1.25;
-    }
-
-    .persona-segment-badge {
-      border-radius: 999px;
-      font-size: 0.72rem;
-      font-weight: 800;
-      padding: 4px 10px;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .badge-high   { background: var(--high-soft);  color: var(--high); }
-    .badge-medium { background: var(--med-soft);   color: var(--med);  }
-    .badge-low    { background: var(--low-soft);   color: var(--low);  }
-    .badge-cluster { background: var(--brand-soft); color: var(--brand); }
-
-    .persona-row {
-      display: grid;
-      gap: 2px;
-    }
-
-    .persona-row-label {
-      font-size: 0.68rem;
-      font-weight: 800;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-    }
-
-    .persona-row-text {
-      font-size: 0.84rem;
-      color: var(--muted-strong);
-      line-height: 1.5;
-    }
-
-    .persona-evidence {
-      background: var(--brand-soft);
-      border: 1px solid #bfdbfe;
-      border-radius: 8px;
-      color: var(--brand);
-      font-size: 0.82rem;
-      font-weight: 800;
-      padding: 8px 12px;
-      text-align: center;
-    }
-
-    /* ── PRIORIZAÇÃO ────────────────────────────────────── */
-    .priority-layout { display: grid; gap: 20px; }
-
-    .priority-zones {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-
-    .priority-zone {
-      border-radius: var(--radius-md);
-      border: 1.5px solid;
-      padding: 20px;
-      display: grid;
-      gap: 12px;
-    }
-
-    .priority-zone.immediate {
-      background: var(--high-soft);
-      border-color: #fca5a5;
-    }
-
-    .priority-zone.strategic {
-      background: var(--med-soft);
-      border-color: #fcd34d;
-    }
-
-    .priority-zone.monitor {
-      background: var(--low-soft);
-      border-color: #6ee7b7;
-    }
-
-    .priority-zone-label {
-      font-size: 0.72rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-    }
-
-    .immediate .priority-zone-label { color: var(--high); }
-    .strategic .priority-zone-label { color: var(--med);  }
-    .monitor   .priority-zone-label { color: var(--low);  }
-
-    .priority-zone-title {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--text);
-      line-height: 1.25;
-    }
-
-    .priority-zone-desc {
-      font-size: 0.84rem;
-      color: var(--muted-strong);
-      line-height: 1.5;
-    }
-
-    .priority-zone-segments { display: grid; gap: 6px; }
-
-    .priority-seg-item {
-      background: rgba(255,255,255,0.7);
-      border-radius: 8px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      padding: 8px 10px;
-      color: var(--text);
-    }
-
-    @media (max-width: 900px) {
-      .priority-zones, .seg-summary { grid-template-columns: 1fr; }
-    }
-
-    /* ── DECK EXECUTIVO ─────────────────────────────────── */
-    .deck-layout { display: grid; gap: 20px; }
-
-    .deck-nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      background: var(--surface-muted);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 14px 18px;
-    }
-
-    .deck-counter {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--muted-strong);
-    }
-
-    .deck-nav-btns { display: flex; gap: 8px; }
-
-    .deck-nav-btn {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--muted-strong);
-      cursor: pointer;
-      font: inherit;
-      font-size: 0.82rem;
-      font-weight: 800;
-      padding: 8px 14px;
-      transition: border-color 0.15s, color 0.15s;
-    }
-
-    .deck-nav-btn:hover:not(:disabled) { border-color: var(--brand); color: var(--brand); }
-    .deck-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
-    .deck-slide {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow);
-      min-height: 380px;
-      padding: 36px 40px;
-      display: grid;
-      grid-template-rows: auto auto 1fr;
-      gap: 16px;
-    }
-
-    .slide-tag {
-      font-size: 0.72rem;
-      font-weight: 800;
-      color: var(--brand);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .slide-header { display: grid; gap: 6px; }
-
-    .slide-title {
-      font-size: clamp(1.4rem, 3vw, 2.2rem);
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      line-height: 1.1;
-    }
-
-    .slide-subtitle {
-      font-size: 1rem;
-      color: var(--muted-strong);
-      font-weight: 500;
-    }
-
-    .slide-content {
-      font-size: 0.96rem;
-      color: var(--muted-strong);
-      line-height: 1.7;
-      align-self: end;
-    }
-
-    .slide-content strong { color: var(--text); }
-
-    .deck-thumbnails {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .deck-thumb {
-      background: var(--surface-muted);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.74rem;
-      font-weight: 700;
-      padding: 6px 10px;
-      color: var(--muted-strong);
-      transition: border-color 0.15s, color 0.15s;
-    }
-
-    .deck-thumb.active { border-color: var(--brand); color: var(--brand); background: var(--brand-soft); }
-    .deck-thumb:hover:not(.active) { border-color: var(--border-strong); }
-
-    /* ── LIMITAÇÕES ─────────────────────────────────────── */
-    .limitations-list {
-      display: grid;
-      gap: 8px;
-      counter-reset: lim-counter;
-    }
-
-    .limitation-item {
-      counter-increment: lim-counter;
-      display: grid;
-      grid-template-columns: 32px 1fr;
-      gap: 10px;
-      align-items: start;
-    }
-
-    .limitation-item::before {
-      content: counter(lim-counter);
-      background: var(--high-soft);
-      border-radius: 8px;
-      color: var(--high);
-      display: grid;
-      font-size: 0.78rem;
-      font-weight: 800;
-      height: 32px;
-      place-items: center;
-      width: 32px;
-    }
-
-    .limitation-item span {
-      font-size: 0.88rem;
-      color: var(--muted-strong);
-      line-height: 1.55;
-      padding-top: 6px;
-    }
-
-    /* ── CONVERGÊNCIA ───────────────────────────────────── */
-    .convergence-block {
+    /* LEITURA DOS SEGMENTOS */
+    .leitura-block {
       background: var(--surface-soft);
       border: 1px solid #bfdbfe;
       border-radius: var(--radius-md);
-      padding: 20px 24px;
-      font-size: 0.9rem;
-      color: var(--muted-strong);
-      line-height: 1.7;
+      padding: 20px;
+    }
+    .leitura-block h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 10px; }
+    .leitura-block p  { color: var(--muted-strong); font-size: 0.92rem; line-height: 1.7; }
+    .leitura-block strong { color: var(--high); }
+    .leitura-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .leitura-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+    }
+    .leitura-item strong { display: block; font-size: 0.88rem; color: var(--text); margin-bottom: 4px; }
+    .leitura-item span  { font-size: 0.80rem; color: var(--muted-strong); line-height: 1.5; }
+
+    /* PERSONA CARDS */
+    .persona-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .persona-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .persona-card.c0 { border-left: 4px solid var(--high); }
+    .persona-card.c1 { border-left: 4px solid var(--low); }
+    .persona-card.c2 { border-left: 4px solid var(--brand); }
+    .persona-card.c3 { border-left: 4px solid var(--med); }
+    .persona-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .persona-badge {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: grid; place-items: center;
+      font-weight: 800; font-size: 0.78rem; color: #fff; flex-shrink: 0;
+    }
+    .persona-badge.c0 { background: var(--high); }
+    .persona-badge.c1 { background: var(--low); }
+    .persona-badge.c2 { background: var(--brand); }
+    .persona-badge.c3 { background: var(--med); }
+    .persona-name { font-weight: 800; font-size: 0.96rem; color: var(--text); line-height: 1.2; }
+    .persona-churn-rate { font-size: 0.76rem; font-weight: 700; color: var(--muted); margin-top: 2px; }
+    .persona-body { color: var(--muted-strong); font-size: 0.87rem; line-height: 1.65; }
+    .persona-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .persona-tag {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 0.72rem; font-weight: 800;
+      padding: 4px 10px; color: var(--muted-strong);
     }
 
-    .convergence-block strong { color: var(--text); }
+    /* RF PREDICAO */
+    .rf-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .rf-cluster-card {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+    .rf-cluster-name { font-size: 0.74rem; font-weight: 800; color: var(--muted-strong); margin-bottom: 8px; }
+    .rf-prob { font-size: 1.45rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 8px; }
+    .rf-risk-bars { display: flex; flex-direction: column; gap: 4px; font-size: 0.74rem; font-weight: 700; color: var(--muted-strong); }
+    .rf-risk-bar-row { display: flex; align-items: center; gap: 6px; }
+    .rf-risk-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-    /* ── PLACEHOLDER UNIVERSAL ──────────────────────────── */
-    .analysis-placeholder {
-      padding: 48px 24px;
-      text-align: center;
-      color: var(--muted-strong);
-      font-size: 0.9rem;
-      font-weight: 600;
-      line-height: 1.6;
+    .pred-status {
+      border-radius: var(--radius-md);
+      display: block;
+      font-size: 0.9rem; font-weight: 800; line-height: 1.5; padding: 14px 16px;
+    }
+    .pred-status.waiting { background: var(--surface-soft); color: var(--muted-strong); }
+    .pred-status.success { background: var(--low-soft); color: var(--low); }
+    .pred-status.error   { background: var(--high-soft); color: var(--high); }
+    .pred-dashboard { display: none; gap: 20px; }
+    .pred-dashboard.active { display: grid; }
+
+    /* BASELINE */
+    .baseline-status { border-radius: var(--radius-md); display: block; font-size: 0.9rem; font-weight: 800; line-height: 1.5; padding: 14px 16px; }
+    .baseline-status.waiting { background: var(--surface-soft); color: var(--muted-strong); }
+    .baseline-status.success { background: var(--low-soft); color: var(--low); }
+    .baseline-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+    .baseline-card { background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; }
+    .baseline-rule { font-size: 0.82rem; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+    .baseline-acc { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.04em; color: var(--brand); margin-bottom: 4px; }
+    .baseline-desc { font-size: 0.78rem; color: var(--muted-strong); font-weight: 700; line-height: 1.5; }
+    .convergence-note {
+      background: var(--brand-soft); border: 1px solid #bfdbfe;
+      border-radius: var(--radius-md); padding: 16px;
+      color: var(--muted-strong); font-size: 0.9rem; font-weight: 700; line-height: 1.6; margin-top: 16px;
+    }
+    .baseline-dashboard { display: none; }
+    .baseline-dashboard.active { display: block; }
+
+    /* MINI DECK */
+    .deck-wrap {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); box-shadow: var(--shadow);
+      padding: 32px; min-height: 440px;
+      display: flex; flex-direction: column;
+    }
+    .deck-slide { display: none; flex: 1; flex-direction: column; }
+    .deck-slide.active { display: flex; }
+    .deck-slide-num { color: var(--brand); font-size: 0.74rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+    .deck-slide-title { font-size: clamp(1.4rem, 3vw, 2.3rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 16px; color: var(--text); }
+    .deck-slide-body { color: var(--muted-strong); font-size: 0.94rem; line-height: 1.7; flex: 1; }
+    .deck-slide-body ul { padding-left: 18px; display: grid; gap: 6px; margin-top: 10px; }
+    .deck-slide-body li { color: var(--muted-strong); font-size: 0.92rem; line-height: 1.6; }
+    .deck-slide-body strong { color: var(--text); }
+    .deck-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); gap: 12px;
+    }
+    .deck-nav-btn {
+      border: 1px solid var(--border); border-radius: 999px;
+      background: var(--surface-muted); color: var(--muted-strong);
+      font-size: 0.86rem; font-weight: 800; padding: 10px 18px;
+      cursor: pointer; transition: background 0.2s, border-color 0.2s;
+    }
+    .deck-nav-btn:hover { background: var(--border); }
+    .deck-nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .deck-dots { display: flex; gap: 6px; }
+    .deck-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); cursor: pointer; transition: background 0.2s; }
+    .deck-dot.active { background: var(--brand); }
+    .deck-slide-tag {
+      display: inline-block; background: var(--surface-muted);
+      border: 1px solid var(--border); border-radius: 999px;
+      font-size: 0.74rem; font-weight: 800; padding: 4px 12px;
+      color: var(--muted-strong); margin-bottom: 14px;
+    }
+
+    /* METODOLOGIA */
+    .met-layout { display: grid; gap: 20px; }
+    .met-step-grid { display: grid; gap: 12px; }
+    .met-step {
+      background: var(--surface-muted); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 18px 20px;
+      display: grid; grid-template-columns: 48px 1fr; gap: 16px; align-items: start;
+    }
+    .met-step-num {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--brand); color: #fff;
+      display: grid; place-items: center; font-weight: 800; font-size: 1.05rem; flex-shrink: 0;
+    }
+    .met-step-content strong { display: block; color: var(--text); font-size: 0.96rem; margin-bottom: 6px; }
+    .met-step-content span   { color: var(--muted-strong); font-size: 0.88rem; line-height: 1.6; }
+    .algo-compare { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .algo-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; }
+    .algo-card.chosen { border-color: var(--brand); background: var(--brand-soft); }
+    .algo-name { font-weight: 800; font-size: 0.88rem; color: var(--text); margin-bottom: 6px; }
+    .algo-card.chosen .algo-name { color: var(--brand); }
+    .algo-desc { font-size: 0.79rem; color: var(--muted-strong); line-height: 1.5; }
+    .algo-verdict { font-size: 0.74rem; font-weight: 800; margin-bottom: 6px; }
+    .algo-card.chosen .algo-verdict { color: var(--brand); }
+
+    /* EDA EXTRA SECTIONS */
+    .eda-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: 24px; }
+    .eda-section h3 { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .eda-section-sub { color: var(--muted-strong); font-size: 0.86rem; line-height: 1.55; margin-bottom: 16px; }
+    .method-infographic { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .method-card { background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; }
+    .method-card.selected { background: var(--brand-soft); border-color: var(--brand); }
+    .method-name { font-weight: 800; font-size: 0.88rem; color: var(--text); margin-bottom: 4px; }
+    .method-card.selected .method-name { color: var(--brand); }
+    .method-verdict { font-size: 0.74rem; font-weight: 800; color: var(--muted); margin-bottom: 6px; }
+    .method-card.selected .method-verdict { color: var(--brand); }
+    .method-desc { font-size: 0.78rem; color: var(--muted-strong); line-height: 1.5; }
+    .contract-window-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .window-card { background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; }
+    .window-card.danger { background: var(--high-soft); border-color: #fca5a5; }
+    .window-card.safe   { background: var(--low-soft);  border-color: #6ee7b7; }
+    .window-value { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.04em; color: var(--text); margin-bottom: 4px; }
+    .window-card.danger .window-value { color: var(--high); }
+    .window-card.safe   .window-value { color: var(--low); }
+    .window-label { font-size: 0.78rem; font-weight: 700; color: var(--muted-strong); line-height: 1.4; }
+    .driver-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .driver-card { background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; }
+    .driver-name { font-weight: 800; font-size: 0.9rem; color: var(--text); margin-bottom: 6px; }
+    .driver-effect { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.04em; color: var(--low); margin-bottom: 4px; }
+    .driver-desc { font-size: 0.78rem; color: var(--muted-strong); line-height: 1.5; }
+    .retention-signal-list { display: grid; gap: 10px; }
+    .ret-signal { display: grid; grid-template-columns: 32px 1fr; gap: 12px; align-items: start; background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; }
+    .ret-rank { width: 32px; height: 32px; border-radius: 8px; background: var(--brand); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 0.82rem; }
+    .ret-signal-name { font-weight: 800; font-size: 0.88rem; color: var(--text); margin-bottom: 2px; }
+    .ret-signal-desc { font-size: 0.79rem; color: var(--muted-strong); line-height: 1.5; }
+
+    @media (max-width: 900px) {
+      .cluster-grid, .rf-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .persona-grid { grid-template-columns: 1fr; }
+      .baseline-grid, .driver-grid, .method-infographic, .algo-compare { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .contract-window-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .leitura-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .cluster-grid, .rf-grid, .baseline-grid, .driver-grid,
+      .method-infographic, .algo-compare, .contract-window-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -1694,34 +1539,35 @@
 <main class="app-shell">
   <section class="topbar" aria-label="Status da aplicação">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true">G</div>
+      <div class="brand-mark" aria-hidden="true">V</div>
       <div>
-        <div class="brand-kicker">Inteli MBA · Módulo 2</div>
-        <div class="brand-title">Vitaliza</div>
+        <div class="brand-kicker">Módulo 2 · Grupo 6</div>
+        <div class="brand-title">Vitaliza · Retenção Preditiva</div>
       </div>
     </div>
     <div class="top-actions">
-      <span class="status-pill" id="backend-status-pill"><span class="status-dot" id="backend-status-dot"></span><span id="backend-status-text">Verificando backend…</span></span>
-      <span class="ghost-btn">6 algoritmos · 11 features</span>
+      <span class="status-pill"><span class="status-dot"></span>Modelo operacional</span>
+      <span class="ghost-btn">K-Means + RandomForest · 11 features</span>
     </div>
   </section>
 
   <nav class="tab-nav" aria-label="Navegação da entrega">
-    <button class="tab-btn active" type="button" data-tab-target="upload" onclick="trocarAba('upload')">Upload CSV</button>
+    <button class="tab-btn active" type="button" data-tab-target="upload" onclick="trocarAba('upload')">Upload</button>
+    <button class="tab-btn" type="button" data-tab-target="eda" onclick="trocarAba('eda')">EDA</button>
+    <button class="tab-btn" type="button" data-tab-target="segmentacao" onclick="trocarAba('segmentacao')">Segmentação / Personas</button>
+    <button class="tab-btn" type="button" data-tab-target="predicao" onclick="trocarAba('predicao')">Predição</button>
     <button class="tab-btn" type="button" data-tab-target="inference" onclick="trocarAba('inference')">Inferência</button>
-    <button class="tab-btn" type="button" data-tab-target="eda" onclick="trocarAba('eda')">Dashboard EDA</button>
-    <button class="tab-btn" type="button" data-tab-target="segmentation" onclick="trocarAba('segmentation')">Segmentação / Personas</button>
-    <button class="tab-btn" type="button" data-tab-target="prioritization" onclick="trocarAba('prioritization')">Priorização</button>
-    <button class="tab-btn" type="button" data-tab-target="deck" onclick="trocarAba('deck')">Deck Executivo</button>
-    <button class="tab-btn" type="button" data-tab-target="documentation" onclick="trocarAba('documentation')">Documentação</button>
+    <button class="tab-btn" type="button" data-tab-target="baseline" onclick="trocarAba('baseline')">Baseline</button>
+    <button class="tab-btn" type="button" data-tab-target="minideck" onclick="trocarAba('minideck')">Mini Deck</button>
+    <button class="tab-btn" type="button" data-tab-target="metodologia" onclick="trocarAba('metodologia')">Metodologia</button>
   </nav>
 
   <header class="hero">
     <div>
-      <div class="eyebrow">A Arquitetura da Retenção Preditiva</div>
-      <h1>Segmentação e predição de churn para academias</h1>
+      <div class="eyebrow">Customer Segmentation Report</div>
+      <h1>A Arquitetura da Retenção Preditiva</h1>
       <p class="hero-copy">
-        Envie o CSV, escolha o algoritmo e obtenha EDA, segmentação, personas, priorização e deck executivo em uma única análise.
+        K-Means segmenta os clientes em 4 perfis comportamentais. O RandomForest quantifica o risco individual dentro de cada segmento. Envie o CSV para acionar toda a pipeline.
       </p>
     </div>
     <div class="metric-grid" aria-label="Resumo do modelo">
@@ -1883,66 +1729,32 @@
   </div>
   </section>
 
-  <section class="tab-panel active" id="tab-upload" aria-label="Upload de CSV e execução de análise">
+  <section class="tab-panel active" id="tab-upload" aria-label="Upload de CSV para treino do modelo">
     <div class="upload-layout">
       <section class="card" aria-labelledby="upload-title">
-        <div class="section-label" id="upload-title">Análise completa</div>
+        <div class="section-label" id="upload-title">Upload CSV</div>
         <p class="upload-help">
-          Envie o arquivo <strong>gym_churn_us.csv</strong>, escolha o algoritmo e clique em
-          <strong>"Executar análise completa"</strong>. Este botão treina o modelo, executa a EDA,
-          gera segmentos, personas, priorização e deck executivo — todas as abas são preenchidas de uma vez.
+          Envie a base <strong>gym_churn_us.csv</strong> para treinar o modelo no backend. Depois do treino,
+          a aba de inferência passa a usar este modelo imediatamente.
         </p>
+
         <div class="field">
           <label for="csv-file">Arquivo CSV com a coluna Churn e as 11 features</label>
           <input type="file" id="csv-file" accept=".csv,text/csv"/>
         </div>
 
-        <div class="algo-select-wrap">
-          <label for="algo-select" style="font-size:0.82rem;font-weight:700;color:var(--muted-strong);">
-            Escolher algoritmo de análise
-          </label>
-          <select id="algo-select" class="algo-select" onchange="aoMudarAlgoritmo()">
-            <option value="kmeans">K-Means (segmentação)</option>
-            <option value="random_forest" selected>Random Forest (classificação)</option>
-            <option value="logistic_regression">Regressão Logística</option>
-            <option value="xgboost">XGBoost</option>
-            <option value="lightgbm">LightGBM</option>
-            <option value="business_rules_baseline">Baseline por Regra de Negócio</option>
-          </select>
-
-          <div class="cluster-field" id="cluster-field">
-            <label for="n-clusters">Número de clusters (K)</label>
-            <input type="number" id="n-clusters" value="4" min="2" max="6" step="1"/>
-          </div>
-
-          <div class="algo-help" id="algo-help"></div>
+        <div class="upload-btn-row">
+          <button id="train-btn" type="button" onclick="treinarModelo()">Treinar modelo com CSV</button>
+          <button type="button" class="secondary-btn" onclick="limparAnalise()">Limpar análise</button>
+          <button type="button" class="danger-btn" onclick="limparDataset()">Limpar dataset</button>
         </div>
-
-        <button class="analyze-btn" id="analyze-btn" type="button" onclick="executarAnalise()">
-          Executar análise completa
-        </button>
         <div class="upload-status" id="upload-status"></div>
-
-        <!-- select oculto para compatibilidade com treinarModelo() (aba Inferência) -->
-        <select id="train-algo-select" style="display:none;">
-          <option value="random_forest" selected>Random Forest</option>
-          <option value="logistic_regression">Regressão Logística</option>
-          <option value="xgboost">XGBoost</option>
-          <option value="lightgbm">LightGBM</option>
-        </select>
       </section>
 
       <aside class="card" aria-labelledby="training-title">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <div class="section-label" id="training-title" style="margin-bottom:0;">Resultado</div>
-          <button type="button" id="clear-btn" onclick="limparAnalise()"
-            style="font-size:0.78rem;font-weight:700;padding:5px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface-muted);color:var(--muted-strong);cursor:pointer;display:none;">
-            Limpar análise
-          </button>
-        </div>
-        <p class="upload-help" id="result-help-text">
-          Após executar a análise, os resultados aparecem aqui e nas abas Segmentação, Personas,
-          Priorização e Deck Executivo.
+        <div class="section-label" id="training-title">Resultado do treino</div>
+        <p class="upload-help">
+          As métricas aparecem aqui após o backend validar o CSV, limpar os dados e treinar o RandomForest.
         </p>
         <div class="training-metrics" id="training-metrics"></div>
       </aside>
@@ -2023,6 +1835,132 @@
           </article>
         </div>
 
+        <!-- PAGE 4 · Contexto metodológico -->
+        <article class="eda-section">
+          <h3>Contexto metodológico · Escolha do algoritmo de segmentação</h3>
+          <p class="eda-section-sub">Antes de rodar o K-Means, três alternativas foram avaliadas e descartadas com base nos requisitos de interpretabilidade e robustez com dados de academia.</p>
+          <div class="method-infographic">
+            <div class="method-card">
+              <div class="method-name">Cox Proportional Hazards</div>
+              <div class="method-verdict">Descartado</div>
+              <div class="method-desc">Ideal para análise de sobrevivência com censura. Requer dados longitudinais completos e não gera segmentos diretos — apenas fatores de risco individuais.</div>
+            </div>
+            <div class="method-card">
+              <div class="method-name">DBSCAN</div>
+              <div class="method-verdict">Descartado</div>
+              <div class="method-desc">Ótimo para clusters de forma arbitrária e detecção de ruído. Sensível aos parâmetros ε e min_samples, o que dificulta reprodutibilidade e interpretação de negócio.</div>
+            </div>
+            <div class="method-card">
+              <div class="method-name">GMM (Gaussian Mixture)</div>
+              <div class="method-verdict">Descartado</div>
+              <div class="method-desc">Flexível com distribuições suaves. Gera clusters sobrepostos, difíceis de comunicar para equipes de retenção que precisam de segmentos mutuamente exclusivos.</div>
+            </div>
+            <div class="method-card selected">
+              <div class="method-name">K-Means</div>
+              <div class="method-verdict">Escolhido · n_clusters=4 · n_init=30</div>
+              <div class="method-desc">Clusters esféricos, interpretáveis, com silhueta estável. Permite nomear personas e comunicar churn por segmento de forma clara. Compatível com o volume e estrutura da base.</div>
+            </div>
+            <div class="method-card" style="grid-column:span 2;">
+              <div class="method-name">Decisão de validação</div>
+              <div class="method-verdict">Silhouette score + Elbow Method</div>
+              <div class="method-desc">O número de clusters foi avaliado com o método do cotovelo (inércia) e confirmado com o silhouette score. k=4 apresentou a melhor separação interpretável sem fragmentar os perfis em grupos sem significado de negócio.</div>
+            </div>
+          </div>
+        </article>
+
+        <!-- PAGE 5 · Churn por contrato + janela de 30 dias -->
+        <article class="eda-section">
+          <h3>Churn por duração de contrato · A janela crítica de 30 dias</h3>
+          <p class="eda-section-sub">A análise da base revela padrão claro: quanto menor o contrato, maior o churn. E independente do contrato, o mês anterior ao vencimento concentra risco desproporcional.</p>
+          <div class="contract-window-grid">
+            <div class="window-card danger">
+              <div class="window-value">~45%</div>
+              <div class="window-label">Churn em contratos mensais (1 mês)</div>
+            </div>
+            <div class="window-card">
+              <div class="window-value">~25%</div>
+              <div class="window-label">Churn em contratos semestrais (6 meses)</div>
+            </div>
+            <div class="window-card safe">
+              <div class="window-value">~5%</div>
+              <div class="window-label">Churn em contratos anuais (12 meses)</div>
+            </div>
+            <div class="window-card danger">
+              <div class="window-value">2×</div>
+              <div class="window-label">Aumento de risco nos 30 dias antes do vencimento — a janela crítica de retenção</div>
+            </div>
+          </div>
+          <div class="callout" style="margin-top:14px;">
+            A janela de 30 dias antes do vencimento é o momento mais eficiente para intervenção: o cliente ainda está ativo, mas a decisão de renovar ou cancelar já está sendo formada. Ações tardias (após o vencimento) apresentam taxa de reversão muito menor.
+          </div>
+        </article>
+
+        <!-- PAGE 6 · Drivers protetores -->
+        <article class="eda-section">
+          <h3>Drivers protetores · O que reduz o risco de churn</h3>
+          <p class="eda-section-sub">Três fatores aparecem consistentemente como protetores na análise de correlação: vínculo social, indicação de origem e parceria empresarial. Cada um reduz churn por mecanismos distintos.</p>
+          <div class="driver-grid">
+            <div class="driver-card">
+              <div class="driver-name">Aulas em grupo (Group_visits)</div>
+              <div class="driver-effect">−18 pp</div>
+              <div class="driver-desc">Clientes que participam de aulas coletivas têm taxa de churn significativamente menor. O vínculo social com instrutores e colegas cria barreira emocional à saída — sair da academia significa sair também do grupo.</div>
+            </div>
+            <div class="driver-card">
+              <div class="driver-name">Indicação de amigos (Promo_friends)</div>
+              <div class="driver-effect">−14 pp</div>
+              <div class="driver-desc">Clientes que vieram por indicação de amigos já chegam integrados socialmente. A rede de relacionamento pré-existente acelera adaptação e reduz a probabilidade de abandono nos primeiros meses.</div>
+            </div>
+            <div class="driver-card">
+              <div class="driver-name">Convênio empresarial (Partner)</div>
+              <div class="driver-effect">−11 pp</div>
+              <div class="driver-desc">Clientes com desconto via empresa parceira têm menor sensibilidade ao preço e maior percepção de valor. O subsídio remove uma das principais justificativas de cancelamento.</div>
+            </div>
+          </div>
+        </article>
+
+        <!-- PAGE 7 · Top 5 sinais de retenção -->
+        <article class="eda-section">
+          <h3>Top 5 sinais de retenção · Correlação com permanência</h3>
+          <p class="eda-section-sub">Estes são os cinco sinais com maior força de associação à permanência do cliente — base para a seleção de features do modelo preditivo.</p>
+          <div class="retention-signal-list">
+            <div class="ret-signal">
+              <div class="ret-rank">1</div>
+              <div>
+                <div class="ret-signal-name">Lifetime (tempo como cliente)</div>
+                <div class="ret-signal-desc">O sinal mais forte. Clientes com mais tempo de relacionamento têm rotina consolidada e maior custo de troca. Cada mês adicional reduz significativamente a probabilidade de churn.</div>
+              </div>
+            </div>
+            <div class="ret-signal">
+              <div class="ret-rank">2</div>
+              <div>
+                <div class="ret-signal-name">Frequência atual (Avg_class_frequency_current_month)</div>
+                <div class="ret-signal-desc">Queda de frequência no mês atual é o sinal de alerta mais imediato. Clientes com frequência abaixo de 1 aula/semana têm risco substancialmente maior.</div>
+              </div>
+            </div>
+            <div class="ret-signal">
+              <div class="ret-rank">3</div>
+              <div>
+                <div class="ret-signal-name">Duração do contrato (Contract_period)</div>
+                <div class="ret-signal-desc">Contratos anuais criam comprometimento financeiro e psicológico. A migração de mensal para anual é uma das ações de retenção com maior impacto documentado na base.</div>
+              </div>
+            </div>
+            <div class="ret-signal">
+              <div class="ret-rank">4</div>
+              <div>
+                <div class="ret-signal-name">Frequência histórica (Avg_class_frequency_total)</div>
+                <div class="ret-signal-desc">A média histórica revela o padrão de comportamento estrutural do cliente. Clientes com histórico consistente tendem a retomar frequência após oscilações temporárias.</div>
+              </div>
+            </div>
+            <div class="ret-signal">
+              <div class="ret-rank">5</div>
+              <div>
+                <div class="ret-signal-name">Meses até vencer o contrato (Month_to_end_contract)</div>
+                <div class="ret-signal-desc">Quanto mais próximo do vencimento, maior o risco. Clientes com menos de 1 mês até o vencimento têm probabilidade de churn 2× maior — janela crítica de intervenção.</div>
+              </div>
+            </div>
+          </div>
+        </article>
+
         <article class="eda-insights" aria-labelledby="eda-insights-title">
           <div class="eda-insights-header">
             <div class="section-label" id="eda-insights-title">10 insights acionáveis</div>
@@ -2078,261 +2016,487 @@
     </div>
   </section>
 
-  <section class="tab-panel" id="tab-documentation" aria-label="Documentação técnica do Vitaliza">
-    <div class="doc-layout">
+  <!-- ══════════════════════════════════════════════
+       TAB · SEGMENTAÇÃO / PERSONAS
+  ══════════════════════════════════════════════ -->
+  <section class="tab-panel" id="tab-segmentacao" aria-label="Segmentação K-Means e personas">
+    <div class="eda-layout">
+      <section class="card">
+        <div class="section-label">Segmentação K-Means · 4 clusters</div>
+        <p class="upload-help">Após o upload do CSV, o K-Means (n_clusters=4, n_init=30) agrupa os clientes em 4 perfis distintos. Os resultados aparecem automaticamente aqui.</p>
+        <div class="seg-status waiting" id="seg-status">Aguardando upload do CSV na aba Upload.</div>
+      </section>
+
+      <section class="seg-dashboard" id="seg-dashboard">
+        <div class="cluster-grid" id="cluster-cards"></div>
+
+        <div class="chart-grid">
+          <article class="chart-card">
+            <h3 class="chart-title">Churn rate por cluster</h3>
+            <div class="bar-list" id="cluster-churn-chart"></div>
+          </article>
+          <article class="chart-card">
+            <h3 class="chart-title">Tamanho dos clusters</h3>
+            <div class="bar-list" id="cluster-size-chart"></div>
+          </article>
+        </div>
+
+        <article class="chart-card">
+          <h3 class="chart-title">Heatmap de features por cluster <small style="font-weight:600;color:var(--muted);font-size:0.76rem;">(0 = mínimo · 1 = máximo normalizado)</small></h3>
+          <div class="heatmap-wrap">
+            <table class="heatmap-table" id="cluster-heatmap">
+              <thead><tr><th>Feature</th><th>C0 · Em fuga</th><th>C1 · Leal anual</th><th>C2 · Engajado mensal</th><th>C3 · Em trânsito</th></tr></thead>
+              <tbody id="heatmap-body"></tbody>
+            </table>
+          </div>
+          <p class="plot-caption" style="margin-top:10px;">Silhouette score e inércia aparecem no card de métricas do treino após segmentação.</p>
+        </article>
+
+        <div class="leitura-block">
+          <h3>Leitura dos Segmentos</h3>
+          <p>O cluster de maior risco é o <strong>C0 · Recém-chegado em fuga, com ~78% de churn</strong>. Clientes neste segmento ainda não estabeleceram rotina, não têm vínculos sociais na academia e estão nos primeiros meses de contrato. Qualquer fricção — uma semana de falta, uma cobrança inesperada — é suficiente para o cancelamento definitivo.</p>
+          <div class="leitura-grid">
+            <div class="leitura-item">
+              <strong>C0 · Recém-chegado em fuga (~78% churn)</strong>
+              <span>Altíssimo risco. Primeiros meses, sem vínculos. Precisa de onboarding intensivo nos primeiros 30 dias.</span>
+            </div>
+            <div class="leitura-item">
+              <strong>C1 · Leal anual (baixo churn)</strong>
+              <span>Perfil de maior valor. Contrato longo, frequência consistente. Retenção quase orgânica — o risco é de negligência.</span>
+            </div>
+            <div class="leitura-item">
+              <strong>C2 · Engajado mensal (médio-baixo churn)</strong>
+              <span>Engajado mas sem comprometimento de longo prazo. Incentivo para migrar para contrato anual é a alavanca principal.</span>
+            </div>
+            <div class="leitura-item">
+              <strong>C3 · Médio em trânsito (médio churn)</strong>
+              <span>Zona cinza. Nem muito novo, nem muito leal. Frequência irregular. Precisa de atenção antes de entrar em silêncio.</span>
+            </div>
+          </div>
+        </div>
+
+        <article class="chart-card">
+          <h3 class="chart-title">Personas dos segmentos</h3>
+          <div class="persona-grid" id="persona-grid">
+            <div class="persona-card c0">
+              <div class="persona-header">
+                <div class="persona-badge c0">C0</div>
+                <div>
+                  <div class="persona-name">Recém-chegado em fuga</div>
+                  <div class="persona-churn-rate">Churn ~78% · Lifetime ≤ 2 meses</div>
+                </div>
+              </div>
+              <div class="persona-body">Entrou na academia com uma expectativa, mas ainda não encontrou o seu ritmo. Geralmente é o primeiro ou segundo mês de contrato. Sem amigos aqui, sem rotina definida, sem comprometimento de longo prazo. A menor fricção é suficiente para fazê-lo sair — uma semana de falta já virou ex-aluno. O risco é agravado pela ausência de vínculos sociais e pela falta de contrato que crie ancoragem financeira.</div>
+              <div class="persona-tags">
+                <span class="persona-tag">Lifetime curto</span>
+                <span class="persona-tag">Sem grupo</span>
+                <span class="persona-tag">Sem indicação</span>
+                <span class="persona-tag">Contrato mensal</span>
+              </div>
+            </div>
+            <div class="persona-card c1">
+              <div class="persona-header">
+                <div class="persona-badge c1">C1</div>
+                <div>
+                  <div class="persona-name">Leal anual</div>
+                  <div class="persona-churn-rate">Churn baixo · Contrato 12 meses</div>
+                </div>
+              </div>
+              <div class="persona-body">Está aqui faz tempo. Tem contrato anual, frequenta com consistência, participa de aulas coletivas e provavelmente veio por indicação de alguém. É o perfil que mais gosta desta academia e que mais custa a perder. A retenção quase se resolve sozinha — o risco real é de negligência: deixar de nutrir o relacionamento até ele se sentir invisível.</div>
+              <div class="persona-tags">
+                <span class="persona-tag">Lifetime longo</span>
+                <span class="persona-tag">Contrato anual</span>
+                <span class="persona-tag">Aulas em grupo</span>
+                <span class="persona-tag">Alta frequência</span>
+              </div>
+            </div>
+            <div class="persona-card c2">
+              <div class="persona-header">
+                <div class="persona-badge c2">C2</div>
+                <div>
+                  <div class="persona-name">Engajado mensal</div>
+                  <div class="persona-churn-rate">Churn médio-baixo · Contrato 1–3 meses</div>
+                </div>
+              </div>
+              <div class="persona-body">Frequenta bem, mas tem contrato mensal. É engajado nas aulas, gosta do ambiente, mas ainda não fechou um plano de longo prazo. O comprometimento financeiro é o elo mais fraco desta relação. Com o incentivo certo no momento certo, migra para anual — sem ele, pode sair por qualquer oferta concorrente ou por uma semana de ausência sem follow-up.</div>
+              <div class="persona-tags">
+                <span class="persona-tag">Frequência ativa</span>
+                <span class="persona-tag">Contrato curto</span>
+                <span class="persona-tag">Potencial de upgrade</span>
+              </div>
+            </div>
+            <div class="persona-card c3">
+              <div class="persona-header">
+                <div class="persona-badge c3">C3</div>
+                <div>
+                  <div class="persona-name">Médio em trânsito</div>
+                  <div class="persona-churn-rate">Churn médio · Lifetime intermediário</div>
+                </div>
+              </div>
+              <div class="persona-body">Está em uma zona cinza. Não é novo, não é leal. Frequenta de forma irregular, tem algum histórico na academia, mas a relação ainda não se consolidou. Pode ser reativado com esforço moderado — uma campanha de reengajamento, uma meta semanal, um convite para aula coletiva. Sem atenção, silencia gradualmente até o cancelamento.</div>
+              <div class="persona-tags">
+                <span class="persona-tag">Frequência irregular</span>
+                <span class="persona-tag">Histórico médio</span>
+                <span class="persona-tag">Reativável</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       TAB · PREDIÇÃO (RF COMPLEMENTAR)
+  ══════════════════════════════════════════════ -->
+  <section class="tab-panel" id="tab-predicao" aria-label="Predição RF por cluster">
+    <div class="eda-layout">
+      <section class="card">
+        <div class="section-label">Predição RF · Camada complementar</div>
+        <p class="upload-help">O RandomForest não gera segmentos — atua como camada validadora. Para cada cluster K-Means, ele calcula a probabilidade média de churn e a distribuição de risco dos membros.</p>
+        <div class="pred-status waiting" id="pred-status">Aguardando upload e segmentação do CSV.</div>
+      </section>
+      <section class="pred-dashboard" id="pred-dashboard">
+        <article class="chart-card">
+          <h3 class="chart-title">Probabilidade média de churn por cluster (RandomForest)</h3>
+          <div class="rf-grid" id="rf-grid"></div>
+          <p class="plot-caption" style="margin-top:14px;">
+            Alto risco ≥ 70% · Médio 40–69% · Baixo &lt; 40%. O RF não cria os segmentos — confirma o risco já identificado pelo K-Means com uma estimativa probabilística por membro.
+          </p>
+        </article>
+        <article class="chart-card">
+          <h3 class="chart-title">Como interpretar a camada RF</h3>
+          <div class="story-steps">
+            <div class="story-step"><div><strong>K-Means segmenta</strong><span>Os 4 clusters são criados pelo K-Means com base em comportamento (frequência, lifetime, contrato). São os perfis de negócio.</span></div></div>
+            <div class="story-step"><div><strong>RF quantifica o risco</strong><span>Para cada membro de cada cluster, o RandomForest calcula a probabilidade de churn. A média por cluster valida a leitura do K-Means.</span></div></div>
+            <div class="story-step"><div><strong>Complementaridade</strong><span>Se o K-Means identifica C0 como cluster de fuga e o RF confirma 70%+ de probabilidade média, a convergência fortalece a confiança na ação de retenção.</span></div></div>
+          </div>
+        </article>
+      </section>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       TAB · BASELINE
+  ══════════════════════════════════════════════ -->
+  <section class="tab-panel" id="tab-baseline" aria-label="Validação por regras de negócio">
+    <div class="eda-layout">
+      <section class="card">
+        <div class="section-label">Baseline · Validação por regras de negócio</div>
+        <p class="upload-help">Antes de confiar em ML, verificamos se regras simples já capturam o padrão de churn. O baseline é o piso mínimo de performance que o modelo precisa superar para justificar sua complexidade.</p>
+        <div class="baseline-status waiting" id="baseline-status">Aguardando upload do CSV na aba Upload.</div>
+        <div class="baseline-dashboard" id="baseline-dashboard">
+          <div class="baseline-grid" id="baseline-grid"></div>
+          <div class="convergence-note" id="baseline-convergence">
+            O RandomForest supera o melhor baseline por uma margem relevante — justificando o uso do modelo de ML para capturar interações não-lineares entre features que as regras simples não conseguem modelar.
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       TAB · MINI DECK
+  ══════════════════════════════════════════════ -->
+  <section class="tab-panel" id="tab-minideck" aria-label="Mini Deck de apresentação">
+    <section class="card">
+      <div class="section-label">Mini Deck · 8 slides</div>
+      <div class="deck-wrap">
+
+        <div class="deck-slide active" data-slide="0">
+          <div class="deck-slide-num">Slide 01 / 08</div>
+          <div class="deck-slide-title">Contexto</div>
+          <div class="deck-slide-body">
+            <p>Academias dependem de recorrência. A receita é previsível enquanto o cliente permanece — e invisível quando ele vai embora. O problema não é o cancelamento em si: é que o cancelamento já estava sinalizado dias, às vezes semanas antes.</p>
+            <ul>
+              <li><strong>Base:</strong> 4.000 clientes de uma academia americana (gym_churn_us.csv)</li>
+              <li><strong>Taxa de churn observada:</strong> ~26,5% da base cancelou</li>
+              <li><strong>Pergunta central:</strong> é possível identificar antecipadamente quem vai sair?</li>
+              <li><strong>Entrega:</strong> segmentação por perfil de risco + modelo preditivo de churn</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="deck-slide" data-slide="1">
+          <div class="deck-slide-num">Slide 02 / 08</div>
+          <div class="deck-slide-title">O que o dado mostra</div>
+          <div class="deck-slide-body">
+            <p>A análise exploratória revelou padrões consistentes que direcionaram tanto a escolha das features quanto o design dos clusters.</p>
+            <ul>
+              <li>Clientes com <strong>Lifetime ≤ 1 mês</strong> têm taxa de churn desproporcionalmente alta — o primeiro mês é crítico</li>
+              <li><strong>Queda de frequência recente</strong> é o sinal mais imediato de risco — quem reduz presença no mês atual está sinalizando saída</li>
+              <li>Contratos de <strong>1 mês têm ~45% de churn</strong>; contratos anuais têm ~5%</li>
+              <li>Os <strong>30 dias antes do vencimento</strong> concentram risco 2× maior — janela crítica de intervenção</li>
+              <li>Vínculos sociais (aulas em grupo, indicação) reduzem churn em até 18 pontos percentuais</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="deck-slide" data-slide="2">
+          <div class="deck-slide-num">Slide 03 / 08</div>
+          <div class="deck-slide-title">Metodologia</div>
+          <div class="deck-slide-body">
+            <p>A arquitetura técnica combina dois algoritmos com papéis distintos e complementares:</p>
+            <ul>
+              <li><strong>K-Means (segmentação):</strong> n_clusters=4, n_init=30, random_state=42. StandardScaler aplicado apenas nas 11 features (Churn excluído da normalização). Clusters validados por silhouette score e método do cotovelo.</li>
+              <li><strong>RandomForest (predição):</strong> 100 estimadores, random_state=42. Treinado com target Churn. Atua como camada complementar — não gera segmentos, quantifica probabilidade por membro.</li>
+              <li><strong>Separação clara de papéis:</strong> K-Means define perfis comportamentais; RF estima risco individual dentro de cada perfil.</li>
+              <li><strong>Alternativas avaliadas e descartadas:</strong> Cox (sem segmentos diretos), DBSCAN (instável), GMM (clusters sobrepostos).</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="deck-slide" data-slide="3">
+          <div class="deck-slide-num">Slide 04 / 08</div>
+          <div class="deck-slide-title">Jornada técnica</div>
+          <div class="deck-slide-body">
+            <p>O fluxo foi desenhado para ser executável em demonstração ao vivo:</p>
+            <ul>
+              <li><strong>1. Upload:</strong> usuário envia gym_churn_us.csv pela aba Upload</li>
+              <li><strong>2. Treino RF:</strong> backend treina RandomForest, retorna métricas (ROC-AUC, accuracy, recall)</li>
+              <li><strong>3. EDA:</strong> análise exploratória gerada automaticamente com gráficos e insights</li>
+              <li><strong>4. Segmentação K-Means:</strong> chamada ao endpoint /segment — clusters, heatmap, silhouette</li>
+              <li><strong>5. Camada RF por cluster:</strong> probabilidade média de churn e distribuição de risco por segmento</li>
+              <li><strong>6. Inferência individual:</strong> aba Inferência permite estimar risco de um cliente específico</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="deck-slide" data-slide="4">
+          <div class="deck-slide-num">Slide 05 / 08</div>
+          <div class="deck-slide-title">EDA · Achados principais</div>
+          <div class="deck-slide-body">
+            <p>A análise exploratória consolidou os sinais que alimentam tanto o modelo quanto os clusters:</p>
+            <ul>
+              <li><strong>Top feature:</strong> Lifetime — tempo como cliente é o maior preditor de permanência</li>
+              <li><strong>Alerta imediato:</strong> frequência atual abaixo de 1 aula/semana precede cancelamento</li>
+              <li><strong>Contrato é âncora:</strong> migrar de mensal para anual reduz churn em ~40 pontos percentuais</li>
+              <li><strong>Drivers protetores:</strong> aulas em grupo (−18 pp), indicação de amigos (−14 pp), convênio (−11 pp)</li>
+              <li><strong>Segmentos diagnósticos:</strong> early droppers, sleeping dogs e anuais com uso zero — três perfis de risco distintos</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="deck-slide" data-slide="5">
+          <div class="deck-slide-num">Slide 06 / 08</div>
+          <div class="deck-slide-title">Segmentação · 4 clusters</div>
+          <div class="deck-slide-body">
+            <p>O K-Means identificou 4 perfis comportamentais com taxas de churn distintas:</p>
+            <ul>
+              <li><strong>C0 · Recém-chegado em fuga (~78% churn):</strong> primeiros meses, sem rotina, sem vínculos — altíssimo risco. Ação: onboarding intensivo nos primeiros 30 dias</li>
+              <li><strong>C1 · Leal anual (baixo churn):</strong> contrato longo, frequência consistente, engajado socialmente — retenção orgânica. Ação: nutrição do relacionamento</li>
+              <li><strong>C2 · Engajado mensal (médio-baixo):</strong> ativo mas sem comprometimento longo. Ação: incentivo para migração para anual</li>
+              <li><strong>C3 · Médio em trânsito (médio):</strong> zona cinza, frequência irregular. Ação: reengajamento antes do silêncio definitivo</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="deck-slide" data-slide="6">
+          <div class="deck-slide-num">Slide 07 / 08</div>
+          <div class="deck-slide-title">Personas</div>
+          <div class="deck-slide-body">
+            <p>Cada cluster foi traduzido em uma persona com narrativa, perfil comportamental e sinal de entrada:</p>
+            <ul>
+              <li><strong>Recém-chegado em fuga:</strong> chegou com expectativa, ainda não encontrou o ritmo. Sem amigos, sem rotina. A menor fricção o faz sair.</li>
+              <li><strong>Leal anual:</strong> está aqui faz tempo. Tem contrato, frequenta, participa. O risco é de negligência — sentir-se invisível.</li>
+              <li><strong>Engajado mensal:</strong> frequenta bem, mas não tem plano longo. Com o incentivo certo, migra para anual.</li>
+              <li><strong>Médio em trânsito:</strong> nem novo, nem leal. Frequência irregular. Silencia gradualmente sem atenção.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="deck-slide" data-slide="7">
+          <div class="deck-slide-num">Slide 08 / 08</div>
+          <div class="deck-slide-title">Limitações</div>
+          <div class="deck-slide-body">
+            <p>O modelo e a segmentação têm limitações conhecidas que contextualizam sua aplicação:</p>
+            <ul>
+              <li><strong>Base americana:</strong> os padrões de comportamento podem não se traduzir diretamente para academias brasileiras com dinâmicas culturais distintas</li>
+              <li><strong>Clusters esféricos:</strong> K-Means assume clusters de formato esférico — perfis com sobreposição natural (ex: C2 e C3) podem ser melhor capturados por GMM em bases maiores</li>
+              <li><strong>Ausência de dados temporais:</strong> a base é um snapshot, não uma série temporal — mudanças de comportamento ao longo do tempo não são capturadas diretamente</li>
+              <li><strong>Features disponíveis:</strong> variáveis como NPS, histórico de reclamações e interações digitais poderiam enriquecer os clusters</li>
+              <li><strong>Validação de negócio:</strong> os clusters precisam ser validados com o time de operações — a segmentação é um ponto de partida, não uma conclusão</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="deck-nav">
+          <button class="deck-nav-btn" id="deck-prev" onclick="deckNavegar(-1)" disabled>← Anterior</button>
+          <div class="deck-dots" id="deck-dots"></div>
+          <button class="deck-nav-btn" id="deck-next" onclick="deckNavegar(1)">Próximo →</button>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       TAB · METODOLOGIA (renomeado de Documentação)
+  ══════════════════════════════════════════════ -->
+  <section class="tab-panel" id="tab-metodologia" aria-label="Metodologia da entrega">
+    <div class="met-layout">
       <section class="doc-story">
         <article class="doc-hero">
-          <div class="doc-kicker">Módulo 2 · Grupo 6 · Inteli MBA</div>
-          <h2>Vitaliza — A Arquitetura da Retenção Preditiva</h2>
+          <div class="doc-kicker">Entrega Módulo 2</div>
+          <h2>Da dúvida à arquitetura · A jornada metodológica</h2>
           <p>
-            Plataforma de análise preditiva de churn para academias. A partir de um CSV com histórico de clientes,
-            o sistema executa limpeza de dados, análise exploratória, segmentação por algoritmo selecionado,
-            geração de personas, priorização de segmentos e síntese em deck executivo — tudo em uma única análise.
+            A pergunta inicial não era "qual algoritmo usar" — era "o que o dado mostra sobre quem cancela".
+            A EDA revelou padrões claros: frequência, lifetime e tipo de contrato separam churners de retidos com
+            consistência. A partir daí, a decisão foi segmentar para entender perfis, depois predizer para quantificar risco.
           </p>
           <div class="doc-pill-row">
-            <span class="doc-pill">K-Means</span>
-            <span class="doc-pill">Random Forest</span>
-            <span class="doc-pill">XGBoost</span>
-            <span class="doc-pill">LightGBM</span>
-            <span class="doc-pill">Regressão Logística</span>
-            <span class="doc-pill">Regras de Negócio</span>
+            <span class="doc-pill">K-Means · 4 clusters</span>
+            <span class="doc-pill">RandomForest</span>
+            <span class="doc-pill">StandardScaler</span>
             <span class="doc-pill">FastAPI</span>
             <span class="doc-pill">Vercel + Render</span>
+            <span class="doc-pill">8 abas</span>
           </div>
         </article>
 
         <aside class="doc-summary" aria-label="Resumo da entrega">
-          <div class="doc-summary-item"><strong>~4.000</strong><span>clientes na base</span></div>
-          <div class="doc-summary-item"><strong>11</strong><span>features no modelo</span></div>
-          <div class="doc-summary-item"><strong>6</strong><span>algoritmos disponíveis</span></div>
-          <div class="doc-summary-item"><strong>7 abas</strong><span>pipeline completo em uma tela</span></div>
+          <div class="doc-summary-item">
+            <strong>4.000</strong>
+            <span>clientes na base original</span>
+          </div>
+          <div class="doc-summary-item">
+            <strong>4</strong>
+            <span>clusters K-Means · personas</span>
+          </div>
+          <div class="doc-summary-item">
+            <strong>11</strong>
+            <span>features · 2 algoritmos</span>
+          </div>
         </aside>
       </section>
 
       <div class="doc-grid">
-        <article class="doc-card accent">
-          <div class="doc-kicker">1. Problema</div>
-          <h3>Por que prever churn em academias?</h3>
-          <p>
-            Academias dependem de mensalidades recorrentes. Quando um cliente reduz frequência,
-            está próximo do fim do contrato ou interage pouco com a operação, o risco de cancelamento aumenta.
-            O objetivo é transformar esses sinais comportamentais em probabilidade de churn para apoiar ações de retenção.
-          </p>
-        </article>
-
-        <article class="doc-card">
-          <div class="doc-kicker">2. Dados</div>
-          <h3>Base utilizada</h3>
-          <ul>
-            <li>~4.000 clientes de uma academia americana.</li>
-            <li>Target: <strong>Churn</strong> — 0 (permaneceu) ou 1 (cancelou).</li>
-            <li>Sem valores nulos; duplicados removidos no pipeline de limpeza.</li>
-            <li><strong>gender</strong> e <strong>Phone</strong> descartadas por baixa relação com o cancelamento.</li>
-          </ul>
+        <article class="doc-card full">
+          <div class="doc-kicker">Jornada metodológica</div>
+          <h3>Do dado bruto à arquitetura de retenção preditiva</h3>
+          <div class="met-step-grid" style="margin-top:16px;">
+            <div class="met-step">
+              <div class="met-step-num">1</div>
+              <div class="met-step-content">
+                <strong>A dúvida inicial · O que o dado mostra?</strong>
+                <span>A EDA revelou que churn não é aleatório. Frequência recente, tempo como cliente e tipo de contrato separam churners de retidos com correlações fortes. A pergunta mudou: de "quem vai cancelar?" para "que tipo de cliente este é?".</span>
+              </div>
+            </div>
+            <div class="met-step">
+              <div class="met-step-num">2</div>
+              <div class="met-step-content">
+                <strong>A regra de negócio · Segmentar antes de predizer</strong>
+                <span>A decisão foi criar personas comportamentais antes de aplicar predição. Tratar todos os clientes como um grupo homogêneo ignora que um cliente do primeiro mês e um cliente de 12 meses têm jornadas completamente distintas — e precisam de ações distintas.</span>
+              </div>
+            </div>
+            <div class="met-step">
+              <div class="met-step-num">3</div>
+              <div class="met-step-content">
+                <strong>A escolha do K-Means · Por que não outras alternativas?</strong>
+                <span>Cox Proportional Hazards exige dados longitudinais completos e não gera segmentos diretos. DBSCAN é sensível a parâmetros e produz clusters difíceis de comunicar. GMM gera sobreposições que confundem equipes de retenção. O K-Means com k=4 produziu clusters estáveis, interpretáveis e validados pelo silhouette score.</span>
+              </div>
+            </div>
+            <div class="met-step">
+              <div class="met-step-num">4</div>
+              <div class="met-step-content">
+                <strong>As fragilidades reconhecidas · Onde o K-Means é limitado</strong>
+                <span>Clusters esféricos não capturam perfis com sobreposição natural. A base é americana — padrões comportamentais podem não se traduzir diretamente. O snapshot único não captura evolução temporal do cliente. Essas limitações justificam a camada complementar do RandomForest.</span>
+              </div>
+            </div>
+            <div class="met-step">
+              <div class="met-step-num">5</div>
+              <div class="met-step-content">
+                <strong>A decisão · RF como camada complementar</strong>
+                <span>O RandomForest não substitui o K-Means — ele o complementa. Os clusters definem os perfis comportamentais (quem é esse cliente?); o RF quantifica o risco individual dentro de cada perfil (qual a probabilidade de este cliente específico cancelar?). A convergência entre os dois fortalece a confiança na ação de retenção.</span>
+              </div>
+            </div>
+            <div class="met-step">
+              <div class="met-step-num">6</div>
+              <div class="met-step-content">
+                <strong>A complementaridade · Dois algoritmos, dois papéis</strong>
+                <span>K-Means responde "quem é este cliente?" com base em comportamento histórico agregado. O RF responde "qual a probabilidade deste cliente cancelar?" com base nas mesmas 11 features, mas em nível individual. Juntos, permitem priorizar intervenções: atuar primeiro no C0 com maior probabilidade RF.</span>
+              </div>
+            </div>
+          </div>
         </article>
 
         <article class="doc-card full">
-          <div class="doc-kicker">3. Pipeline de análise</div>
-          <h3>Do upload ao deck executivo em uma única execução</h3>
-          <div class="story-steps">
-            <div class="story-step"><div>
-              <strong>Upload e limpeza</strong>
-              <span>CSV enviado via aba Upload CSV. Backend valida colunas, remove duplicados e linhas inválidas.</span>
-            </div></div>
-            <div class="story-step"><div>
-              <strong>EDA automática</strong>
-              <span>Distribuições, correlações, curva de sobrevivência, coorte de churn e segmentos diagnósticos.</span>
-            </div></div>
-            <div class="story-step"><div>
-              <strong>Algoritmo selecionado</strong>
-              <span>K-Means agrupa por padrão comportamental. Modelos supervisionados estimam probabilidade de churn individual.</span>
-            </div></div>
-            <div class="story-step"><div>
-              <strong>Segmentação e Personas</strong>
-              <span>K-Means gera personas comportamentais. Algoritmos supervisionados geram perfis de risco de churn complementares.</span>
-            </div></div>
-            <div class="story-step"><div>
-              <strong>Priorização</strong>
-              <span>Segmentos classificados em três zonas: ação imediata, investimento estratégico e base âncora.</span>
-            </div></div>
-            <div class="story-step"><div>
-              <strong>Deck executivo</strong>
-              <span>Síntese navegável com contexto, achados, perfis e recomendações — pronto para apresentação.</span>
-            </div></div>
+          <div class="doc-kicker">Comparativo de algoritmos de segmentação</div>
+          <h3>Por que K-Means foi escolhido</h3>
+          <div class="algo-compare" style="margin-top:16px;">
+            <div class="algo-card">
+              <div class="algo-name">Cox Proportional Hazards</div>
+              <div class="algo-verdict">Descartado</div>
+              <div class="algo-desc">Requer dados longitudinais com eventos de censura bem definidos. Não gera clusters diretos — apenas fatores de risco individuais. Inadequado para o objetivo de criar personas de negócio.</div>
+            </div>
+            <div class="algo-card">
+              <div class="algo-name">DBSCAN</div>
+              <div class="algo-verdict">Descartado</div>
+              <div class="algo-desc">Sensível aos parâmetros ε e min_samples. Detecta outliers mas produz número variável de clusters difícil de fixar. Clusters de formato arbitrário complicam interpretação para equipes de retenção.</div>
+            </div>
+            <div class="algo-card">
+              <div class="algo-name">Gaussian Mixture (GMM)</div>
+              <div class="algo-verdict">Descartado</div>
+              <div class="algo-desc">Clusters soft com probabilidade de pertencimento — flexível mas gera sobreposições que dificultam a comunicação de perfis mutuamente exclusivos para o time de CRM.</div>
+            </div>
+            <div class="algo-card chosen">
+              <div class="algo-name">K-Means</div>
+              <div class="algo-verdict">Escolhido · n_clusters=4 · n_init=30</div>
+              <div class="algo-desc">Clusters esféricos e interpretáveis. Silhouette score validou k=4 como ponto ótimo. Permite nomear personas e comunicar churn por segmento de forma direta para equipes não-técnicas.</div>
+            </div>
+            <div class="algo-card" style="grid-column:span 2;">
+              <div class="algo-name">RandomForest (papel complementar)</div>
+              <div class="algo-verdict">Predição individual · não gera segmentos</div>
+              <div class="algo-desc">100 estimadores, random_state=42. Treinado no target Churn. Calcula probabilidade por membro, permitindo priorização dentro de cada cluster. ROC-AUC como métrica principal — mede capacidade de separar churners de retidos independente do threshold.</div>
+            </div>
           </div>
         </article>
 
         <article class="doc-card">
-          <div class="doc-kicker">4. Dashboard EDA</div>
-          <h3>O que a análise exploratória responde</h3>
-          <ul>
-            <li>Qual é a proporção de clientes que cancelaram?</li>
-            <li>Clientes com menor frequência recente cancelam mais?</li>
-            <li>Contratos longos e maior tempo como cliente ajudam na retenção?</li>
-            <li>Quais variáveis têm maior correlação com o churn?</li>
-          </ul>
-          <div class="callout">A aba Dashboard EDA exibe as visualizações calculadas sobre o CSV enviado — nenhum dado é pré-carregado.</div>
-        </article>
-
-        <article class="doc-card" id="doc-model-card">
-          <div class="doc-kicker">5. Algoritmos</div>
-          <h3>Seis abordagens, um pipeline unificado</h3>
-          <ul>
-            <li><strong>K-Means</strong> — segmentação não supervisionada por similaridade comportamental. Não usa a coluna Churn.</li>
-            <li><strong>Random Forest</strong> — ensemble de árvores. Alta precisão e boa interpretabilidade via importância de features.</li>
-            <li><strong>Regressão Logística</strong> — modelo linear probabilístico. Ideal para explicar decisões a stakeholders.</li>
-            <li><strong>XGBoost</strong> — gradient boosting otimizado para dados tabulares estruturados.</li>
-            <li><strong>LightGBM</strong> — boosting eficiente, especialmente em bases maiores.</li>
-            <li><strong>Regras de Negócio</strong> — lógica auditável sem ML, usada como baseline comparável.</li>
-          </ul>
-          <div class="callout">Execute a análise para ver as métricas do algoritmo selecionado atualizadas neste card.</div>
-        </article>
-
-        <article class="doc-card">
-          <div class="doc-kicker">6. Features</div>
-          <h3>Sinais que alimentam a previsão</h3>
+          <div class="doc-kicker">Features do modelo</div>
+          <h3>As 11 variáveis que alimentam K-Means e RF</h3>
           <div class="feature-list">
-            <span>Tempo como cliente: <strong>Lifetime</strong></span>
-            <span>Frequência recente: <strong>Avg_class_frequency_current_month</strong></span>
-            <span>Idade: <strong>Age</strong></span>
-            <span>Contrato: <strong>Contract_period</strong>, <strong>Month_to_end_contract</strong></span>
-            <span>Histórico total: <strong>Avg_class_frequency_total</strong></span>
-            <span>Gastos extras: <strong>Avg_additional_charges_total</strong></span>
-            <span>Vínculos sociais: <strong>Group_visits</strong>, <strong>Promo_friends</strong>, <strong>Partner</strong>, <strong>Near_Location</strong></span>
+            <span>Lifetime · tempo como cliente (meses)</span>
+            <span>Avg_class_frequency_current_month · frequência recente</span>
+            <span>Age · idade do cliente</span>
+            <span>Contract_period · duração do contrato</span>
+            <span>Month_to_end_contract · meses até o vencimento</span>
+            <span>Avg_class_frequency_total · frequência histórica</span>
+            <span>Avg_additional_charges_total · gastos extras</span>
+            <span>Group_visits · participação em aulas coletivas</span>
+            <span>Promo_friends · origem por indicação</span>
+            <span>Partner · convênio empresarial</span>
+            <span>Near_Location · proximidade da academia</span>
+          </div>
+          <div class="callout">
+            StandardScaler aplicado apenas nas 11 features para o K-Means. A coluna Churn é excluída da normalização — ela não entra na segmentação, apenas no treino supervisionado do RF.
           </div>
         </article>
 
         <article class="doc-card">
-          <div class="doc-kicker">7. Interpretação</div>
-          <h3>Da probabilidade para a ação</h3>
+          <div class="doc-kicker">Interpretação dos resultados</div>
+          <h3>Como ler os outputs da ferramenta</h3>
           <ul>
-            <li><strong>Baixo risco</strong>: probabilidade &lt; 40% — cliente aparentemente estável.</li>
-            <li><strong>Risco médio</strong>: probabilidade 40–69% — monitorar e engajar.</li>
-            <li><strong>Alto risco</strong>: probabilidade ≥ 70% — ação de retenção imediata recomendada.</li>
+            <li><strong>Silhouette score:</strong> quanto mais próximo de 1, mais separados os clusters. Abaixo de 0.3 indica sobreposição excessiva.</li>
+            <li><strong>Churn rate por cluster:</strong> taxa observada na base — o quanto do cluster histórico cancelou.</li>
+            <li><strong>Probabilidade RF:</strong> estimativa individual do RandomForest — o quanto este cliente específico tem chance de cancelar.</li>
+            <li><strong>Heatmap normalizado:</strong> valores de 0 a 1 por feature, normalizados entre clusters — revela o perfil relativo de cada segmento.</li>
           </ul>
           <div class="callout">
-            A aba Inferência estima o risco individual com pelo menos 2 campos preenchidos.
-            Campos ausentes são completados com a mediana calculada do CSV de treino.
-          </div>
-        </article>
-
-        <article class="doc-card">
-          <div class="doc-kicker">8. Arquitetura de deploy</div>
-          <h3>Como o sistema está implantado</h3>
-          <ul>
-            <li><strong>Frontend</strong>: SPA estática (HTML/CSS/JS puro) hospedada no Vercel — zero build.</li>
-            <li><strong>Backend</strong>: FastAPI em Python 3.11 hospedado no Render (plano free).</li>
-            <li><strong>Endpoints</strong>: <code>GET /</code> health · <code>POST /train</code> treino isolado · <code>POST /eda</code> análise exploratória · <code>POST /analyze</code> pipeline completo · <code>POST /predict</code> inferência individual.</li>
-            <li><strong>Atenção</strong>: o plano free do Render hiberna após inatividade. A primeira requisição pode levar 30–90s para o servidor acordar — o indicador no topo da tela reflete o estado atual.</li>
-          </ul>
-        </article>
-
-        <article class="doc-card full">
-          <div class="doc-kicker">9. Limitações metodológicas</div>
-          <h3>O que não podemos afirmar</h3>
-          <div class="limitations-list" id="doc-limitations">
-            <div class="limitation-item"><span>Não temos o motivo declarado de cancelamento — apenas o comportamento observado.</span></div>
-            <div class="limitation-item"><span>Os dados representam um snapshot mensal sem granularidade temporal contínua.</span></div>
-            <div class="limitation-item"><span>Correlação identificada não implica causalidade.</span></div>
-            <div class="limitation-item"><span>As hipóteses de driver por segmento precisam de validação experimental.</span></div>
-            <div class="limitation-item"><span>O modelo foi treinado em base americana — pode não generalizar sem recalibração local.</span></div>
-          </div>
-        </article>
-
-        <article class="doc-card full">
-          <div class="doc-kicker">5.1 Convergência dos algoritmos</div>
-          <h3>Quando algoritmos diferentes chegam ao mesmo lugar</h3>
-          <div class="convergence-block" id="doc-convergence">
-            Execute a análise completa para ver a síntese de convergência gerada dinamicamente para o algoritmo selecionado.
+            Baixo risco &lt; 40% · Médio risco 40–69% · Alto risco ≥ 70%. Ações de retenção devem priorizar membros de C0 com RF alto — a convergência dos dois sinais é o indicador mais confiável.
           </div>
         </article>
       </div>
     </div>
   </section>
-
-  <!-- ── SEGMENTAÇÃO / PERSONAS ───────────────────────────── -->
-  <section class="tab-panel" id="tab-segmentation" aria-label="Segmentação e Personas">
-    <div class="seg-layout">
-      <div class="analysis-placeholder" id="seg-placeholder">
-        <div style="margin-bottom:12px;">Nenhuma análise executada ainda.</div>
-        <div style="font-size:0.84rem;color:var(--muted-strong);margin-bottom:16px;">
-          Vá para a aba <strong>Upload CSV</strong>, envie o arquivo CSV, escolha o algoritmo e clique em <strong>"Executar análise completa"</strong>.
-        </div>
-        <button type="button" onclick="trocarAba('upload')" style="padding:8px 20px;border-radius:8px;border:none;background:var(--brand);color:#fff;font-weight:700;cursor:pointer;font-size:0.88rem;">
-          Ir para Upload CSV →
-        </button>
-      </div>
-      <div id="seg-content" style="display:none;">
-        <div class="seg-summary" id="seg-summary"></div>
-        <section class="card" aria-labelledby="seg-heatmap-title" style="margin-top:0;">
-          <div class="section-label" id="seg-heatmap-title">Heatmap de segmentos</div>
-          <div class="heatmap-wrap">
-            <table class="heatmap-table" id="seg-heatmap"></table>
-          </div>
-        </section>
-        <section class="card" aria-labelledby="seg-cards-title">
-          <div class="section-label" id="seg-cards-title">Segmentos identificados</div>
-          <div id="seg-cards"></div>
-        </section>
-        <section class="card" aria-labelledby="personas-section-title" style="margin-top:16px;">
-          <div id="personas-section-desc"></div>
-          <div class="persona-grid" id="personas-grid"></div>
-        </section>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── PRIORIZAÇÃO ────────────────────────────────────────── -->
-  <section class="tab-panel" id="tab-prioritization" aria-label="Priorização de segmentos">
-    <div class="priority-layout">
-      <div class="analysis-placeholder" id="priority-placeholder">
-        <div style="margin-bottom:12px;">Nenhuma análise executada ainda.</div>
-        <div style="font-size:0.84rem;color:var(--muted-strong);margin-bottom:16px;">
-          Vá para a aba <strong>Upload CSV</strong>, envie o arquivo CSV, escolha o algoritmo e clique em <strong>"Executar análise completa"</strong>.
-        </div>
-        <button type="button" onclick="trocarAba('upload')" style="padding:8px 20px;border-radius:8px;border:none;background:var(--brand);color:#fff;font-weight:700;cursor:pointer;font-size:0.88rem;">
-          Ir para Upload CSV →
-        </button>
-      </div>
-      <div id="priority-content" style="display:none;">
-        <div class="priority-zones" id="priority-zones"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── DECK EXECUTIVO ─────────────────────────────────────── -->
-  <section class="tab-panel" id="tab-deck" aria-label="Deck executivo">
-    <div class="deck-layout">
-      <div class="analysis-placeholder" id="deck-placeholder">
-        <div style="margin-bottom:12px;">Nenhuma análise executada ainda.</div>
-        <div style="font-size:0.84rem;color:var(--muted-strong);margin-bottom:16px;">
-          Vá para a aba <strong>Upload CSV</strong>, envie o arquivo CSV, escolha o algoritmo e clique em <strong>"Executar análise completa"</strong>.
-        </div>
-        <button type="button" onclick="trocarAba('upload')" style="padding:8px 20px;border-radius:8px;border:none;background:var(--brand);color:#fff;font-weight:700;cursor:pointer;font-size:0.88rem;">
-          Ir para Upload CSV →
-        </button>
-      </div>
-      <div id="deck-content" style="display:none;">
-        <div class="deck-nav">
-          <div class="deck-counter" id="deck-counter">Slide 1 de 10</div>
-          <div class="deck-nav-btns">
-            <button class="deck-nav-btn" type="button" id="deck-prev" onclick="navegarSlide(-1)" disabled>← Anterior</button>
-            <button class="deck-nav-btn" type="button" id="deck-next" onclick="navegarSlide(1)">Próximo →</button>
-          </div>
-        </div>
-        <div class="deck-slide" id="deck-slide"></div>
-        <div class="deck-thumbnails" id="deck-thumbnails"></div>
-      </div>
-    </div>
-  </section>
-
 </main>
 
 <script>
   // ==================================================
   // Troque pela URL do seu backend no Render
   // ==================================================
-  const API_URL = "https://modulo2-g6-bwhg.onrender.com";
+  const API_URL = "https://modulo2-g6.onrender.com";
+
+  let csvRowsCache = null;
 
   // Estado dos toggles
   const toggleValues = {
@@ -2387,26 +2551,19 @@
       return;
     }
 
-    const trainAlgo = document.getElementById("train-algo-select")?.value || "random_forest";
     const formData = new FormData();
     formData.append("file", fileInput.files[0]);
-    formData.append("algorithm", trainAlgo);
 
     btn.disabled = true;
     btn.textContent = "Treinando modelo...";
-    statusEl.textContent = "Enviando… O servidor pode levar até 60s na primeira requisição (Render free tier hiberna por inatividade).";
     edaStatusEl.className = "eda-status waiting";
     edaStatusEl.textContent = "Aguardando conclusão do treino para carregar o Dashboard EDA...";
 
-    const trainController = new AbortController();
-    const trainTimeoutId = setTimeout(() => trainController.abort(), 120000);
     try {
       const res = await fetch(`${API_URL}/train`, {
         method: "POST",
         body: formData,
-        signal: trainController.signal,
       });
-      clearTimeout(trainTimeoutId);
 
       if (!res.ok) throw new Error(await obterMensagemErro(res));
 
@@ -2420,14 +2577,10 @@
         rocAuc: data.metrics.roc_auc,
       });
       await carregarDashboardEda(fileInput.files[0]);
+      await carregarSegmentacao(fileInput.files[0]);
     } catch (err) {
-      clearTimeout(trainTimeoutId);
       statusEl.className = "upload-status error";
-      if (err.name === "AbortError") {
-        statusEl.textContent = "Tempo esgotado (2 min). Aguarde 30s e tente novamente.";
-      } else {
-        statusEl.textContent = `Erro de conexão com o backend (${err.message}). Verifique se o serviço no Render está ativo.`;
-      }
+      statusEl.textContent = `Erro ao treinar modelo: ${err.message}`;
     } finally {
       btn.disabled = false;
       btn.textContent = "Treinar modelo com CSV";
@@ -2577,6 +2730,7 @@
 
     try {
       const rows = parsearCsvNumerico(await file.text());
+      csvRowsCache = rows;
       const extensoes = criarExtensoesEdaLocal(rows);
       return { ...data, ...extensoes };
     } catch (err) {
@@ -3314,524 +3468,266 @@
     }).format(value);
   }
 
-  // ── ALGO SELECTOR ──────────────────────────────────────────
-  const ALGO_HELP_TEXTS = {
-    kmeans: "Segmentação não supervisionada por similaridade comportamental. Não usa a coluna Churn para treino — agrupa por padrão de uso.",
-    random_forest: "Ensemble de árvores de decisão. Alta precisão, boa interpretabilidade via importância de features. Padrão recomendado.",
-    logistic_regression: "Modelo linear probabilístico. Alta interpretabilidade via coeficientes — ideal para explicar decisões a stakeholders.",
-    xgboost: "Gradient boosting otimizado. Alta performance preditiva em dados tabulares estruturados.",
-    lightgbm: "Gradient boosting eficiente. Rápido e preciso, especialmente em bases com mais de 10 mil registros.",
-    business_rules_baseline: "Lógica auditável sem ML. Classifica risco por pontuação de fatores — útil como referência interpretável e comparável.",
-  };
-
-  function aoMudarAlgoritmo() {
-    const algo = document.getElementById("algo-select").value;
-    const helpEl = document.getElementById("algo-help");
-    const clusterEl = document.getElementById("cluster-field");
-    helpEl.textContent = ALGO_HELP_TEXTS[algo] || "";
-    helpEl.classList.toggle("visible", Boolean(ALGO_HELP_TEXTS[algo]));
-    clusterEl.classList.toggle("visible", algo === "kmeans");
-  }
-
-  // ── ANÁLISE COMPLETA ───────────────────────────────────────
-  let _deckSlides = [];
-  let _deckIndex = 0;
-
-  async function executarAnalise() {
-    const fileEl = document.getElementById("csv-file");
-    const statusEl = document.getElementById("upload-status");
-    const btn = document.getElementById("analyze-btn");
-
-    if (!fileEl.files.length) {
-      statusEl.textContent = "Selecione um arquivo CSV antes de executar.";
-      statusEl.style.color = "var(--high)";
-      return;
-    }
-
-    statusEl.textContent = "Enviando… O servidor pode levar até 60s para responder na primeira requisição (Render free tier hiberna por inatividade).";
-    statusEl.style.color = "var(--muted-strong)";
-    btn.disabled = true;
-    btn.textContent = "Processando…";
-
-    const algo = document.getElementById("algo-select").value;
-    const nClusters = parseInt(document.getElementById("n-clusters").value) || 4;
-    const form = new FormData();
-    form.append("file", fileEl.files[0]);
-    form.append("algorithm", algo);
-    form.append("n_clusters", nClusters);
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 120000);
-    try {
-      const res = await fetch(`${API_URL}/analyze`, { method: "POST", body: form, signal: controller.signal });
-      clearTimeout(timeoutId);
-      if (!res.ok) throw new Error(await obterMensagemErro(res));
-      const data = await res.json();
-      exibirResultadoAnalise(data);
-      statusEl.textContent = "Análise concluída com sucesso.";
-      statusEl.style.color = "var(--low)";
-    } catch (err) {
-      clearTimeout(timeoutId);
-      let msg;
-      if (err.name === "AbortError") {
-        msg = "Tempo esgotado (2 min). Aguarde 30s e tente novamente.";
-      } else if (err.message.includes("Not Found") || err.message.includes("404")) {
-        msg = "Backend desatualizado: o endpoint /analyze ainda não existe no Render. Acesse dashboard.render.com, encontre o serviço, clique em 'Manual Deploy → Deploy latest commit' e aguarde o redeploy.";
-      } else {
-        msg = `Erro de conexão com o backend (${err.message}). Verifique se o serviço no Render está ativo.`;
-      }
-      statusEl.textContent = msg;
-      statusEl.style.color = "var(--high)";
-    } finally {
-      btn.disabled = false;
-      btn.textContent = "Executar análise completa";
-    }
-  }
-
-  function exibirResultadoAnalise(data) {
-    const summary = (data.eda || {}).summary || {};
-    if (summary.customers) {
-      document.getElementById("hero-customers").textContent = Number(summary.customers).toLocaleString("pt-BR");
-    }
-    if (summary.churn_rate != null) {
-      document.getElementById("hero-churn-rate").textContent = `${(summary.churn_rate * 100).toFixed(1)}%`;
-    }
-
-    const metricsEl = document.getElementById("training-metrics");
-    const metrics = data.metrics || {};
-    const rotulos = {
-      rows_used: "Linhas usadas", test_rows: "Linhas de teste",
-      churn_rate: "Taxa de churn", roc_auc: "ROC-AUC",
-      accuracy: "Accuracy", precision: "Precision", recall: "Recall",
-      silhouette: "Silhouette", inertia: "Inertia",
-      f1_score: "F1 Score", log_loss: "Log Loss",
-    };
-    metricsEl.replaceChildren();
-    Object.entries(metrics).forEach(([k, v]) => {
-      const card = document.createElement("div");
-      const lbl = document.createElement("div");
-      const val = document.createElement("div");
-      const cap = document.createElement("div");
-      card.className = "metric-card";
-      lbl.className = "metric-label";
-      val.className = "metric-value";
-      cap.className = "metric-caption";
-      lbl.textContent = rotulos[k] || k.replace(/_/g, " ");
-      val.textContent = typeof v === "number" ? v.toFixed(4) : v;
-      cap.textContent = "análise atual";
-      card.append(lbl, val, cap);
-      metricsEl.appendChild(card);
-    });
-    if (Object.keys(metrics).length) metricsEl.className = "training-metrics active";
-
-    const helpText = document.getElementById("result-help-text");
-    if (helpText) helpText.style.display = "none";
-
-    const clearBtn = document.getElementById("clear-btn");
-    if (clearBtn) clearBtn.style.display = "";
-
-    const renderSteps = [
-      () => data.eda && exibirDashboardEda({ ...data.eda, cleaning: data.eda.cleaning || {} }),
-      () => exibirSegmentacao(data),
-      () => exibirPersonas(data.personas || [], data.algorithm),
-      () => exibirPriorizacao(data.segments || [], data.algorithm),
-      () => exibirDeck(data.deck_sections || []),
-      () => atualizarDocumentacaoDinamica(data.documentation || {}, data.metrics || {}),
-    ];
-    renderSteps.forEach((fn, i) => {
-      try { fn(); } catch (e) { console.error(`Render step ${i} failed:`, e); }
-    });
-  }
-
-  // ── SEGMENTAÇÃO ────────────────────────────────────────────
-  function exibirSegmentacao(data) {
-    const placeholder = document.getElementById("seg-placeholder");
-    const content = document.getElementById("seg-content");
-    const segments = data.segments || [];
-    const heatmap = data.heatmap || [];
-
-    placeholder.style.display = "none";
-    content.style.display = "";
-
-    const summaryEl = document.getElementById("seg-summary");
-    summaryEl.replaceChildren();
-    const totalClients = segments.reduce((a, s) => a + (s.count || 0), 0);
-    const highRiskCount = segments.filter(s => (s.churn_rate || 0) >= 0.6).reduce((a, s) => a + (s.count || 0), 0);
-    const avgChurn = segments.length ? segments.reduce((a, s) => a + (s.churn_rate || 0), 0) / segments.length : 0;
-    [
-      { label: "Segmentos", value: segments.length, caption: "identificados pelo algoritmo" },
-      { label: "Alto risco", value: highRiskCount.toLocaleString("pt-BR"), caption: "clientes com churn ≥ 60%" },
-      { label: "Churn médio", value: `${(avgChurn * 100).toFixed(1)}%`, caption: "média entre segmentos" },
-    ].forEach(({ label, value, caption }) => {
-      const card = document.createElement("div");
-      card.className = "seg-card";
-      card.innerHTML = `<div class="seg-card-label">${label}</div><div class="seg-card-value">${value}</div><div class="seg-card-caption">${caption}</div>`;
-      summaryEl.appendChild(card);
-    });
-
-    const table = document.getElementById("seg-heatmap");
-    table.replaceChildren();
-    if (heatmap.length) {
-      const features = Object.keys(heatmap[0]).filter(k => k !== "segment" && k !== "label" && k !== "churn_rate");
-      const thead = table.createTHead();
-      const hr = thead.insertRow();
-      const thLbl = document.createElement("th");
-      thLbl.textContent = "Segmento";
-      hr.appendChild(thLbl);
-      features.forEach(feat => {
-        const th = document.createElement("th");
-        th.textContent = traduzirFeature(feat);
-        hr.appendChild(th);
-      });
-      const tbody = table.createTBody();
-      heatmap.forEach(row => {
-        const tr = tbody.insertRow();
-        const td = tr.insertCell();
-        td.textContent = row.label || row.segment || "—";
-        features.forEach(feat => {
-          const cell = tr.insertCell();
-          const val = row[feat];
-          const span = document.createElement("span");
-          span.className = "hm-cell";
-          span.textContent = typeof val === "number" ? val.toFixed(2) : (val ?? "—");
-          if (typeof val === "number") {
-            const intensity = Math.min(Math.abs(val), 1);
-            span.style.background = `rgba(37,99,235,${(intensity * 0.38).toFixed(2)})`;
-            span.style.color = intensity > 0.6 ? "#fff" : "inherit";
-          }
-          cell.appendChild(span);
-        });
-      });
-    }
-
-    const cardsEl = document.getElementById("seg-cards");
-    cardsEl.replaceChildren();
-    cardsEl.style.cssText = "display:grid;gap:12px;";
-    segments.forEach(seg => {
-      const card = document.createElement("div");
-      card.className = "segment-card";
-      const churnStr = seg.churn_rate != null ? ` · ${(seg.churn_rate * 100).toFixed(1)}% churn` : "";
-      const riskLabel = seg.risk_label || seg.label || "Segmento";
-      const countStr = (seg.count || 0).toLocaleString("pt-BR");
-      card.innerHTML = `<strong>${riskLabel}</strong><span>${countStr} clientes${churnStr}</span>`;
-      if (seg.features && Object.keys(seg.features).length) {
-        const featEl = document.createElement("span");
-        featEl.style.fontSize = "0.78rem";
-        featEl.textContent = Object.entries(seg.features)
-          .map(([k, v]) => `${traduzirFeature(k)}: ${typeof v === "number" ? v.toFixed(2) : v}`)
-          .join(" · ");
-        card.appendChild(featEl);
-      }
-      cardsEl.appendChild(card);
-    });
-  }
-
-  // ── PERSONAS (dentro da aba Segmentação / Personas) ────────
-  function exibirPersonas(personas, algorithm) {
-    const grid = document.getElementById("personas-grid");
-    if (!grid) return;
-    grid.replaceChildren();
-
-    const isKmeans = algorithm === "kmeans";
-
-    // Section header block (create or reuse)
-    let descEl = document.getElementById("personas-section-desc");
-    if (!descEl) {
-      descEl = document.createElement("div");
-      descEl.id = "personas-section-desc";
-      descEl.style.marginBottom = "20px";
-      grid.parentNode.insertBefore(descEl, grid);
-    }
-    if (isKmeans) {
-      descEl.innerHTML = `
-        <div class="section-label">Personas Comportamentais</div>
-        <p style="font-size:0.88rem;color:var(--muted-strong);margin-top:6px;line-height:1.55;">
-          Perfis derivados da segmentação <strong>K-Means</strong>. Cada persona representa um padrão de uso e vínculo com a academia — quem é o cliente, não só o risco que representa.
-        </p>`;
-    } else {
-      const algoLabels = {
-        random_forest: "Random Forest",
-        logistic_regression: "Regressão Logística",
-        xgboost: "XGBoost",
-        lightgbm: "LightGBM",
-        business_rules_baseline: "Baseline por Regra de Negócio",
-      };
-      descEl.innerHTML = `
-        <div class="section-label">Perfis de Risco de Churn</div>
-        <p style="font-size:0.88rem;color:var(--muted-strong);margin-top:6px;line-height:1.55;">
-          Perfis gerados pelo modelo <strong>${algoLabels[algorithm] || algorithm}</strong>, baseados na probabilidade de churn prevista.
-          Complementam as personas comportamentais do K-Means: enquanto o K-Means responde <em>"quem é o cliente"</em>, este modelo responde <em>"qual o risco de ele cancelar"</em>.
-        </p>`;
-    }
-
-    personas.forEach(p => {
-      const churnPct = p.churn_rate != null ? p.churn_rate * 100 : null;
-      const riskLevel = churnPct == null ? "low" : churnPct >= 65 ? "high" : churnPct >= 35 ? "medium" : "low";
-      const badgeClass = isKmeans ? "badge-cluster" : `badge-${riskLevel}`;
-
-      const card = document.createElement("article");
-      card.className = "persona-card";
-
-      const header = document.createElement("div");
-      header.className = "persona-header";
-      const nameEl = document.createElement("div");
-      nameEl.className = "persona-name";
-      nameEl.textContent = p.name || "Perfil";
-      const badge = document.createElement("span");
-      badge.className = `persona-segment-badge ${badgeClass}`;
-      badge.textContent = p.segment_label || "Segmento";
-      header.append(nameEl, badge);
-      card.appendChild(header);
-
-      const rowDefs = isKmeans
-        ? [
-            { label: "Contexto", text: p.setup },
-            { label: "Conflito", text: p.conflict },
-            { label: "Resolução", text: p.resolution },
-          ]
-        : [
-            { label: "Perfil de risco", text: p.setup },
-            { label: "Sinal de alerta", text: p.conflict },
-            { label: "Recomendação", text: p.resolution },
-          ];
-
-      rowDefs.forEach(({ label, text }) => {
-        if (!text) return;
-        const row = document.createElement("div");
-        row.className = "persona-row";
-        row.innerHTML = `<div class="persona-row-label">${label}</div><div class="persona-row-text">${text}</div>`;
-        card.appendChild(row);
-      });
-
-      if (p.evidence) {
-        const ev = document.createElement("div");
-        ev.className = "persona-evidence";
-        ev.textContent = p.evidence;
-        card.appendChild(ev);
-      }
-
-      [
-        { label: "Decisão", text: p.decision },
-        { label: "Limite", text: p.limit },
-      ].forEach(({ label, text }) => {
-        if (!text) return;
-        const row = document.createElement("div");
-        row.className = "persona-row";
-        row.innerHTML = `<div class="persona-row-label">${label}</div><div class="persona-row-text">${text}</div>`;
-        card.appendChild(row);
-      });
-
-      grid.appendChild(card);
-    });
-  }
-
-  // ── PRIORIZAÇÃO ────────────────────────────────────────────
-  function exibirPriorizacao(segments, algorithm) {
-    const placeholder = document.getElementById("priority-placeholder");
-    const content = document.getElementById("priority-content");
-    const zonesEl = document.getElementById("priority-zones");
-
-    placeholder.style.display = "none";
-    content.style.display = "";
-    zonesEl.replaceChildren();
-
-    const sorted = [...segments].sort((a, b) => (b.churn_rate || 0) - (a.churn_rate || 0));
-    const zones = [
-      {
-        cls: "immediate",
-        label: "Ação Imediata",
-        title: "Alto risco — intervir agora",
-        desc: "Clientes com contrato próximo do vencimento, queda de frequência e baixo vínculo. Cada semana sem contato aumenta o risco de cancelamento.",
-        segs: sorted.filter(s => (s.churn_rate || 0) >= 0.55),
-      },
-      {
-        cls: "strategic",
-        label: "Investimento Estratégico",
-        title: "Risco médio — fidelizar",
-        desc: "Potencial de retenção via onboarding estruturado, aulas em grupo e benefícios de indicação de amigos.",
-        segs: sorted.filter(s => (s.churn_rate || 0) >= 0.3 && (s.churn_rate || 0) < 0.55),
-      },
-      {
-        cls: "monitor",
-        label: "Monitorar e Preservar",
-        title: "Baixo risco — base âncora",
-        desc: "Clientes estáveis e engajados. Sustentam o negócio e servem como referência de comportamento ideal.",
-        segs: sorted.filter(s => (s.churn_rate || 0) < 0.3),
-      },
-    ];
-
-    zones.forEach(({ cls, label, title, desc, segs }) => {
-      const zone = document.createElement("div");
-      zone.className = `priority-zone ${cls}`;
-      const segItems = segs.map(s => {
-        const churnStr = s.churn_rate != null ? ` · ${(s.churn_rate * 100).toFixed(1)}% churn` : "";
-        const segLabel = s.risk_label || s.label || "Segmento";
-        return `<div class="priority-seg-item">${segLabel} · ${(s.count || 0).toLocaleString("pt-BR")} clientes${churnStr}</div>`;
-      }).join("") || `<div class="priority-seg-item" style="opacity:0.5">Nenhum segmento nesta faixa</div>`;
-      zone.innerHTML = `
-        <div class="priority-zone-label">${label}</div>
-        <div class="priority-zone-title">${title}</div>
-        <div class="priority-zone-desc">${desc}</div>
-        <div class="priority-zone-segments">${segItems}</div>`;
-      zonesEl.appendChild(zone);
-    });
-  }
-
-  // ── DECK EXECUTIVO ─────────────────────────────────────────
-  function exibirDeck(slides) {
-    const placeholder = document.getElementById("deck-placeholder");
-    const content = document.getElementById("deck-content");
-    if (!slides.length) {
-      placeholder.style.display = "";
-      content.style.display = "none";
-      return;
-    }
-    placeholder.style.display = "none";
-    content.style.display = "";
-    _deckSlides = slides;
-    _deckIndex = 0;
-
-    const thumbsEl = document.getElementById("deck-thumbnails");
-    thumbsEl.replaceChildren();
-    slides.forEach((slide, i) => {
-      const btn = document.createElement("button");
-      btn.className = "deck-thumb" + (i === 0 ? " active" : "");
-      btn.type = "button";
-      btn.textContent = `${slide.number}. ${slide.tag}`;
-      btn.onclick = () => { _deckIndex = i; renderizarSlide(); };
-      thumbsEl.appendChild(btn);
-    });
-    renderizarSlide();
-  }
-
-  function renderizarSlide() {
-    const slide = _deckSlides[_deckIndex];
-    if (!slide) return;
-    const total = _deckSlides.length;
-    document.getElementById("deck-counter").textContent = `Slide ${_deckIndex + 1} de ${total}`;
-    document.getElementById("deck-prev").disabled = _deckIndex === 0;
-    document.getElementById("deck-next").disabled = _deckIndex === total - 1;
-    const slideEl = document.getElementById("deck-slide");
-    slideEl.innerHTML = `
-      <div class="slide-tag">${slide.tag}</div>
-      <div class="slide-header">
-        <div class="slide-title">${slide.title}</div>
-        <div class="slide-subtitle">${slide.subtitle || ""}</div>
-      </div>
-      <div class="slide-content">${(slide.content || "").replace(/\n/g, "<br>")}</div>`;
-    document.querySelectorAll(".deck-thumb").forEach((btn, i) => {
-      btn.classList.toggle("active", i === _deckIndex);
-    });
-  }
-
-  function navegarSlide(dir) {
-    _deckIndex = Math.max(0, Math.min(_deckSlides.length - 1, _deckIndex + dir));
-    renderizarSlide();
-  }
-
-  // ── DOCUMENTAÇÃO DINÂMICA ──────────────────────────────────
-  function atualizarDocumentacaoDinamica(documentation, metrics) {
-    const card = document.getElementById("doc-model-card");
-    if (card) {
-      const name = documentation.algorithm_name || "Algoritmo";
-      const section = documentation.model_section || {};
-      const metricsHtml = Object.entries(metrics)
-        .filter(([, v]) => typeof v === "number" || typeof v === "string")
-        .map(([k, v]) => {
-          const label = k.replace(/_/g, " ");
-          const formatted = typeof v === "number" ? v.toFixed(4) : v;
-          return `<li><strong>${label}</strong>: ${formatted}</li>`;
-        }).join("");
-      card.innerHTML = `
-        <div class="doc-kicker">5. Modelo</div>
-        <h3>${section.title || name}</h3>
-        <p>${section.text || ""}</p>
-        ${metricsHtml ? `<ul style="margin-top:12px;">${metricsHtml}</ul>` : ""}
-        <div class="callout" style="margin-top:12px;">
-          O treino acontece após o upload do CSV com divisão estratificada de treino e teste.
-        </div>`;
-    }
-
-    const convergenceEl = document.getElementById("doc-convergence");
-    if (convergenceEl && documentation.convergence) {
-      convergenceEl.innerHTML = `<strong>Síntese:</strong> ${documentation.convergence}`;
-    }
-
-    const limEl = document.getElementById("doc-limitations");
-    if (limEl && Array.isArray(documentation.limitations) && documentation.limitations.length) {
-      limEl.replaceChildren();
-      documentation.limitations.forEach(lim => {
-        const item = document.createElement("div");
-        item.className = "limitation-item";
-        const span = document.createElement("span");
-        span.textContent = lim;
-        item.appendChild(span);
-        limEl.appendChild(item);
-      });
-    }
-  }
-
-  // ── LIMPAR ANÁLISE ─────────────────────────────────────────
+  // ── LIMPAR ──────────────────────────────────────
   function limparAnalise() {
-    ["seg", "priority", "deck"].forEach(id => {
-      const placeholder = document.getElementById(`${id}-placeholder`);
-      const content = document.getElementById(`${id}-content`);
-      if (placeholder) placeholder.style.display = "";
-      if (content) content.style.display = "none";
-    });
+    const uploadStatus = document.getElementById("upload-status");
+    uploadStatus.className = "upload-status";
+    uploadStatus.textContent = "";
 
     const metricsEl = document.getElementById("training-metrics");
-    if (metricsEl) {
-      metricsEl.replaceChildren();
-      metricsEl.className = "training-metrics";
-    }
+    metricsEl.className = "training-metrics";
+    metricsEl.replaceChildren();
 
-    const statusEl = document.getElementById("upload-status");
-    if (statusEl) statusEl.textContent = "";
+    const edaStatus = document.getElementById("eda-status");
+    edaStatus.className = "eda-status waiting";
+    edaStatus.textContent = "Aguardando upload do CSV na aba Upload CSV.";
+    document.getElementById("eda-dashboard").className = "eda-dashboard";
 
-    const helpText = document.getElementById("result-help-text");
-    if (helpText) helpText.style.display = "";
+    const segStatus = document.getElementById("seg-status");
+    segStatus.className = "seg-status waiting";
+    segStatus.textContent = "Aguardando upload do CSV na aba Upload.";
+    document.getElementById("seg-dashboard").className = "seg-dashboard";
 
-    const clearBtn = document.getElementById("clear-btn");
-    if (clearBtn) clearBtn.style.display = "none";
+    const predStatus = document.getElementById("pred-status");
+    predStatus.className = "pred-status waiting";
+    predStatus.textContent = "Aguardando upload e segmentação do CSV.";
+    document.getElementById("pred-dashboard").className = "pred-dashboard";
+
+    const baselineStatus = document.getElementById("baseline-status");
+    baselineStatus.className = "baseline-status waiting";
+    baselineStatus.textContent = "Aguardando upload do CSV na aba Upload.";
+    document.getElementById("baseline-dashboard").className = "baseline-dashboard";
 
     document.getElementById("hero-customers").textContent = "-";
     document.getElementById("hero-churn-rate").textContent = "-";
-
-    const fileInput = document.getElementById("csv-file");
-    if (fileInput) fileInput.value = "";
-
-    trocarAba("upload");
+    document.getElementById("hero-roc-auc").textContent = "-";
+    csvRowsCache = null;
   }
 
-  // ── BACKEND HEALTH CHECK / PRE-WARM ────────────────────────
-  async function verificarBackend() {
-    const dot  = document.getElementById("backend-status-dot");
-    const text = document.getElementById("backend-status-text");
-    if (!dot || !text) return;
+  function limparDataset() {
+    document.getElementById("csv-file").value = "";
+    limparAnalise();
+  }
 
-    dot.className  = "status-dot waking";
-    text.textContent = "Acordando servidor…";
+  // ── SEGMENTAÇÃO K-MEANS ──────────────────────────
+  async function carregarSegmentacao(file) {
+    const segStatus = document.getElementById("seg-status");
+    const segDashboard = document.getElementById("seg-dashboard");
+
+    segStatus.className = "seg-status waiting";
+    segStatus.textContent = "Executando K-Means (n_clusters=4)...";
+    segDashboard.className = "seg-dashboard";
+
+    const formData = new FormData();
+    formData.append("file", file);
 
     try {
-      const ctrl = new AbortController();
-      const tid  = setTimeout(() => ctrl.abort(), 90000);
-      const res  = await fetch(`${API_URL}/`, { signal: ctrl.signal });
-      clearTimeout(tid);
-      if (res.ok) {
-        dot.className  = "status-dot online";
-        text.textContent = "Backend operacional";
-      } else {
-        dot.className  = "status-dot offline";
-        text.textContent = "Backend com erro";
-      }
-    } catch {
-      dot.className  = "status-dot offline";
-      text.textContent = "Backend indisponível";
+      const res = await fetch(`${API_URL}/segment`, { method: "POST", body: formData });
+      if (!res.ok) throw new Error(await obterMensagemErro(res));
+      const data = await res.json();
+      exibirSegmentacao(data);
+      if (csvRowsCache && csvRowsCache.length) renderizarBaselineLocal(csvRowsCache);
+    } catch (err) {
+      segStatus.className = "seg-status error";
+      segStatus.textContent = `Erro na segmentação: ${err.message}`;
     }
   }
 
-  verificarBackend();
+  function exibirSegmentacao(data) {
+    const segStatus = document.getElementById("seg-status");
+    const segDashboard = document.getElementById("seg-dashboard");
+    const clusterClass = ["c0", "c1", "c2", "c3"];
+    const churnColorClass = r => r >= 0.5 ? "high" : r >= 0.3 ? "med" : r >= 0.15 ? "brand" : "low";
+
+    // Cluster cards
+    const cardsEl = document.getElementById("cluster-cards");
+    cardsEl.replaceChildren();
+    data.cluster_stats.forEach(c => {
+      const card = document.createElement("div");
+      card.className = `cluster-card ${clusterClass[c.id]}`;
+      card.innerHTML = `
+        <div class="cluster-name">${c.name}</div>
+        <div class="cluster-churn ${churnColorClass(c.churn_rate)}">${Math.round(c.churn_rate * 100)}%</div>
+        <div class="cluster-caption">churn · ${c.count} clientes (${Math.round(c.percentage * 100)}%)</div>
+      `;
+      cardsEl.appendChild(card);
+    });
+
+    // Bar charts
+    renderizarGraficoBarras("cluster-churn-chart", data.cluster_stats.map(c => ({
+      label: c.name,
+      value: c.churn_rate,
+      width: c.churn_rate,
+      caption: `${Math.round(c.churn_rate * 100)}%`,
+      danger: c.churn_rate >= 0.4,
+    })));
+
+    renderizarGraficoBarras("cluster-size-chart", data.cluster_stats.map(c => ({
+      label: c.name,
+      value: c.count,
+      width: c.percentage,
+      caption: `${c.count} clientes`,
+    })));
+
+    // Heatmap
+    const tbody = document.getElementById("heatmap-body");
+    tbody.replaceChildren();
+    data.heatmap_features.forEach(feat => {
+      const tr = document.createElement("tr");
+      const labelTd = document.createElement("td");
+      labelTd.textContent = data.heatmap_labels[feat] || feat;
+      labelTd.style.textAlign = "left";
+      labelTd.style.fontWeight = "700";
+      tr.appendChild(labelTd);
+
+      (data.heatmap_normalized[feat] || []).forEach(v => {
+        const td = document.createElement("td");
+        const bg = `rgba(37,99,235,${(0.08 + v * 0.62).toFixed(2)})`;
+        const fg = v > 0.62 ? "#fff" : "var(--text)";
+        td.innerHTML = `<span class="heat-cell" style="background:${bg};color:${fg}">${v.toFixed(2)}</span>`;
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+
+    segStatus.className = "seg-status success";
+    segStatus.textContent = `Segmentação concluída · Silhouette: ${data.silhouette_score.toFixed(3)} · Inércia: ${Math.round(data.inertia)}`;
+    segDashboard.className = "seg-dashboard active";
+
+    if (data.rf_by_cluster && data.rf_by_cluster.length) {
+      exibirRfPredicao(data.rf_by_cluster);
+    }
+  }
+
+  // ── RF COMPLEMENTAR ──────────────────────────────
+  function exibirRfPredicao(rfData) {
+    const predStatus = document.getElementById("pred-status");
+    const predDashboard = document.getElementById("pred-dashboard");
+    const rfGrid = document.getElementById("rf-grid");
+
+    if (!rfData || !rfData.length) {
+      predStatus.className = "pred-status waiting";
+      predStatus.textContent = "Modelo RF não disponível. Treine o modelo primeiro.";
+      return;
+    }
+
+    const probColor = p => p >= 0.7 ? "var(--high)" : p >= 0.4 ? "var(--med)" : "var(--low)";
+
+    rfGrid.replaceChildren();
+    rfData.forEach(c => {
+      const card = document.createElement("div");
+      card.className = "rf-cluster-card";
+      card.innerHTML = `
+        <div class="rf-cluster-name">${c.name}</div>
+        <div class="rf-prob" style="color:${probColor(c.avg_churn_prob)}">${Math.round(c.avg_churn_prob * 100)}%</div>
+        <div class="rf-risk-bars">
+          <div class="rf-risk-bar-row"><span class="rf-risk-dot" style="background:var(--high)"></span>Alto ≥70%: ${Math.round(c.high_risk_pct * 100)}%</div>
+          <div class="rf-risk-bar-row"><span class="rf-risk-dot" style="background:var(--med)"></span>Médio 40–69%: ${Math.round(c.med_risk_pct * 100)}%</div>
+          <div class="rf-risk-bar-row"><span class="rf-risk-dot" style="background:var(--low)"></span>Baixo &lt;40%: ${Math.round(c.low_risk_pct * 100)}%</div>
+        </div>
+      `;
+      rfGrid.appendChild(card);
+    });
+
+    predStatus.className = "pred-status success";
+    predStatus.textContent = "Probabilidades RF calculadas por cluster K-Means.";
+    predDashboard.className = "pred-dashboard active";
+  }
+
+  // ── BASELINE ─────────────────────────────────────
+  function renderizarBaselineLocal(rows) {
+    if (!rows || !rows.length) return;
+    const n = rows.length;
+    const baselineStatus = document.getElementById("baseline-status");
+    const baselineDashboard = document.getElementById("baseline-dashboard");
+    const baselineEl = document.getElementById("baseline-grid");
+
+    const calcAcc = (preds) => preds.filter((p, i) => p === rows[i].Churn).length / n;
+    const calcRecall = (preds) => {
+      const tc = rows.filter(r => r.Churn === 1).length;
+      return tc ? preds.filter((p, i) => p === 1 && rows[i].Churn === 1).length / tc : 0;
+    };
+
+    const rule1 = rows.map(r => r.Lifetime <= 1 ? 1 : 0);
+    const rule2 = rows.map(r => (r.Avg_class_frequency_current_month < 1.0 && r.Contract_period === 1) ? 1 : 0);
+    const rule3 = rows.map(r => r.Avg_class_frequency_current_month < 0.5 ? 1 : 0);
+
+    const regras = [
+      {
+        rule: "Regra 1 · Se Lifetime ≤ 1 mês → Churn",
+        acc: calcAcc(rule1), recall: calcRecall(rule1),
+        desc: "Captura early droppers no primeiro mês. Alta precisão para churners precoces.",
+      },
+      {
+        rule: "Regra 2 · Se freq. atual < 1/sem. E contrato mensal → Churn",
+        acc: calcAcc(rule2), recall: calcRecall(rule2),
+        desc: "Combina baixo engajamento com contrato de curto prazo — duplo fator de risco.",
+      },
+      {
+        rule: "Regra 3 · Se freq. atual < 0.5/sem. → Churn",
+        acc: calcAcc(rule3), recall: calcRecall(rule3),
+        desc: "Alarme simples: quem quase não aparece provavelmente vai sair.",
+      },
+    ];
+
+    baselineEl.replaceChildren();
+    regras.forEach(r => {
+      const card = document.createElement("div");
+      card.className = "baseline-card";
+      card.innerHTML = `
+        <div class="baseline-rule">${r.rule}</div>
+        <div class="baseline-acc">${Math.round(r.acc * 100)}% acc.</div>
+        <div class="baseline-desc">Recall: ${Math.round(r.recall * 100)}% dos churners capturados<br>${r.desc}</div>
+      `;
+      baselineEl.appendChild(card);
+    });
+
+    baselineStatus.className = "baseline-status success";
+    baselineStatus.textContent = `Baseline calculado com ${n} registros.`;
+    baselineDashboard.className = "baseline-dashboard active";
+  }
+
+  // ── MINI DECK ─────────────────────────────────────
+  let currentSlide = 0;
+  const TOTAL_SLIDES = 8;
+
+  function inicializarMiniDeck() {
+    const dotsEl = document.getElementById("deck-dots");
+    if (!dotsEl) return;
+    dotsEl.replaceChildren();
+    for (let i = 0; i < TOTAL_SLIDES; i++) {
+      const dot = document.createElement("button");
+      dot.className = i === 0 ? "deck-dot active" : "deck-dot";
+      dot.setAttribute("aria-label", `Ir para slide ${i + 1}`);
+      dot.addEventListener("click", () => irParaSlide(i));
+      dotsEl.appendChild(dot);
+    }
+    atualizarNavDeck();
+  }
+
+  function deckNavegar(dir) {
+    irParaSlide(currentSlide + dir);
+  }
+
+  function irParaSlide(n) {
+    const slides = document.querySelectorAll(".deck-slide");
+    if (slides[currentSlide]) slides[currentSlide].classList.remove("active");
+    currentSlide = Math.max(0, Math.min(n, TOTAL_SLIDES - 1));
+    if (slides[currentSlide]) slides[currentSlide].classList.add("active");
+    atualizarNavDeck();
+  }
+
+  function atualizarNavDeck() {
+    const prev = document.getElementById("deck-prev");
+    const next = document.getElementById("deck-next");
+    if (prev) prev.disabled = currentSlide === 0;
+    if (next) next.disabled = currentSlide === TOTAL_SLIDES - 1;
+    document.querySelectorAll(".deck-dot").forEach((dot, i) => {
+      dot.classList.toggle("active", i === currentSlide);
+    });
+  }
+
+  inicializarMiniDeck();
 </script>
 
 </body>
