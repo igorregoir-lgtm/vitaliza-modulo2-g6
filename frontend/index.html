@@ -1673,6 +1673,33 @@
       .narrative-block { grid-template-columns: 1fr; gap: 2px; }
     }
 
+    /* SEG-CARD GRID */
+    .seg-card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .seg-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow); }
+    .seg-card-hd { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+    .seg-card-badge { width: 36px; height: 36px; border-radius: 8px; display: grid; place-items: center; font-weight: 800; font-size: 0.82rem; color: #fff; flex-shrink: 0; }
+    .seg-card-badge.c0 { background: var(--high); }
+    .seg-card-badge.c1 { background: var(--low); }
+    .seg-card-badge.c2 { background: var(--brand); }
+    .seg-card-badge.c3 { background: var(--med); }
+    .seg-card-title { font-weight: 800; font-size: 0.95rem; color: var(--text); line-height: 1.2; }
+    .seg-card-sub { font-size: 0.73rem; color: var(--muted-strong); margin-top: 3px; }
+    .seg-metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 14px; }
+    .seg-metric { padding: 10px 8px; text-align: center; }
+    .seg-metric + .seg-metric { border-left: 1px solid var(--border); }
+    .seg-metric-val { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+    .seg-metric-val.churn-high { color: #dc2626; }
+    .seg-metric-val.churn-med  { color: #d97706; }
+    .seg-metric-val.churn-low  { color: #059669; }
+    .seg-metric-lbl { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; color: var(--muted-strong); margin-top: 2px; text-transform: uppercase; }
+    .seg-quote { border-left: 3px solid var(--border); margin: 0 0 14px; padding: 8px 12px; font-style: italic; font-size: 0.82rem; line-height: 1.5; color: var(--muted-strong); background: var(--surface-muted); border-radius: 0 6px 6px 0; }
+    .seg-section { margin-bottom: 10px; }
+    .seg-section:last-of-type { margin-bottom: 0; }
+    .seg-section-ttl { font-size: 0.7rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin-bottom: 4px; }
+    .seg-section p { font-size: 0.81rem; line-height: 1.55; color: var(--muted-strong); margin: 0; }
+    .seg-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    .seg-tag { background: var(--surface-muted); border: 1px solid var(--border); border-radius: 999px; font-size: 0.72rem; font-weight: 800; padding: 3px 10px; color: var(--muted-strong); }
+
     /* MINI DECK — scroll vertical */
     .deck-index {
       display: flex; flex-wrap: wrap; gap: 8px;
@@ -1766,6 +1793,7 @@
     @media (max-width: 900px) {
       .cluster-grid, .rf-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .persona-grid { grid-template-columns: 1fr; }
+      .seg-card-grid { grid-template-columns: 1fr; }
       .baseline-grid, .driver-grid, .method-infographic, .algo-compare { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .contract-window-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .leitura-grid { grid-template-columns: 1fr; }
@@ -2597,175 +2625,193 @@
 
         <article class="chart-card" style="margin-top:24px;">
           <h3 class="chart-title">Personas · Narrativa dos segmentos</h3>
-          <div class="persona-grid">
+          <div class="seg-card-grid">
 
-            <div class="persona-card c0">
-              <div class="persona-header">
-                <div class="persona-badge c0">C0</div>
+            <!-- C0 -->
+            <div class="seg-card">
+              <div class="seg-card-hd">
+                <div class="seg-card-badge c0">C0</div>
                 <div>
-                  <div class="persona-name">Recém-chegado em fuga</div>
-                  <div class="persona-churn-rate">52,7% churn · 1.363 clientes · Lifetime ≤ 2 meses</div>
+                  <div class="seg-card-title">C0 · O Recém-chegado em fuga</div>
+                  <div class="seg-card-sub">Lucas · 1.363 clientes · 34% da base · churn 52,7%</div>
                 </div>
               </div>
-              <p class="persona-desc">Cliente nos primeiros meses de contrato, sem rotina estabelecida e sem vínculos sociais na academia. Representa 34% da base e concentra mais da metade do churn total — o perfil de maior urgência para intervenção.</p>
-              <div class="persona-narrative">
-                <div class="narrative-block">
-                  <span class="narrative-label">SETUP</span>
-                  <span class="narrative-text">Chegou à academia com uma expectativa — emagrecer, ganhar energia, criar um hábito. Está nos primeiros dois meses. Ainda não encontrou o ritmo, não tem amigos aqui, não tem rotina definida.</span>
+              <div class="seg-metrics">
+                <div class="seg-metric">
+                  <div class="seg-metric-val">1.363</div>
+                  <div class="seg-metric-lbl">Clientes</div>
                 </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">CONFLITO</span>
-                  <span class="narrative-text">A menor fricção basta para o cancelamento. Uma semana de falta sem retorno, uma cobrança inesperada, uma aula sem instrutor. Sem vínculos sociais e sem contrato longo que crie ancoragem financeira, a decisão de sair é simples.</span>
+                <div class="seg-metric">
+                  <div class="seg-metric-val">34%</div>
+                  <div class="seg-metric-lbl">Da base</div>
                 </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">RESOLUÇÃO</span>
-                  <span class="narrative-text">Onboarding intensivo nos primeiros 30 dias. Check-in semanal, aula de boas-vindas, convite para grupo coletivo. Cada ponto de contato nos primeiros 30 dias reduz o risco de fuga nos 60 seguintes.</span>
-                </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">EVIDÊNCIA</span>
-                  <span class="narrative-text">52,7% da coorte cancela. Lifetime ≤ 2 meses, ausência de aulas em grupo, ausência de indicação de amigos, contrato mensal. Nenhum fator de ancoragem ativo.</span>
-                </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">DECISÃO</span>
-                  <span class="narrative-text">Ação imediata nos primeiros 30 dias de contrato. A janela de intervenção é curta — a maioria dos churns ocorre antes do segundo mês completar.</span>
-                </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">LIMITE</span>
-                  <span class="narrative-text">Sem dados temporais longitudinais, a evolução intra-mês não é capturada. O modelo identifica o perfil de risco, mas não o momento exato da desistência dentro do mês.</span>
+                <div class="seg-metric">
+                  <div class="seg-metric-val churn-high">52,7%</div>
+                  <div class="seg-metric-lbl">Churn obs.</div>
                 </div>
               </div>
-              <div class="persona-tags">
-                <span class="persona-tag">Lifetime curto</span>
-                <span class="persona-tag">Sem grupo</span>
-                <span class="persona-tag">Sem indicação</span>
-                <span class="persona-tag">Contrato mensal</span>
+              <blockquote class="seg-quote">"Assinou no impulso, abriu duas vezes, esqueceu — e o cartão fará o resto."</blockquote>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Setup — Quem é</div>
+                <p>Idade média 28 anos. Lifetime médio 2,2 meses. Contrato curto (predominante mensal). Frequência atual de 0,95 aulas/semana. Apenas 19% entrou por indicação. 38% via convênio.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Conflito — O que ameaça</div>
+                <p>A menor fricção basta para o cancelamento. Sem vínculos sociais e sem contrato longo criando ancoragem financeira, a decisão de sair é simples. Uma semana de ausência sem follow-up é suficiente.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Resolução — O que fazer</div>
+                <p>Onboarding intensivo nos primeiros 30 dias. Check-in semanal, aula de boas-vindas, convite para grupo coletivo. Cada contato nos primeiros 30 dias reduz o risco nos 60 seguintes.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Decisão — Onde agir</div>
+                <p>Ação imediata nos primeiros 30 dias de contrato. A janela de intervenção é curta — a maioria dos churns ocorre antes do segundo mês completar.</p>
+              </div>
+              <div class="seg-tags">
+                <span class="seg-tag">Lifetime curto</span>
+                <span class="seg-tag">Sem grupo</span>
+                <span class="seg-tag">Contrato mensal</span>
               </div>
             </div>
 
-            <div class="persona-card c1">
-              <div class="persona-header">
-                <div class="persona-badge c1">C1</div>
+            <!-- C1 -->
+            <div class="seg-card">
+              <div class="seg-card-hd">
+                <div class="seg-card-badge c1">C1</div>
                 <div>
-                  <div class="persona-name">Leal anual</div>
-                  <div class="persona-churn-rate">2,8% churn · 1.122 clientes · Contrato 12 meses</div>
+                  <div class="seg-card-title">C1 · O Leal anual</div>
+                  <div class="seg-card-sub">Beatriz · 1.122 clientes · 28% da base · churn 2,8%</div>
                 </div>
               </div>
-              <p class="persona-desc">Cliente consolidado com contrato de 12 meses, frequência consistente e múltiplos fatores de ancoragem (grupo, indicação, convênio). O menor risco da base — o foco é manutenção do vínculo, não conversão.</p>
-              <div class="persona-narrative">
-                <div class="narrative-block">
-                  <span class="narrative-label">SETUP</span>
-                  <span class="narrative-text">Está aqui faz tempo. Tem contrato anual, frequenta com consistência, participa de aulas coletivas e provavelmente veio por indicação de alguém da academia.</span>
+              <div class="seg-metrics">
+                <div class="seg-metric">
+                  <div class="seg-metric-val">1.122</div>
+                  <div class="seg-metric-lbl">Clientes</div>
                 </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">CONFLITO</span>
-                  <span class="narrative-text">O risco não é de saída por insatisfação — é de negligência. Se a academia parar de nutrir o relacionamento, este cliente pode sentir-se invisível. A retenção que parece orgânica pode mascarar um distanciamento silencioso.</span>
+                <div class="seg-metric">
+                  <div class="seg-metric-val">28%</div>
+                  <div class="seg-metric-lbl">Da base</div>
                 </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">RESOLUÇÃO</span>
-                  <span class="narrative-text">Programa de reconhecimento de tempo de casa. Acesso antecipado a novidades, convite para eventos exclusivos, comunicação personalizada que evidencie o tempo e o valor construído juntos.</span>
-                </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">EVIDÊNCIA</span>
-                  <span class="narrative-text">2,8% de churn. Lifetime longo, contrato de 12 meses, participação em aulas coletivas, frequência histórica alta. Todos os fatores de proteção ativos simultaneamente.</span>
-                </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">DECISÃO</span>
-                  <span class="narrative-text">Manutenção do vínculo — não deixar o relacionamento esfriar por inércia. O menor investimento em reconhecimento tem retorno alto neste segmento.</span>
-                </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">LIMITE</span>
-                  <span class="narrative-text">A alta retenção pode mascarar insatisfação latente que não se expressa em comportamento mensurável. Pesquisa qualitativa complementa o modelo neste segmento.</span>
+                <div class="seg-metric">
+                  <div class="seg-metric-val churn-low">2,8%</div>
+                  <div class="seg-metric-lbl">Churn obs.</div>
                 </div>
               </div>
-              <div class="persona-tags">
-                <span class="persona-tag">Lifetime longo</span>
-                <span class="persona-tag">Contrato anual</span>
-                <span class="persona-tag">Aulas em grupo</span>
-                <span class="persona-tag">Alta frequência</span>
+              <blockquote class="seg-quote">"Já fez as contas. Pagou anual, indicou três amigas e participa do desafio mensal."</blockquote>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Setup — Quem é</div>
+                <p>Idade média 30 anos. Lifetime médio 4,7 meses. Contrato anual (10,7 meses até fim). Frequência 2,0 aulas/semana. 78% via convênio, 57% por indicação, 53% participa de desafios em grupo.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Conflito — O que ameaça</div>
+                <p>O risco não é de saída por insatisfação — é de negligência. Se a academia parar de nutrir o relacionamento, este cliente pode sentir-se invisível. A retenção orgânica pode mascarar distanciamento silencioso.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Resolução — O que fazer</div>
+                <p>Programa de reconhecimento de tempo de casa. Acesso antecipado a novidades, convite para eventos exclusivos, comunicação personalizada que evidencie o valor construído juntos.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Decisão — Onde agir</div>
+                <p>Manutenção do vínculo — não deixar o relacionamento esfriar por inércia. O menor investimento em reconhecimento tem retorno alto neste segmento.</p>
+              </div>
+              <div class="seg-tags">
+                <span class="seg-tag">Lifetime longo</span>
+                <span class="seg-tag">Contrato anual</span>
+                <span class="seg-tag">Alta frequência</span>
               </div>
             </div>
 
-            <div class="persona-card c2">
-              <div class="persona-header">
-                <div class="persona-badge c2">C2</div>
+            <!-- C2 -->
+            <div class="seg-card">
+              <div class="seg-card-hd">
+                <div class="seg-card-badge c2">C2</div>
                 <div>
-                  <div class="persona-name">Engajado mensal</div>
-                  <div class="persona-churn-rate">7,0% churn · 961 clientes · Contrato 1–3 meses</div>
+                  <div class="seg-card-title">C2 · O Engajado mensal</div>
+                  <div class="seg-card-sub">Fernanda · 961 clientes · 24% da base · churn 7,0%</div>
                 </div>
               </div>
-              <p class="persona-desc">Cliente com alta frequência de uso e bom engajamento comportamental, mas contrato de curta duração sem comprometimento financeiro de longo prazo. Candidato ideal para migração para plano anual.</p>
-              <div class="persona-narrative">
-                <div class="narrative-block">
-                  <span class="narrative-label">SETUP</span>
-                  <span class="narrative-text">Frequenta bem, gosta do ambiente, participa das aulas — mas tem contrato mensal. O engajamento comportamental existe; o comprometimento financeiro de longo prazo, não.</span>
+              <div class="seg-metrics">
+                <div class="seg-metric">
+                  <div class="seg-metric-val">961</div>
+                  <div class="seg-metric-lbl">Clientes</div>
                 </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">CONFLITO</span>
-                  <span class="narrative-text">Sem âncora financeira, qualquer oferta concorrente ou uma semana de ausência sem follow-up pode redirecionar a decisão. O elo mais fraco desta relação é o tipo de contrato, não o comportamento.</span>
+                <div class="seg-metric">
+                  <div class="seg-metric-val">24%</div>
+                  <div class="seg-metric-lbl">Da base</div>
                 </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">RESOLUÇÃO</span>
-                  <span class="narrative-text">Oferta de migração para plano anual com benefício tangível no momento certo — após o segundo mês consecutivo de frequência acima da média. O timing é crítico: cedo demais gera resistência, tarde demais perde a janela.</span>
-                </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">EVIDÊNCIA</span>
-                  <span class="narrative-text">7,0% de churn. Frequência atual e histórica acima da média do cluster, mas contrato de duração curta. O comportamento protege; o tipo de contrato expõe.</span>
-                </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">DECISÃO</span>
-                  <span class="narrative-text">Campanha de upgrade para anual com argumento de conveniência e economia. Prioridade: clientes em segundo mês consecutivo de boa frequência.</span>
-                </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">LIMITE</span>
-                  <span class="narrative-text">A janela de oferta ideal varia por cliente. Sem dados de histórico de contatos anteriores, o modelo não distingue quem já recusou uma oferta de upgrade antes.</span>
+                <div class="seg-metric">
+                  <div class="seg-metric-val churn-low">7,0%</div>
+                  <div class="seg-metric-lbl">Churn obs.</div>
                 </div>
               </div>
-              <div class="persona-tags">
-                <span class="persona-tag">Frequência ativa</span>
-                <span class="persona-tag">Contrato curto</span>
-                <span class="persona-tag">Potencial de upgrade</span>
+              <blockquote class="seg-quote">"Treina toda semana, gosta do ambiente — mas nunca parou para pensar se o mensal faz sentido."</blockquote>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Setup — Quem é</div>
+                <p>Frequência acima da média (1,8 aulas/semana). Contrato de 1–3 meses. Bom engajamento comportamental. 34% participa de aulas coletivas. Sem comprometimento financeiro de longo prazo.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Conflito — O que ameaça</div>
+                <p>Sem âncora financeira, qualquer oferta concorrente ou ausência de follow-up pode redirecionar a decisão. O elo mais fraco desta relação é o tipo de contrato, não o comportamento.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Resolução — O que fazer</div>
+                <p>Oferta de migração para plano anual após o segundo mês consecutivo de boa frequência. O timing é crítico: cedo demais gera resistência, tarde demais perde a janela.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Decisão — Onde agir</div>
+                <p>Campanha de upgrade para anual. Prioridade: clientes no segundo mês consecutivo com frequência acima da média do cluster.</p>
+              </div>
+              <div class="seg-tags">
+                <span class="seg-tag">Frequência ativa</span>
+                <span class="seg-tag">Contrato curto</span>
+                <span class="seg-tag">Potencial de upgrade</span>
               </div>
             </div>
 
-            <div class="persona-card c3">
-              <div class="persona-header">
-                <div class="persona-badge c3">C3</div>
+            <!-- C3 -->
+            <div class="seg-card">
+              <div class="seg-card-hd">
+                <div class="seg-card-badge c3">C3</div>
                 <div>
-                  <div class="persona-name">Médio em trânsito</div>
-                  <div class="persona-churn-rate">44,2% churn · 554 clientes · Lifetime intermediário</div>
+                  <div class="seg-card-title">C3 · O Médio em trânsito</div>
+                  <div class="seg-card-sub">Marcos · 554 clientes · 14% da base · churn 44,2%</div>
                 </div>
               </div>
-              <p class="persona-desc">Cliente intermediário com histórico moderado e frequência irregular. Sem o estímulo da novidade nem a inércia do hábito consolidado, o silêncio gradual precede o cancelamento.</p>
-              <div class="persona-narrative">
-                <div class="narrative-block">
-                  <span class="narrative-label">SETUP</span>
-                  <span class="narrative-text">Nem novo, nem leal. Tem algum histórico na academia — mais que o recém-chegado, menos que o leal anual. A frequência é irregular; a relação ainda não se consolidou.</span>
+              <div class="seg-metrics">
+                <div class="seg-metric">
+                  <div class="seg-metric-val">554</div>
+                  <div class="seg-metric-lbl">Clientes</div>
                 </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">CONFLITO</span>
-                  <span class="narrative-text">Zona cinza de relacionamento. Sem o estímulo de novidade do início nem a inércia do hábito consolidado, este cliente silencia gradualmente. A ausência de atenção é suficiente para o cancelamento.</span>
+                <div class="seg-metric">
+                  <div class="seg-metric-val">14%</div>
+                  <div class="seg-metric-lbl">Da base</div>
                 </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">RESOLUÇÃO</span>
-                  <span class="narrative-text">Reengajamento ativo antes do silêncio definitivo. Convite para aula coletiva, desafio de meta semanal, contato personalizado baseado no histórico de frequência. Intervenção quando a frequência cai abaixo de 1 aula/semana.</span>
-                </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">EVIDÊNCIA</span>
-                  <span class="narrative-text">44,2% de churn. Frequência irregular, lifetime intermediário, sem vínculos sociais consolidados. O K-Means identifica este cluster pela ausência de extremos — não tem o pior, nem o melhor perfil.</span>
-                </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">DECISÃO</span>
-                  <span class="narrative-text">Campanha de reengajamento disparada quando frequência cai. Priorizar membros deste cluster com RF alto — convergência dos dois sinais indica intervenção urgente.</span>
-                </div>
-                <div class="narrative-block">
-                  <span class="narrative-label">LIMITE</span>
-                  <span class="narrative-text">Alto custo de reativação para clientes já em silêncio avançado. A intervenção deve ser preemptiva — depois do segundo mês sem frequência, a taxa de sucesso de reativação cai significativamente.</span>
+                <div class="seg-metric">
+                  <div class="seg-metric-val churn-high">44,2%</div>
+                  <div class="seg-metric-lbl">Churn obs.</div>
                 </div>
               </div>
-              <div class="persona-tags">
-                <span class="persona-tag">Frequência irregular</span>
-                <span class="persona-tag">Histórico médio</span>
-                <span class="persona-tag">Reativável</span>
+              <blockquote class="seg-quote">"Aparece quando lembra. O problema é que está lembrando cada vez menos."</blockquote>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Setup — Quem é</div>
+                <p>Lifetime intermediário. Frequência irregular (0,7 aulas/semana). Sem vínculos sociais consolidados. Nem muito novo nem muito leal — a relação ainda não se definiu.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Conflito — O que ameaça</div>
+                <p>Zona cinza de relacionamento. Sem o estímulo da novidade do início nem a inércia do hábito consolidado, este cliente silencia gradualmente. A ausência de atenção é suficiente para o cancelamento.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Resolução — O que fazer</div>
+                <p>Reengajamento ativo antes do silêncio definitivo. Convite para aula coletiva, desafio de meta semanal, contato personalizado quando a frequência cai abaixo de 1 aula/semana.</p>
+              </div>
+              <div class="seg-section">
+                <div class="seg-section-ttl">Decisão — Onde agir</div>
+                <p>Campanha de reengajamento disparada quando frequência cai. Intervenção preemptiva — depois do segundo mês sem frequência, a taxa de sucesso de reativação cai significativamente.</p>
+              </div>
+              <div class="seg-tags">
+                <span class="seg-tag">Frequência irregular</span>
+                <span class="seg-tag">Histórico médio</span>
+                <span class="seg-tag">Reativável</span>
               </div>
             </div>
 
