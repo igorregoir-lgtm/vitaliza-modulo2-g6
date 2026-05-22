@@ -103,6 +103,12 @@
     .how-to h2 { font-size: 1.05rem; font-weight: 800; margin-bottom: 10px; }
     .how-to p { color: var(--muted-strong); font-size: 0.9rem; line-height: 1.65; }
 
+    /* NOTEBOOK INFO */
+    .notebook-info { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--shadow); padding: 22px; }
+    .notebook-info h2 { font-size: 1.05rem; font-weight: 800; margin-bottom: 10px; }
+    .notebook-info p { font-size: 0.88rem; color: var(--muted-strong); line-height: 1.65; margin: 0 0 14px; }
+    .nb-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--r-md); padding: 14px 16px; font-size: 0.86rem; font-weight: 700; color: var(--text); line-height: 1.55; }
+
     /* INSIGHTS */
     .insights { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--shadow); padding: 22px; }
     .insights h2 { font-size: 1.05rem; font-weight: 800; margin-bottom: 16px; }
@@ -465,6 +471,15 @@
         <strong>10. Recall é métrica-chave para retenção.</strong>
         <span>É melhor capturar mais clientes em risco do que perder cancelamentos reais.</span>
       </div>
+    </div>
+  </div>
+
+  <!-- NOTEBOOK INFO -->
+  <div class="notebook-info">
+    <h2>Evidência formal da EDA</h2>
+    <p>Além do Dashboard EDA interativo, a entrega inclui um notebook Jupyter com a análise formal da base: carga do CSV, limpeza, estatísticas descritivas, gráficos, correlações e conclusão sobre as features usadas.</p>
+    <div class="nb-box">
+      Arquivo no projeto: <strong>notebooks/eda_churn.ipynb</strong>. Abra pelo Cursor ou pelo Jupyter e execute as células em ordem com o CSV em <strong>notebooks/gym_churn_us.csv</strong>.
     </div>
   </div>
 
