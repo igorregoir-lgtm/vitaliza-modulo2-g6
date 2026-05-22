@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Relatório Visual EDA · Vitaliza</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-muted: #f8fafc;
+      --surface-soft: #eef4ff;
+      --border: #dbe3ef;
+      --border-strong: #c7d2e3;
+      --text: #172033;
+      --text-on-accent: #ffffff;
+      --muted: #64748b;
+      --muted-strong: #475569;
+      --brand: #2563eb;
+      --brand-strong: #1d4ed8;
+      --brand-soft: #dbeafe;
+      --high: #dc2626;
+      --high-soft: #fee2e2;
+      --med: #b45309;
+      --med-soft: #fef3c7;
+      --low: #047857;
+      --low-soft: #d1fae5;
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 32%),
+        linear-gradient(180deg, #ffffff 0%, var(--bg) 280px);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: grid; place-items: center;
+      background: var(--brand); color: var(--text-on-accent);
+      font-weight: 800; box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
+    }
+    .brand-kicker { color: var(--muted); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+    .brand-title { font-size: 1.25rem; font-weight: 800; line-height: 1.1; }
+
+    .back-btn {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--muted-strong);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 10px 16px;
+      text-decoration: none;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .back-btn:hover { background: var(--brand-soft); border-color: var(--brand); color: var(--brand); }
+
+    .page-hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    .page-eyebrow {
+      color: var(--brand); font-size: 0.78rem; font-weight: 800;
+      letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .page-hero h1 { font-size: clamp(1.6rem, 4vw, 2.6rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 10px; }
+    .page-hero p { color: var(--muted-strong); font-size: 0.96rem; line-height: 1.6; }
+
+    .eda-layout { display: grid; gap: 20px; }
+
+    .section-label {
+      color: var(--text); font-size: 0.86rem; font-weight: 800;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .callout {
+      background: var(--brand-soft); border: 1px solid #bfdbfe;
+      border-radius: var(--radius-md); color: var(--muted-strong);
+      font-weight: 700; margin-top: 16px; padding: 16px;
+    }
+
+    /* EDA SECTIONS */
+    .eda-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: 24px; }
+    .eda-section h3 { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .eda-section-sub { color: var(--muted-strong); font-size: 0.86rem; line-height: 1.55; margin-bottom: 16px; }
+
+    .method-infographic { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .method-card { background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; }
+    .method-card.selected { background: var(--brand-soft); border-color: var(--brand); }
+    .method-name { font-weight: 800; font-size: 0.88rem; color: var(--text); margin-bottom: 4px; }
+    .method-card.selected .method-name { color: var(--brand); }
+    .method-verdict { font-size: 0.74rem; font-weight: 800; color: var(--muted); margin-bottom: 6px; }
+    .method-card.selected .method-verdict { color: var(--brand); }
+    .method-desc { font-size: 0.78rem; color: var(--muted-strong); line-height: 1.5; }
+
+    .contract-window-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .window-card { background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; }
+    .window-card.danger { background: var(--high-soft); border-color: #fca5a5; }
+    .window-card.safe   { background: var(--low-soft);  border-color: #6ee7b7; }
+    .window-value { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.04em; color: var(--text); margin-bottom: 4px; }
+    .window-card.danger .window-value { color: var(--high); }
+    .window-card.safe   .window-value { color: var(--low); }
+    .window-label { font-size: 0.78rem; font-weight: 700; color: var(--muted-strong); line-height: 1.4; }
+
+    .driver-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .driver-card { background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; }
+    .driver-name { font-weight: 800; font-size: 0.9rem; color: var(--text); margin-bottom: 6px; }
+    .driver-effect { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.04em; color: var(--low); margin-bottom: 4px; }
+    .driver-desc { font-size: 0.78rem; color: var(--muted-strong); line-height: 1.5; }
+
+    .retention-signal-list { display: grid; gap: 10px; }
+    .ret-signal { display: grid; grid-template-columns: 32px 1fr; gap: 12px; align-items: start; background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; }
+    .ret-rank { width: 32px; height: 32px; border-radius: 8px; background: var(--brand); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 0.82rem; }
+    .ret-signal-name { font-weight: 800; font-size: 0.88rem; color: var(--text); margin-bottom: 2px; }
+    .ret-signal-desc { font-size: 0.79rem; color: var(--muted-strong); line-height: 1.5; }
+
+    .eda-insights {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: 24px;
+    }
+    .eda-insights-header { margin-bottom: 16px; }
+    .eda-insights-header p { color: var(--muted-strong); font-size: 0.92rem; line-height: 1.6; margin-top: 6px; }
+
+    .insight-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .insight-card {
+      background: var(--surface-muted); border: 1px solid var(--border);
+      border-radius: var(--radius-md); display: grid; gap: 8px; padding: 16px;
+    }
+    .insight-card strong { color: var(--text); font-size: 0.92rem; line-height: 1.35; }
+    .insight-card span { color: var(--muted-strong); font-size: 0.84rem; font-weight: 600; line-height: 1.5; }
+
+    @media (max-width: 900px) {
+      body { padding: 16px; }
+      .driver-grid, .method-infographic { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .contract-window-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .insight-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .topbar { flex-direction: column; align-items: flex-start; }
+      .driver-grid, .method-infographic, .contract-window-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">V</div>
+        <div>
+          <div class="brand-kicker">Análise Exploratória</div>
+          <div class="brand-title">Relatório Visual EDA</div>
+        </div>
+      </div>
+      <a href="index.html" class="back-btn">← Voltar ao app</a>
+    </div>
+
+    <div class="page-hero">
+      <div class="page-eyebrow">Evidência formal · Módulo 2</div>
+      <h1>Dashboard EDA · Gym Churn</h1>
+      <p>Análise exploratória completa da base de 4.000 clientes: contexto metodológico, drivers de churn, sinais de retenção e 10 insights acionáveis derivados dos padrões identificados.</p>
+    </div>
+
+    <div class="eda-layout">
+
+      <!-- Contexto metodológico -->
+      <article class="eda-section">
+        <h3>Contexto metodológico · Escolha do algoritmo de segmentação</h3>
+        <p class="eda-section-sub">Antes de rodar o K-Means, três alternativas foram avaliadas e descartadas com base nos requisitos de interpretabilidade e robustez com dados de academia.</p>
+        <div class="method-infographic">
+          <div class="method-card">
+            <div class="method-name">Cox Proportional Hazards</div>
+            <div class="method-verdict">Descartado</div>
+            <div class="method-desc">Ideal para análise de sobrevivência com censura. Requer dados longitudinais completos e não gera segmentos diretos — apenas fatores de risco individuais.</div>
+          </div>
+          <div class="method-card">
+            <div class="method-name">DBSCAN</div>
+            <div class="method-verdict">Descartado</div>
+            <div class="method-desc">Ótimo para clusters de forma arbitrária e detecção de ruído. Sensível aos parâmetros ε e min_samples, o que dificulta reprodutibilidade e interpretação de negócio.</div>
+          </div>
+          <div class="method-card">
+            <div class="method-name">GMM (Gaussian Mixture)</div>
+            <div class="method-verdict">Descartado</div>
+            <div class="method-desc">Flexível com distribuições suaves. Gera clusters sobrepostos, difíceis de comunicar para equipes de retenção que precisam de segmentos mutuamente exclusivos.</div>
+          </div>
+          <div class="method-card selected">
+            <div class="method-name">K-Means</div>
+            <div class="method-verdict">Escolhido · n_clusters=4 · n_init=30</div>
+            <div class="method-desc">Clusters esféricos, interpretáveis, com silhueta estável. Permite nomear personas e comunicar churn por segmento de forma clara. Compatível com o volume e estrutura da base.</div>
+          </div>
+          <div class="method-card" style="grid-column:span 2;">
+            <div class="method-name">Decisão de validação</div>
+            <div class="method-verdict">Silhouette score + Elbow Method</div>
+            <div class="method-desc">O número de clusters foi avaliado com o método do cotovelo (inércia) e confirmado com o silhouette score. k=4 apresentou a melhor separação interpretável sem fragmentar os perfis em grupos sem significado de negócio.</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Churn por contrato + janela de 30 dias -->
+      <article class="eda-section">
+        <h3>Churn por duração de contrato · A janela crítica de 30 dias</h3>
+        <p class="eda-section-sub">A análise da base revela padrão claro: quanto menor o contrato, maior o churn. E independente do contrato, o mês anterior ao vencimento concentra risco desproporcional.</p>
+        <div class="contract-window-grid">
+          <div class="window-card danger">
+            <div class="window-value">~45%</div>
+            <div class="window-label">Churn em contratos mensais (1 mês)</div>
+          </div>
+          <div class="window-card">
+            <div class="window-value">~25%</div>
+            <div class="window-label">Churn em contratos semestrais (6 meses)</div>
+          </div>
+          <div class="window-card safe">
+            <div class="window-value">~5%</div>
+            <div class="window-label">Churn em contratos anuais (12 meses)</div>
+          </div>
+          <div class="window-card danger">
+            <div class="window-value">2×</div>
+            <div class="window-label">Aumento de risco nos 30 dias antes do vencimento — a janela crítica de retenção</div>
+          </div>
+        </div>
+        <div class="callout">
+          A janela de 30 dias antes do vencimento é o momento mais eficiente para intervenção: o cliente ainda está ativo, mas a decisão de renovar ou cancelar já está sendo formada. Ações tardias (após o vencimento) apresentam taxa de reversão muito menor.
+        </div>
+      </article>
+
+      <!-- Drivers protetores -->
+      <article class="eda-section">
+        <h3>Drivers protetores · O que reduz o risco de churn</h3>
+        <p class="eda-section-sub">Três fatores aparecem consistentemente como protetores na análise de correlação: vínculo social, indicação de origem e parceria empresarial. Cada um reduz churn por mecanismos distintos.</p>
+        <div class="driver-grid">
+          <div class="driver-card">
+            <div class="driver-name">Aulas em grupo (Group_visits)</div>
+            <div class="driver-effect">−18 pp</div>
+            <div class="driver-desc">Clientes que participam de aulas coletivas têm taxa de churn significativamente menor. O vínculo social com instrutores e colegas cria barreira emocional à saída — sair da academia significa sair também do grupo.</div>
+          </div>
+          <div class="driver-card">
+            <div class="driver-name">Indicação de amigos (Promo_friends)</div>
+            <div class="driver-effect">−14 pp</div>
+            <div class="driver-desc">Clientes que vieram por indicação de amigos já chegam integrados socialmente. A rede de relacionamento pré-existente acelera adaptação e reduz a probabilidade de abandono nos primeiros meses.</div>
+          </div>
+          <div class="driver-card">
+            <div class="driver-name">Convênio empresarial (Partner)</div>
+            <div class="driver-effect">−11 pp</div>
+            <div class="driver-desc">Clientes com desconto via empresa parceira têm menor sensibilidade ao preço e maior percepção de valor. O subsídio remove uma das principais justificativas de cancelamento.</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Top 5 sinais de retenção -->
+      <article class="eda-section">
+        <h3>Top 5 sinais de retenção · Correlação com permanência</h3>
+        <p class="eda-section-sub">Estes são os cinco sinais com maior força de associação à permanência do cliente — base para a seleção de features do modelo preditivo.</p>
+        <div class="retention-signal-list">
+          <div class="ret-signal">
+            <div class="ret-rank">1</div>
+            <div>
+              <div class="ret-signal-name">Lifetime (tempo como cliente)</div>
+              <div class="ret-signal-desc">O sinal mais forte. Clientes com mais tempo de relacionamento têm rotina consolidada e maior custo de troca. Cada mês adicional reduz significativamente a probabilidade de churn.</div>
+            </div>
+          </div>
+          <div class="ret-signal">
+            <div class="ret-rank">2</div>
+            <div>
+              <div class="ret-signal-name">Frequência atual (Avg_class_frequency_current_month)</div>
+              <div class="ret-signal-desc">Queda de frequência no mês atual é o sinal de alerta mais imediato. Clientes com frequência abaixo de 1 aula/semana têm risco substancialmente maior.</div>
+            </div>
+          </div>
+          <div class="ret-signal">
+            <div class="ret-rank">3</div>
+            <div>
+              <div class="ret-signal-name">Duração do contrato (Contract_period)</div>
+              <div class="ret-signal-desc">Contratos anuais criam comprometimento financeiro e psicológico. A migração de mensal para anual é uma das ações de retenção com maior impacto documentado na base.</div>
+            </div>
+          </div>
+          <div class="ret-signal">
+            <div class="ret-rank">4</div>
+            <div>
+              <div class="ret-signal-name">Frequência histórica (Avg_class_frequency_total)</div>
+              <div class="ret-signal-desc">A média histórica revela o padrão de comportamento estrutural do cliente. Clientes com histórico consistente tendem a retomar frequência após oscilações temporárias.</div>
+            </div>
+          </div>
+          <div class="ret-signal">
+            <div class="ret-rank">5</div>
+            <div>
+              <div class="ret-signal-name">Meses até vencer o contrato (Month_to_end_contract)</div>
+              <div class="ret-signal-desc">Quanto mais próximo do vencimento, maior o risco. Clientes com menos de 1 mês até o vencimento têm probabilidade de churn 2× maior — janela crítica de intervenção.</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 10 insights acionáveis -->
+      <article class="eda-insights" aria-labelledby="eda-insights-title">
+        <div class="eda-insights-header">
+          <div class="section-label" id="eda-insights-title">10 insights acionáveis</div>
+          <p>Síntese executiva baseada na EDA para transformar sinais de churn em ações de retenção.</p>
+        </div>
+        <div class="insight-grid">
+          <div class="insight-card">
+            <strong>1. Queda de frequência recente é alerta prioritário.</strong>
+            <span>Clientes que reduzem presença no mês atual devem entrar em contato preventivo.</span>
+          </div>
+          <div class="insight-card">
+            <strong>2. Novos clientes precisam de onboarding.</strong>
+            <span>Os primeiros meses pedem acompanhamento, metas semanais e incentivo à rotina.</span>
+          </div>
+          <div class="insight-card">
+            <strong>3. Contratos curtos concentram risco.</strong>
+            <span>Planos mensais devem receber incentivo para migração a contratos mais longos.</span>
+          </div>
+          <div class="insight-card">
+            <strong>4. Proximidade física reduz atrito.</strong>
+            <span>Campanhas locais e parcerias de bairro podem aumentar recorrência de uso.</span>
+          </div>
+          <div class="insight-card">
+            <strong>5. Aulas em grupo criam vínculo social.</strong>
+            <span>Estimular a primeira aula coletiva ajuda a criar pertencimento e hábito.</span>
+          </div>
+          <div class="insight-card">
+            <strong>6. Indicação de amigos favorece retenção.</strong>
+            <span>Desafios em dupla e benefícios compartilhados reforçam o vínculo com a academia.</span>
+          </div>
+          <div class="insight-card">
+            <strong>7. Gastos extras indicam engajamento.</strong>
+            <span>Clientes sem consumo adicional podem receber ofertas simples de baixo atrito.</span>
+          </div>
+          <div class="insight-card">
+            <strong>8. Sleeping dogs precisam de reativação.</strong>
+            <span>Clientes antigos com baixa frequência merecem campanhas específicas para retomar rotina.</span>
+          </div>
+          <div class="insight-card">
+            <strong>9. Queda entre histórico e mês atual antecipa churn.</strong>
+            <span>Monitorar <code>ratio_freq_atual_vs_lifetime</code> ajuda a agir antes do cancelamento.</span>
+          </div>
+          <div class="insight-card">
+            <strong>10. Recall é métrica-chave para retenção.</strong>
+            <span>É melhor capturar mais clientes em risco do que perder cancelamentos reais.</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</body>
+</html>
