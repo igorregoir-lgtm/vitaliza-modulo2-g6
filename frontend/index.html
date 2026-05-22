@@ -2268,30 +2268,7 @@
 
       <!-- CONTEÚDO ESTÁTICO — sempre visível, baseado nos dados do artefato -->
       <section class="seg-static">
-        <div class="cluster-grid static-cluster-grid">
-          <div class="cluster-card c0">
-            <div class="cluster-name">C0 · Recém-chegado em fuga</div>
-            <div class="cluster-churn high">52,7%</div>
-            <div class="cluster-caption">churn · 1.363 clientes · 34,1% da base</div>
-          </div>
-          <div class="cluster-card c1">
-            <div class="cluster-name">C1 · Leal anual</div>
-            <div class="cluster-churn low">2,8%</div>
-            <div class="cluster-caption">churn · 1.122 clientes · 28,1% da base</div>
-          </div>
-          <div class="cluster-card c2">
-            <div class="cluster-name">C2 · Engajado mensal</div>
-            <div class="cluster-churn low">7,0%</div>
-            <div class="cluster-caption">churn · 961 clientes · 24,0% da base</div>
-          </div>
-          <div class="cluster-card c3">
-            <div class="cluster-name">C3 · Médio em trânsito</div>
-            <div class="cluster-churn med">44,2%</div>
-            <div class="cluster-caption">churn · 554 clientes · 13,8% da base</div>
-          </div>
-        </div>
-
-        <article class="chart-card" style="margin-top:24px;">
+        <article class="chart-card">
           <h3 class="chart-title">EDA · Achado 1 — Contrato e janela crítica de cancelamento</h3>
           <div class="chart-two-col">
             <div>
@@ -2593,6 +2570,29 @@
             <div class="hmap-legend-item"><span class="hmap-swatch" style="background:#fee2e2"></span>Mais baixo</div>
           </div>
         </article>
+
+        <div class="leitura-block" style="margin-top:24px;">
+          <h3>Leitura dos segmentos</h3>
+          <p>O K-Means identificou <strong>4 perfis comportamentais distintos</strong>. 78% do churn agregado concentra-se no C0 — confirmando a hipótese de "early drop-off" do business case.</p>
+          <div class="leitura-grid">
+            <div class="leitura-item">
+              <strong>C0 · Recém-chegado em fuga (52,7% churn)</strong>
+              <span>Altíssimo risco. Primeiros meses, sem vínculos. Precisa de onboarding intensivo nos primeiros 30 dias.</span>
+            </div>
+            <div class="leitura-item">
+              <strong>C1 · Leal anual (2,8% churn)</strong>
+              <span>Perfil de maior valor. Contrato longo, frequência consistente. Retenção quase orgânica — o risco é de negligência.</span>
+            </div>
+            <div class="leitura-item">
+              <strong>C2 · Engajado mensal (7,0% churn)</strong>
+              <span>Engajado mas sem comprometimento de longo prazo. Incentivo para migrar para contrato anual é a alavanca principal.</span>
+            </div>
+            <div class="leitura-item">
+              <strong>C3 · Médio em trânsito (44,2% churn)</strong>
+              <span>Zona cinza. Nem muito novo, nem muito leal. Frequência irregular. Precisa de atenção antes de entrar em silêncio.</span>
+            </div>
+          </div>
+        </div>
 
         <article class="chart-card" style="margin-top:24px;">
           <h3 class="chart-title">Personas · Narrativa dos segmentos</h3>
