@@ -740,6 +740,66 @@
       .chart-two-col { grid-template-columns: 1fr; }
     }
 
+    .bar-value {
+      transition: width 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* Cluster profile grid — page 8 */
+    .cp-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1fr 1fr;
+      margin-top: 4px;
+    }
+    @media (max-width: 640px) { .cp-grid { grid-template-columns: 1fr; } }
+
+    .cp-card {
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border);
+      padding: 16px;
+      display: grid;
+      gap: 10px;
+    }
+    .cp-card.risk-high  { border-color: var(--high);  background: var(--high-soft); }
+    .cp-card.risk-med   { border-color: var(--med);   background: var(--surface-soft); }
+    .cp-card.risk-low   { border-color: var(--low);   background: var(--low-soft); }
+
+    .cp-header { display: flex; align-items: center; gap: 10px; }
+    .cp-badge {
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      text-transform: uppercase;
+    }
+    .cp-badge.c0 { background: var(--high); color: #fff; }
+    .cp-badge.c1 { background: var(--low);  color: #fff; }
+    .cp-badge.c2 { background: var(--brand); color: #fff; }
+    .cp-badge.c3 { background: var(--med);  color: #fff; }
+
+    .cp-name { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+    .cp-churn { font-size: 1.6rem; font-weight: 900; line-height: 1; }
+    .cp-churn.high { color: var(--high); }
+    .cp-churn.med  { color: var(--med);  }
+    .cp-churn.low  { color: var(--low);  }
+    .cp-size { font-size: 0.8rem; color: var(--muted-strong); font-weight: 600; }
+
+    .cp-metrics { display: grid; gap: 6px; }
+    .cp-metric { display: grid; grid-template-columns: 120px 1fr 48px; align-items: center; gap: 8px; font-size: 0.78rem; }
+    .cp-metric span:first-child { color: var(--muted-strong); font-weight: 600; }
+    .cp-metric span:last-child  { color: var(--text); font-weight: 700; text-align: right; }
+    .cp-mini { background: var(--border); border-radius: 999px; height: 7px; overflow: hidden; }
+    .cp-mini-fill { border-radius: 999px; height: 100%; }
+
+    .cp-action {
+      background: rgba(0,0,0,0.04);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 8px 10px;
+    }
+
     .bar-list {
       display: grid;
       gap: 12px;
@@ -2221,50 +2281,81 @@
         </article>
 
         <article class="chart-card" style="margin-top:24px;">
-          <h3 class="chart-title">Segmentação · Visão geral dos 4 clusters</h3>
-          <div class="chart-two-col">
-            <div>
-              <div class="chart-subtitle">Churn rate por cluster</div>
-              <div class="bar-list">
-                <div class="bar-row">
-                  <div class="bar-meta"><span>C0 · Recém-chegado em fuga</span><span>56%</span></div>
-                  <div class="bar-track"><div class="bar-value high-risk" style="width:56%"></div></div>
-                </div>
-                <div class="bar-row">
-                  <div class="bar-meta"><span>C3 · Médio em trânsito</span><span>27%</span></div>
-                  <div class="bar-track"><div class="bar-value" style="width:27%"></div></div>
-                </div>
-                <div class="bar-row">
-                  <div class="bar-meta"><span>C2 · Engajado mensal</span><span>9%</span></div>
-                  <div class="bar-track"><div class="bar-value" style="width:9%"></div></div>
-                </div>
-                <div class="bar-row">
-                  <div class="bar-meta"><span>C1 · Leal anual</span><span>3%</span></div>
-                  <div class="bar-track"><div class="bar-value" style="width:3%"></div></div>
-                </div>
+          <h3 class="chart-title">Segmentação · Perfil comparativo dos 4 clusters</h3>
+          <div class="cp-grid">
+
+            <!-- C0 -->
+            <div class="cp-card risk-high">
+              <div class="cp-header">
+                <span class="cp-badge c0">C0</span>
+                <span class="cp-name">Recém-chegado em fuga</span>
               </div>
-            </div>
-            <div>
-              <div class="chart-subtitle">Tamanho de cada cluster</div>
-              <div class="bar-list">
-                <div class="bar-row">
-                  <div class="bar-meta"><span>C0 · 1.470 clientes</span><span>37%</span></div>
-                  <div class="bar-track"><div class="bar-value high-risk" style="width:37%"></div></div>
-                </div>
-                <div class="bar-row">
-                  <div class="bar-meta"><span>C1 · 1.082 clientes</span><span>27%</span></div>
-                  <div class="bar-track"><div class="bar-value" style="width:27%"></div></div>
-                </div>
-                <div class="bar-row">
-                  <div class="bar-meta"><span>C2 · 1.062 clientes</span><span>27%</span></div>
-                  <div class="bar-track"><div class="bar-value" style="width:27%"></div></div>
-                </div>
-                <div class="bar-row">
-                  <div class="bar-meta"><span>C3 · 386 clientes</span><span>10%</span></div>
-                  <div class="bar-track"><div class="bar-value" style="width:10%"></div></div>
-                </div>
+              <div class="cp-churn high">56% <span style="font-size:0.9rem;font-weight:600;">churn</span></div>
+              <div class="cp-size">1.470 clientes · 37% da base</div>
+              <div class="cp-metrics">
+                <div class="cp-metric"><span>Lifetime</span><div class="cp-mini"><div class="cp-mini-fill" style="width:5%;background:var(--high)"></div></div><span>~1m</span></div>
+                <div class="cp-metric"><span>Contrato</span><div class="cp-mini"><div class="cp-mini-fill" style="width:8%;background:var(--high)"></div></div><span>1m</span></div>
+                <div class="cp-metric"><span>Freq. atual</span><div class="cp-mini"><div class="cp-mini-fill" style="width:28%;background:var(--high)"></div></div><span>baixa</span></div>
+                <div class="cp-metric"><span>Grupo</span><div class="cp-mini"><div class="cp-mini-fill" style="width:22%;background:var(--high)"></div></div><span>22%</span></div>
+                <div class="cp-metric"><span>Indicação</span><div class="cp-mini"><div class="cp-mini-fill" style="width:14%;background:var(--high)"></div></div><span>14%</span></div>
               </div>
+              <div class="cp-action">Ação: onboarding intensivo nos primeiros 30 dias</div>
             </div>
+
+            <!-- C3 -->
+            <div class="cp-card risk-med">
+              <div class="cp-header">
+                <span class="cp-badge c3">C3</span>
+                <span class="cp-name">Médio em trânsito</span>
+              </div>
+              <div class="cp-churn med">27% <span style="font-size:0.9rem;font-weight:600;">churn</span></div>
+              <div class="cp-size">386 clientes · 10% da base</div>
+              <div class="cp-metrics">
+                <div class="cp-metric"><span>Lifetime</span><div class="cp-mini"><div class="cp-mini-fill" style="width:35%;background:var(--med)"></div></div><span>~5m</span></div>
+                <div class="cp-metric"><span>Contrato</span><div class="cp-mini"><div class="cp-mini-fill" style="width:50%;background:var(--med)"></div></div><span>6m</span></div>
+                <div class="cp-metric"><span>Freq. atual</span><div class="cp-mini"><div class="cp-mini-fill" style="width:45%;background:var(--med)"></div></div><span>média</span></div>
+                <div class="cp-metric"><span>Grupo</span><div class="cp-mini"><div class="cp-mini-fill" style="width:32%;background:var(--med)"></div></div><span>32%</span></div>
+                <div class="cp-metric"><span>Indicação</span><div class="cp-mini"><div class="cp-mini-fill" style="width:22%;background:var(--med)"></div></div><span>22%</span></div>
+              </div>
+              <div class="cp-action">Ação: oferta de upgrade antes do vencimento</div>
+            </div>
+
+            <!-- C2 -->
+            <div class="cp-card risk-low">
+              <div class="cp-header">
+                <span class="cp-badge c2">C2</span>
+                <span class="cp-name">Engajado mensal</span>
+              </div>
+              <div class="cp-churn low">9% <span style="font-size:0.9rem;font-weight:600;">churn</span></div>
+              <div class="cp-size">1.062 clientes · 27% da base</div>
+              <div class="cp-metrics">
+                <div class="cp-metric"><span>Lifetime</span><div class="cp-mini"><div class="cp-mini-fill" style="width:65%;background:var(--low)"></div></div><span>~15m</span></div>
+                <div class="cp-metric"><span>Contrato</span><div class="cp-mini"><div class="cp-mini-fill" style="width:35%;background:var(--low)"></div></div><span>1–6m</span></div>
+                <div class="cp-metric"><span>Freq. atual</span><div class="cp-mini"><div class="cp-mini-fill" style="width:80%;background:var(--low)"></div></div><span>alta</span></div>
+                <div class="cp-metric"><span>Grupo</span><div class="cp-mini"><div class="cp-mini-fill" style="width:58%;background:var(--low)"></div></div><span>58%</span></div>
+                <div class="cp-metric"><span>Indicação</span><div class="cp-mini"><div class="cp-mini-fill" style="width:40%;background:var(--low)"></div></div><span>40%</span></div>
+              </div>
+              <div class="cp-action">Ação: incentivar upgrade para contrato anual</div>
+            </div>
+
+            <!-- C1 -->
+            <div class="cp-card risk-low">
+              <div class="cp-header">
+                <span class="cp-badge c1">C1</span>
+                <span class="cp-name">Leal anual</span>
+              </div>
+              <div class="cp-churn low">3% <span style="font-size:0.9rem;font-weight:600;">churn</span></div>
+              <div class="cp-size">1.082 clientes · 27% da base</div>
+              <div class="cp-metrics">
+                <div class="cp-metric"><span>Lifetime</span><div class="cp-mini"><div class="cp-mini-fill" style="width:100%;background:var(--low)"></div></div><span>~20m</span></div>
+                <div class="cp-metric"><span>Contrato</span><div class="cp-mini"><div class="cp-mini-fill" style="width:100%;background:var(--low)"></div></div><span>12m</span></div>
+                <div class="cp-metric"><span>Freq. atual</span><div class="cp-mini"><div class="cp-mini-fill" style="width:65%;background:var(--low)"></div></div><span>média</span></div>
+                <div class="cp-metric"><span>Grupo</span><div class="cp-mini"><div class="cp-mini-fill" style="width:46%;background:var(--low)"></div></div><span>46%</span></div>
+                <div class="cp-metric"><span>Indicação</span><div class="cp-mini"><div class="cp-mini-fill" style="width:36%;background:var(--low)"></div></div><span>36%</span></div>
+              </div>
+              <div class="cp-action">Ação: programa de fidelidade e benefícios exclusivos</div>
+            </div>
+
           </div>
         </article>
 
@@ -4018,6 +4109,137 @@
   }
 
   // ── SEGMENTAÇÃO K-MEANS ──────────────────────────
+  // ── CLIENT-SIDE K-MEANS ──────────────────────────────────────────
+  function runClientKMeans(rows) {
+    const SEG_FEATURES = [
+      "Lifetime","Avg_class_frequency_current_month","Age","Contract_period",
+      "Month_to_end_contract","Avg_class_frequency_total","Avg_additional_charges_total",
+      "Group_visits","Promo_friends","Partner","Near_Location"
+    ];
+    const HMAP_FEATURES = [
+      "Lifetime","Avg_class_frequency_current_month","Age","Contract_period",
+      "Month_to_end_contract","Avg_class_frequency_total","Group_visits","Promo_friends","Partner"
+    ];
+    const HMAP_LABELS = {
+      Lifetime:"Tempo como cliente", Avg_class_frequency_current_month:"Frequência atual",
+      Age:"Idade", Contract_period:"Duração contrato", Month_to_end_contract:"Meses até vencer",
+      Avg_class_frequency_total:"Frequência histórica", Group_visits:"Desafios em grupo",
+      Promo_friends:"Indicação de amigos", Partner:"Convênio empresarial"
+    };
+    const C_NAMES = ["C0 · Recém-chegado em fuga","C1 · Leal anual","C2 · Engajado mensal","C3 · Médio em trânsito"];
+
+    const valid = rows.filter(r => SEG_FEATURES.every(f => r[f] !== undefined && !isNaN(r[f])));
+    if (valid.length < 20) throw new Error("CSV inválido para segmentação.");
+
+    // StandardScaler
+    const mu = {}, sigma = {};
+    SEG_FEATURES.forEach(f => {
+      const vals = valid.map(r => r[f]);
+      const m = vals.reduce((a, b) => a + b, 0) / vals.length;
+      const s = Math.sqrt(vals.reduce((a, b) => a + (b - m) ** 2, 0) / vals.length) || 1;
+      mu[f] = m; sigma[f] = s;
+    });
+    const scaled = valid.map(r => SEG_FEATURES.map(f => (r[f] - mu[f]) / sigma[f]));
+
+    function sq(a, b) { return a.reduce((s, v, i) => s + (v - b[i]) ** 2, 0); }
+
+    function krun(data, k) {
+      const n = data.length;
+      // KMeans++ init
+      const ci = [Math.floor(Math.random() * n)];
+      while (ci.length < k) {
+        const d2 = data.map(p => Math.min(...ci.map(i => sq(p, data[i]))));
+        const tot = d2.reduce((a, b) => a + b, 0);
+        let r = Math.random() * tot;
+        let chosen = n - 1;
+        for (let i = 0; i < n; i++) { r -= d2[i]; if (r <= 0) { chosen = i; break; } }
+        ci.push(chosen);
+      }
+      let centroids = ci.map(i => data[i].slice());
+      let labels = new Int32Array(n);
+
+      for (let iter = 0; iter < 120; iter++) {
+        let changed = false;
+        for (let i = 0; i < n; i++) {
+          let best = 0, bestD = Infinity;
+          for (let c = 0; c < k; c++) { const d = sq(data[i], centroids[c]); if (d < bestD) { bestD = d; best = c; } }
+          if (labels[i] !== best) { labels[i] = best; changed = true; }
+        }
+        if (!changed) break;
+        centroids = Array.from({ length: k }, (_, c) => {
+          const pts = data.filter((_, i) => labels[i] === c);
+          return pts.length ? pts[0].map((_, j) => pts.reduce((s, p) => s + p[j], 0) / pts.length) : centroids[c];
+        });
+      }
+      const inertia = data.reduce((s, p, i) => s + sq(p, centroids[labels[i]]), 0);
+      return { labels: Array.from(labels), inertia, centroids };
+    }
+
+    // Run n_init=6, keep best inertia
+    let best = null;
+    for (let t = 0; t < 6; t++) {
+      const res = krun(scaled, 4);
+      if (!best || res.inertia < best.inertia) best = res;
+    }
+    const { labels, inertia } = best;
+
+    // Remap cluster IDs: highest churn→C0, 2nd→C3, 3rd→C2, lowest→C1
+    const churnByLabel = [0,1,2,3].map(c => {
+      const m = valid.filter((_, i) => labels[i] === c);
+      return m.length ? m.reduce((s, r) => s + (r.Churn || 0), 0) / m.length : 0;
+    });
+    const sorted = [0,1,2,3].sort((a, b) => churnByLabel[b] - churnByLabel[a]);
+    const TARGET_IDS = [0, 3, 2, 1]; // rank 0→C0, 1→C3, 2→C2, 3→C1
+    const remap = {};
+    sorted.forEach((orig, rank) => { remap[orig] = TARGET_IDS[rank]; });
+    const remapped = labels.map(l => remap[l]);
+
+    const cluster_stats = [0,1,2,3].map(cid => {
+      const m = valid.filter((_, i) => remapped[i] === cid);
+      const churn_rate = m.length ? m.reduce((s, r) => s + (r.Churn || 0), 0) / m.length : 0;
+      return { id: cid, name: C_NAMES[cid], count: m.length, percentage: m.length / valid.length, churn_rate };
+    });
+
+    const cluster_means = {};
+    for (let cid = 0; cid < 4; cid++) {
+      const m = valid.filter((_, i) => remapped[i] === cid);
+      const means = {};
+      HMAP_FEATURES.forEach(f => { means[f] = m.length ? m.reduce((s, r) => s + r[f], 0) / m.length : 0; });
+      cluster_means[String(cid)] = means;
+    }
+
+    const heatmap_normalized = {};
+    HMAP_FEATURES.forEach(f => {
+      const vals = [0,1,2,3].map(c => cluster_means[c][f] || 0);
+      const mn = Math.min(...vals), mx = Math.max(...vals), span = (mx - mn) || 1;
+      heatmap_normalized[f] = vals.map(v => Math.round(((v - mn) / span) * 1000) / 1000);
+    });
+
+    // Simplified silhouette (sample 150 pts)
+    const sIdx = Array.from({ length: Math.min(150, valid.length) }, () => Math.floor(Math.random() * valid.length));
+    let silSum = 0;
+    sIdx.forEach(i => {
+      const c = remapped[i];
+      const same = sIdx.filter(j => remapped[j] === c && j !== i);
+      const a = same.length ? same.reduce((s, j) => s + Math.sqrt(sq(scaled[i], scaled[j])), 0) / same.length : 0;
+      const b = Math.min(...[0,1,2,3].filter(x => x !== c).map(oc => {
+        const om = sIdx.filter(j => remapped[j] === oc);
+        return om.length ? om.reduce((s, j) => s + Math.sqrt(sq(scaled[i], scaled[j])), 0) / om.length : Infinity;
+      }));
+      const mx = Math.max(a, b);
+      silSum += mx > 0 ? (b - a) / mx : 0;
+    });
+
+    return {
+      status: "segmented", n_clusters: 4,
+      inertia: Math.round(inertia * 100) / 100,
+      silhouette_score: Math.round(silSum / sIdx.length * 10000) / 10000,
+      cluster_stats, cluster_means,
+      heatmap_features: HMAP_FEATURES, heatmap_labels: HMAP_LABELS,
+      heatmap_normalized, rf_by_cluster: [],
+    };
+  }
+
   async function carregarSegmentacao(file) {
     const segStatus = document.getElementById("seg-status");
     const segDashboard = document.getElementById("seg-dashboard");
@@ -4026,15 +4248,29 @@
     segStatus.textContent = "Executando K-Means (n_clusters=4)...";
     segDashboard.className = "seg-dashboard";
 
-    const formData = new FormData();
-    formData.append("file", file);
-
+    // Try backend first; if unavailable, fall back to client-side K-Means
     try {
-      const res = await fetch(`${API_URL}/segment`, { method: "POST", body: formData });
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch(`${API_URL}/segment`, {
+        method: "POST", body: formData,
+        signal: AbortSignal.timeout ? AbortSignal.timeout(12000) : undefined,
+      });
       if (!res.ok) throw new Error(await obterMensagemErro(res));
       const data = await res.json();
       exibirSegmentacao(data);
-    } catch (err) {
+      return;
+    } catch (_) { /* fall through to client K-Means */ }
+
+    try {
+      segStatus.textContent = "Processando no navegador (K-Means local)...";
+      await new Promise(r => setTimeout(r, 0)); // let UI paint
+      const csvText = await file.text();
+      const rows = parsearCsvNumerico(csvText);
+      csvRowsCache = rows;
+      const data = runClientKMeans(rows);
+      exibirSegmentacao(data);
+    } catch (clientErr) {
       segStatus.className = "seg-status waiting";
       segStatus.textContent = "Segmentação dinâmica indisponível. Dados do artefato exibidos abaixo.";
     }
@@ -4162,6 +4398,35 @@
     });
 
     calcularPredicao().catch(function () {});
+
+    // Animate bar widths when chart cards scroll into view
+    const barObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.querySelectorAll('.bar-value, .cp-mini-fill').forEach(function (bar) {
+          const target = bar.style.width;
+          if (!target || target === '0%' || target === '0') return;
+          bar.style.width = '0';
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              bar.style.width = target;
+            });
+          });
+        });
+        barObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.chart-card, .cp-card').forEach(function (el) {
+      // Start all bars at 0 so animation is visible
+      el.querySelectorAll('.bar-value, .cp-mini-fill').forEach(function (bar) {
+        if (bar.style.width && bar.style.width !== '0%') {
+          bar.dataset.targetW = bar.style.width;
+          bar.style.width = '0';
+        }
+      });
+      barObserver.observe(el);
+    });
   });
 
 </script>
