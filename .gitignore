@@ -13,3 +13,4 @@ cursorrules
 .python-version
 *.egg-info/
 .DS_Store
+!notebooks/gym_churn_us.csv
