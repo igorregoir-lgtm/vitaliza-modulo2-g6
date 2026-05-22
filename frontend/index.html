@@ -1723,6 +1723,16 @@
     .deck-slide-body ul { padding-left: 18px; display: grid; gap: 6px; margin-top: 10px; }
     .deck-slide-body li { color: var(--muted-strong); font-size: 0.92rem; line-height: 1.6; }
     .deck-slide-body strong { color: var(--text); }
+    .deck-kicker { font-size: 0.72rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand); margin-bottom: 8px; }
+    .deck-info-box { background: var(--brand-soft); border: 1px solid var(--brand); border-radius: var(--radius-md); padding: 14px 16px; margin: 14px 0; font-size: 0.86rem; font-weight: 700; color: var(--text); line-height: 1.5; }
+    .deck-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+    .deck-btn { display: inline-block; background: var(--brand); color: #fff; border-radius: 999px; padding: 9px 18px; font-size: 0.82rem; font-weight: 800; text-decoration: none; transition: opacity 0.15s; }
+    .deck-btn:hover { opacity: 0.85; }
+    .deck-gloss { display: grid; gap: 10px; margin-top: 14px; }
+    .deck-gloss-item { display: grid; grid-template-columns: minmax(130px,180px) 1fr; gap: 10px; align-items: start; background: var(--surface-muted); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; }
+    .deck-gloss-term { font-weight: 800; font-size: 0.85rem; color: var(--brand); }
+    .deck-gloss-def { font-size: 0.82rem; color: var(--muted-strong); line-height: 1.5; }
+    @media (max-width: 600px) { .deck-gloss-item { grid-template-columns: 1fr; gap: 3px; } }
 
     /* RF HIGHLIGHT BOX */
     .rf-highlight-box {
@@ -2968,7 +2978,7 @@
   ══════════════════════════════════════════════ -->
   <section class="tab-panel" id="tab-minideck" aria-label="Mini Deck de apresentação">
     <section class="card">
-      <div class="section-label">Mini Deck · 8 slides</div>
+      <div class="section-label">Mini Deck · 10 slides</div>
 
       <nav class="deck-index" aria-label="Índice do Mini Deck">
         <a href="#deck-s1" class="deck-index-link">01 · Contexto</a>
@@ -2979,12 +2989,14 @@
         <a href="#deck-s6" class="deck-index-link">06 · Segmentação · 4 clusters</a>
         <a href="#deck-s7" class="deck-index-link">07 · Personas</a>
         <a href="#deck-s8" class="deck-index-link">08 · Limitações</a>
+        <a href="#deck-s9" class="deck-index-link">09 · Evidência EDA</a>
+        <a href="#deck-s10" class="deck-index-link">10 · Glossário</a>
       </nav>
 
       <div class="deck-scroll">
 
         <div class="deck-section" id="deck-s1">
-          <div class="deck-slide-num">Slide 01 / 08</div>
+          <div class="deck-slide-num">Slide 01 / 10</div>
           <div class="deck-slide-title">Contexto</div>
           <div class="deck-slide-body">
             <p>Academias dependem de recorrência. A receita é previsível enquanto o cliente permanece — e invisível quando ele vai embora. O problema não é o cancelamento em si: é que o cancelamento já estava sinalizado dias, às vezes semanas antes.</p>
@@ -2998,7 +3010,7 @@
         </div>
 
         <div class="deck-section" id="deck-s2">
-          <div class="deck-slide-num">Slide 02 / 08</div>
+          <div class="deck-slide-num">Slide 02 / 10</div>
           <div class="deck-slide-title">O que o dado mostra</div>
           <div class="deck-slide-body">
             <p>A análise exploratória revelou padrões consistentes que direcionaram tanto a escolha das features quanto o design dos clusters.</p>
@@ -3013,7 +3025,7 @@
         </div>
 
         <div class="deck-section" id="deck-s3">
-          <div class="deck-slide-num">Slide 03 / 08</div>
+          <div class="deck-slide-num">Slide 03 / 10</div>
           <div class="deck-slide-title">Metodologia</div>
           <div class="deck-slide-body">
             <p>A arquitetura técnica combina dois algoritmos com papéis distintos e complementares:</p>
@@ -3027,7 +3039,7 @@
         </div>
 
         <div class="deck-section" id="deck-s4">
-          <div class="deck-slide-num">Slide 04 / 08</div>
+          <div class="deck-slide-num">Slide 04 / 10</div>
           <div class="deck-slide-title">Jornada técnica</div>
           <div class="deck-slide-body">
             <p>O fluxo foi desenhado para ser executável em demonstração ao vivo:</p>
@@ -3043,7 +3055,7 @@
         </div>
 
         <div class="deck-section" id="deck-s5">
-          <div class="deck-slide-num">Slide 05 / 08</div>
+          <div class="deck-slide-num">Slide 05 / 10</div>
           <div class="deck-slide-title">EDA · Achados principais</div>
           <div class="deck-slide-body">
             <p>A análise exploratória consolidou os sinais que alimentam tanto o modelo quanto os clusters:</p>
@@ -3058,7 +3070,7 @@
         </div>
 
         <div class="deck-section" id="deck-s6">
-          <div class="deck-slide-num">Slide 06 / 08</div>
+          <div class="deck-slide-num">Slide 06 / 10</div>
           <div class="deck-slide-title">Segmentação · 4 clusters</div>
           <div class="deck-slide-body">
             <p>O K-Means identificou 4 perfis comportamentais com taxas de churn distintas:</p>
@@ -3072,7 +3084,7 @@
         </div>
 
         <div class="deck-section" id="deck-s7">
-          <div class="deck-slide-num">Slide 07 / 08</div>
+          <div class="deck-slide-num">Slide 07 / 10</div>
           <div class="deck-slide-title">Personas</div>
           <div class="deck-slide-body">
             <p>Cada cluster foi traduzido em uma persona com narrativa, perfil comportamental e sinal de entrada:</p>
@@ -3086,7 +3098,7 @@
         </div>
 
         <div class="deck-section" id="deck-s8">
-          <div class="deck-slide-num">Slide 08 / 08</div>
+          <div class="deck-slide-num">Slide 08 / 10</div>
           <div class="deck-slide-title">Limitações</div>
           <div class="deck-slide-body">
             <p>O modelo e a segmentação têm limitações conhecidas que contextualizam sua aplicação:</p>
@@ -3097,6 +3109,73 @@
               <li><strong>Features disponíveis:</strong> variáveis como NPS, histórico de reclamações e interações digitais poderiam enriquecer os clusters</li>
               <li><strong>Validação de negócio:</strong> os clusters precisam ser validados com o time de operações — a segmentação é um ponto de partida, não uma conclusão</li>
             </ul>
+          </div>
+        </div>
+
+
+        <div class="deck-section" id="deck-s9">
+          <div class="deck-slide-num">Slide 09 / 10</div>
+          <div class="deck-kicker">Evidência formal da EDA</div>
+          <div class="deck-slide-title">Notebook de análise exploratória</div>
+          <div class="deck-slide-body">
+            <p>Além do Dashboard EDA interativo, a entrega inclui um notebook Jupyter com a análise formal da base: carga do CSV, limpeza, estatísticas descritivas, gráficos, correlações e conclusão sobre as features usadas.</p>
+            <div class="deck-info-box">
+              Arquivo no projeto: <strong>notebooks/eda_churn.ipynb</strong>. Abra pelo Cursor ou pelo Jupyter e execute as células em ordem com o CSV em <strong>notebooks/gym_churn_us.csv</strong>.
+            </div>
+            <div class="deck-btns">
+              <a href="notebooks/eda_churn.ipynb" download class="deck-btn">Abrir notebook EDA</a>
+              <a href="#" onclick="trocarAba('eda');return false;" class="deck-btn">Abrir relatório visual EDA</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="deck-section" id="deck-s10">
+          <div class="deck-slide-num">Slide 10 / 10</div>
+          <div class="deck-slide-title">Glossário</div>
+          <div class="deck-slide-body">
+            <p>Termos técnicos usados ao longo do projeto:</p>
+            <div class="deck-gloss">
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">Churn</span>
+                <span class="deck-gloss-def">Cancelamento da assinatura pelo cliente. Variável binária alvo dos modelos preditivos.</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">EDA</span>
+                <span class="deck-gloss-def">Análise Exploratória de Dados — fase que examina distribuições, correlações e padrões antes da modelagem.</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">K-Means</span>
+                <span class="deck-gloss-def">Algoritmo de agrupamento não supervisionado que particiona os dados em k clusters minimizando a variância intra-cluster.</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">Cluster</span>
+                <span class="deck-gloss-def">Grupo de clientes com perfil comportamental similar, identificado pelo K-Means a partir das 11 features normalizadas.</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">Silhouette Score</span>
+                <span class="deck-gloss-def">Métrica de qualidade de clustering — mede coesão interna e separação entre clusters. Varia de -1 a 1 (quanto maior, melhor).</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">StandardScaler</span>
+                <span class="deck-gloss-def">Técnica de normalização que transforma cada feature para média 0 e desvio padrão 1, necessária para o K-Means funcionar corretamente.</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">RandomForest</span>
+                <span class="deck-gloss-def">Ensemble de árvores de decisão usado para predição de churn individual. Fornece probabilidade de cancelamento e ranking de importância das features.</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">Lifetime</span>
+                <span class="deck-gloss-def">Tempo total de permanência do cliente como assinante, em meses. Feature com correlação negativa forte com churn.</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">Ancoragem</span>
+                <span class="deck-gloss-def">Conjunto de fatores que reduzem a propensão ao cancelamento: contrato longo, participação em grupo, indicação por amigo, convênio.</span>
+              </div>
+              <div class="deck-gloss-item">
+                <span class="deck-gloss-term">Feature</span>
+                <span class="deck-gloss-def">Variável de entrada dos modelos. Exemplos: frequência semanal, tipo de contrato, lifetime, participação em aulas coletivas.</span>
+              </div>
+            </div>
           </div>
         </div>
 
