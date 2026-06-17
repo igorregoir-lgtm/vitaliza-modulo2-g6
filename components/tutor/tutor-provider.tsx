@@ -29,7 +29,7 @@ const SCREEN_LABELS: Record<string, string> = {
 };
 
 const WELCOME =
-  "Oi! Sou o Tutor do Vitaliza. Posso explicar qualquer parte deste sistema — o modelo de churn, as explicações SHAP, as telas, os arquétipos, a retenção ou a governança LGPD. Pergunte por texto ou pelo microfone. (Só falo sobre este repositório.)";
+  "Oi, que bom ter você aqui! Eu sou o Tutor do Vitaliza e quero te ajudar, no seu ritmo, a entender este sistema. Pode me perguntar qualquer coisa sobre o repositório — o modelo, as explicações, as telas, a governança — escrevendo ou falando comigo pelo microfone. Como posso ajudar?";
 
 const SUGESTOES = [
   "O que esta tela mostra?",
@@ -52,6 +52,7 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
   const messagesRef = React.useRef<Msg[]>([]);
   const loadingRef = React.useRef(false);
   const speakOnRef = React.useRef(false);
+  const screenRef = React.useRef(screen);
   const scrollRef = React.useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recRef = React.useRef<any>(null);
@@ -65,6 +66,9 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
   React.useEffect(() => {
     speakOnRef.current = speakOn;
   }, [speakOn]);
+  React.useEffect(() => {
+    screenRef.current = screen;
+  }, [screen]);
 
   React.useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -101,7 +105,7 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
       const res = await fetch("/api/tutor", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history, screen }),
+        body: JSON.stringify({ messages: history, screen: screenRef.current }),
       });
       const data = await res.json();
       const ans: string = data.answer ?? "Não consegui responder agora.";
@@ -158,12 +162,18 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
 
   const open = React.useCallback((seed?: Seed) => {
     setIsOpen(true);
-    if (messagesRef.current.length === 0) {
+    const firstTime = messagesRef.current.length === 0;
+    if (firstTime) {
       const init = [{ role: "assistant", content: WELCOME } as Msg];
       setMessages(init);
       messagesRef.current = init;
     }
-    if (seed?.question) send(seed.question);
+    if (seed?.question) {
+      send(seed.question);
+    } else if (firstTime) {
+      // Saudação falada ao abrir pelo botão flutuante (gesto do usuário permite TTS).
+      speak(WELCOME);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
