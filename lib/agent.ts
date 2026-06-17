@@ -25,7 +25,7 @@ interface OpenRouterMessage {
 async function callOpenRouter(messages: OpenRouterMessage[], maxTokens = 700): Promise<string> {
   const apiKey = process.env.OPENROUTER_API_KEY;
   const baseUrl = process.env.OPENROUTER_BASE_URL ?? "https://openrouter.ai/api/v1";
-  const model = process.env.OPENROUTER_MODEL ?? "anthropic/claude-3.5-sonnet";
+  const model = process.env.OPENROUTER_MODEL || "anthropic/claude-sonnet-4.6";
   if (!apiKey) throw new Error("OPENROUTER_API_KEY ausente no servidor.");
 
   const res = await fetch(`${baseUrl}/chat/completions`, {
@@ -34,7 +34,7 @@ async function callOpenRouter(messages: OpenRouterMessage[], maxTokens = 700): P
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
       "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-      "X-Title": "Vitaliza — Inteligência de Retenção",
+      "X-Title": "Vitaliza Retencao",
     },
     body: JSON.stringify({
       model,
