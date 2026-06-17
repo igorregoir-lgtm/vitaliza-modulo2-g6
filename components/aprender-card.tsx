@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { GraduationCap, ChevronDown, Sparkles, Loader2 } from "lucide-react";
+import { GraduationCap, ChevronDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { TutorIcon } from "@/components/icons/tutor-icon";
 
 interface AprenderCardProps {
   /** Short concept id / screen name passed to the tutor as context. */
@@ -93,7 +94,7 @@ export function AprenderCard({
           {loading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
-            <Sparkles className="h-4 w-4 transition-transform group-hover:scale-110" />
+            <TutorIcon className="h-[18px] w-[18px] transition-transform group-hover:scale-110" />
           )}
           <span className="hidden sm:inline">{loading ? "Pensando…" : "Perguntar ao tutor"}</span>
           <span className="sm:hidden">Tutor</span>
@@ -144,7 +145,7 @@ export function AprenderCard({
               className="mt-4 rounded-[var(--radius-md)] border border-[var(--rule-soft)] border-l-2 border-l-[var(--accent)] bg-[var(--accent-light)]/35 p-3.5"
             >
               <p className="eyebrow mb-1.5 flex items-center gap-1.5 text-[var(--accent-deep)]">
-                <Sparkles className="h-3 w-3" /> Tutor
+                <TutorIcon className="h-3.5 w-3.5" /> Tutor
               </p>
               {loading ? (
                 <p className="flex items-center gap-2 text-[var(--steel)]">
