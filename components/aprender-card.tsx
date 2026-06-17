@@ -1,12 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { GraduationCap, ChevronDown, Loader2 } from "lucide-react";
+import { GraduationCap, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TutorIcon } from "@/components/icons/tutor-icon";
+import { useTutor } from "@/components/tutor/tutor-provider";
 
 interface AprenderCardProps {
-  /** Short concept id / screen name passed to the tutor as context. */
+  /** Short concept id / screen name (mantido para contexto/compatibilidade). */
   screen: string;
   title: string;
   /** Static "what & why" content (always available, no LLM needed). */
@@ -17,44 +18,14 @@ interface AprenderCardProps {
   defaultOpen?: boolean;
 }
 
-export function AprenderCard({
-  screen,
-  title,
-  what,
-  why,
-  bullets,
-  defaultOpen = false,
-}: AprenderCardProps) {
+export function AprenderCard({ title, what, why, bullets, defaultOpen = false }: AprenderCardProps) {
   const [open, setOpen] = React.useState(defaultOpen);
-  const [tutorAnswer, setTutorAnswer] = React.useState<string | null>(null);
-  const [loading, setLoading] = React.useState(false);
-  const answerRef = React.useRef<HTMLDivElement>(null);
+  const tutor = useTutor();
 
-  async function askTutor() {
-    setOpen(true);
-    setLoading(true);
-    setTutorAnswer(null);
-    try {
-      const res = await fetch("/api/agent", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mode: "tutor",
-          question: `Explique de forma simples e acolhedora a tela "${title}": o que ela faz e por que ela importa para reduzir cancelamentos.`,
-          context: `Tela: ${screen}. O que faz: ${what} Por que existe: ${why}`,
-        }),
-      });
-      const data = await res.json();
-      setTutorAnswer(data.answer ?? "Não foi possível obter a explicação agora.");
-    } catch {
-      setTutorAnswer("Não foi possível falar com o tutor agora. Tente novamente em instantes.");
-    } finally {
-      setLoading(false);
-      requestAnimationFrame(() =>
-        answerRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }),
-      );
-    }
-  }
+  const askTutor = () =>
+    tutor.open({
+      question: `Sobre a tela "${title}": o que ela faz e por que ela importa para reduzir cancelamentos? Explique de forma simples.`,
+    });
 
   return (
     <div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--rule)] bg-[var(--paper-soft)]">
@@ -75,38 +46,27 @@ export function AprenderCard({
           </span>
         </button>
 
-        {/* Prominent, always-visible Tutor CTA (allla teal) */}
+        {/* CTA do tutor (abre o chat conversacional) */}
         <button
           type="button"
           onClick={askTutor}
-          disabled={loading}
           aria-label="Perguntar ao tutor"
           className={cn(
             "group relative inline-flex shrink-0 items-center gap-2 rounded-[var(--radius-md)] px-3.5 py-2",
-            "bg-[var(--accent)] text-white",
-            "text-[11px] font-semibold uppercase tracking-[0.12em]",
+            "bg-[var(--accent)] text-white text-[11px] font-semibold uppercase tracking-[0.12em]",
             "shadow-[0_4px_16px_-3px_rgba(20,184,166,0.5)] ring-1 ring-inset ring-white/15",
             "transition-all duration-200 hover:bg-[var(--accent-deep)] hover:shadow-[0_6px_22px_-3px_rgba(20,184,166,0.6)]",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--paper-soft)]",
-            "active:translate-y-px disabled:cursor-not-allowed disabled:opacity-60",
+            "active:translate-y-px",
           )}
         >
-          {loading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <TutorIcon className="h-[18px] w-[18px] transition-transform group-hover:scale-110" />
-          )}
-          <span className="hidden sm:inline">{loading ? "Pensando…" : "Perguntar ao tutor"}</span>
+          <TutorIcon className="h-[18px] w-[18px] transition-transform group-hover:scale-110" />
+          <span className="hidden sm:inline">Perguntar ao tutor</span>
           <span className="sm:hidden">Tutor</span>
-          {!loading && (
-            <span
-              className="absolute -right-1 -top-1 flex h-3 w-3"
-              aria-hidden
-            >
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--accent)] opacity-75" />
-              <span className="relative inline-flex h-3 w-3 rounded-full bg-[var(--accent)] ring-2 ring-[var(--paper-soft)]" />
-            </span>
-          )}
+          <span className="absolute -right-1 -top-1 flex h-3 w-3" aria-hidden>
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--accent)] opacity-75" />
+            <span className="relative inline-flex h-3 w-3 rounded-full bg-[var(--accent)] ring-2 ring-[var(--paper-soft)]" />
+          </span>
         </button>
 
         {/* Expand chevron */}
@@ -138,24 +98,13 @@ export function AprenderCard({
               ))}
             </ul>
           )}
-
-          {(loading || tutorAnswer) && (
-            <div
-              ref={answerRef}
-              className="mt-4 rounded-[var(--radius-md)] border border-[var(--rule-soft)] border-l-2 border-l-[var(--accent)] bg-[var(--accent-light)]/35 p-3.5"
-            >
-              <p className="eyebrow mb-1.5 flex items-center gap-1.5 text-[var(--accent-deep)]">
-                <TutorIcon className="h-3.5 w-3.5" /> Tutor
-              </p>
-              {loading ? (
-                <p className="flex items-center gap-2 text-[var(--steel)]">
-                  <Loader2 className="h-4 w-4 animate-spin" /> Preparando uma explicação acolhedora…
-                </p>
-              ) : (
-                <p className="whitespace-pre-wrap text-[var(--ink-soft)]">{tutorAnswer}</p>
-              )}
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={askTutor}
+            className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-[var(--accent-deep)] hover:underline"
+          >
+            <TutorIcon className="h-3.5 w-3.5" /> Conversar com o tutor sobre isto
+          </button>
         </div>
       )}
     </div>

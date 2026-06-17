@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
+import { TutorProvider } from "@/components/tutor/tutor-provider";
 import type { UserRole } from "@/lib/types";
 
 interface NavItem {
@@ -119,6 +120,7 @@ export function AppShell({
   const initials = (email ?? "VZ").slice(0, 2).toUpperCase();
 
   return (
+    <TutorProvider>
     <div className="flex min-h-screen flex-col">
       {/* Top bar (dark ink header) */}
       <header className="sticky top-0 z-30 border-b border-[var(--primary-deep)] bg-[var(--ink)] text-[var(--paper)]">
@@ -214,5 +216,6 @@ export function AppShell({
         </main>
       </div>
     </div>
+    </TutorProvider>
   );
 }
