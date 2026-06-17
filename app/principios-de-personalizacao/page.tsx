@@ -71,7 +71,10 @@ export default async function PrincipiosPage() {
     <div className="min-h-screen bg-[var(--paper)]">
       {/* Dark ink header */}
       <header className="border-b border-[var(--primary-deep)] bg-[var(--ink)] text-[var(--paper)]">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
+        <div className="relative mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
+          <p className="pointer-events-none absolute left-1/2 hidden -translate-x-1/2 whitespace-nowrap font-display text-base font-semibold tracking-tight text-[var(--paper)] md:block">
+            Sistema de Inteligência de Retenção
+          </p>
           <Link href="/dashboard" className="flex items-center gap-2.5">
             <span className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-md)] bg-[var(--accent)] text-white">
               <Activity className="h-4 w-4" />
@@ -90,11 +93,8 @@ export default async function PrincipiosPage() {
 
       {/* Faixa central — identidade + proposta de valor (em todas as páginas) */}
       <div className="border-b border-[var(--rule)] bg-[var(--paper-soft)]">
-        <div className="mx-auto max-w-3xl px-6 py-3 text-center">
-          <p className="font-display text-base font-semibold text-[var(--ink)]">
-            Sistema de Inteligência de Retenção
-          </p>
-          <p className="mt-1 text-xs leading-relaxed text-[var(--steel)]">
+        <div className="mx-auto max-w-3xl px-6 py-2.5 text-center">
+          <p className="text-xs leading-relaxed text-[var(--steel)]">
             Risco de churn por usuário, explicação individual com SHAP e recomendação prescritiva,
             tudo auditável de ponta a ponta.
           </p>

@@ -122,7 +122,10 @@ export function AppShell({
     <div className="flex min-h-screen flex-col">
       {/* Top bar (dark ink header) */}
       <header className="sticky top-0 z-30 border-b border-[var(--primary-deep)] bg-[var(--ink)] text-[var(--paper)]">
-        <div className="flex h-14 items-center gap-3 px-4 sm:px-6">
+        <div className="relative flex h-14 items-center gap-3 px-4 sm:px-6">
+          <p className="pointer-events-none absolute left-1/2 hidden -translate-x-1/2 whitespace-nowrap font-display text-base font-semibold tracking-tight text-[var(--paper)] md:block lg:text-lg">
+            Sistema de Inteligência de Retenção
+          </p>
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="text-[var(--paper)] hover:bg-white/10 lg:hidden">
@@ -172,22 +175,15 @@ export function AppShell({
                   <span className="hidden sm:inline">Sair</span>
                 </Button>
               </>
-            ) : (
-              <Badge variant="outline" className="border-white/25 text-[var(--paper)]">
-                Acesso aberto
-              </Badge>
-            )}
+            ) : null}
           </div>
         </div>
       </header>
 
-      {/* Faixa central — identidade + proposta de valor (todas as páginas) */}
+      {/* Faixa de proposta de valor (todas as páginas) */}
       <div className="border-b border-[var(--rule)] bg-[var(--paper)]">
-        <div className="mx-auto max-w-3xl px-4 py-3 text-center">
-          <p className="font-display text-lg font-semibold tracking-tight text-[var(--ink)] sm:text-xl">
-            Sistema de Inteligência de Retenção
-          </p>
-          <p className="mt-1 text-xs leading-relaxed text-[var(--steel)] sm:text-sm">
+        <div className="mx-auto max-w-3xl px-4 py-2.5 text-center">
+          <p className="text-xs leading-relaxed text-[var(--steel)] sm:text-sm">
             Risco de churn por usuário, explicação individual com SHAP e recomendação prescritiva,
             tudo auditável de ponta a ponta.
           </p>
