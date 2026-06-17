@@ -37,3 +37,5 @@ next-env.d.ts
 # --- diversos ---
 cursorrules
 .DS_Store
+
+.vercel

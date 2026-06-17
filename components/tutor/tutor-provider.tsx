@@ -68,6 +68,9 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
   const [listening, setListening] = React.useState(false);
   const [speakOn, setSpeakOn] = React.useState(false);
   const [voiceSupported, setVoiceSupported] = React.useState(false);
+  const [ttsLoading, setTtsLoading] = React.useState(false);
+  const [playing, setPlaying] = React.useState(false);
+  const [voiceSourceLabel, setVoiceSourceLabel] = React.useState("voz do navegador");
 
   const messagesRef = React.useRef<Msg[]>([]);
   const loadingRef = React.useRef(false);
@@ -77,6 +80,8 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recRef = React.useRef<any>(null);
   const voiceRef = React.useRef<SpeechSynthesisVoice | null>(null);
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
+  const serverVoiceRef = React.useRef(false);
 
   React.useEffect(() => {
     messagesRef.current = messages;
@@ -110,11 +115,50 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
     return () => synth.removeEventListener?.("voiceschanged", refresh);
   }, []);
 
+  // Descobre se há voz natural no servidor (ElevenLabs/Google); senão, navegador.
+  React.useEffect(() => {
+    let alive = true;
+    fetch("/api/tts")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((s) => {
+        if (!alive || !s) return;
+        const avail = !!s.serverVoiceAvailable;
+        serverVoiceRef.current = avail;
+        const cfg = (s.providers || []).find(
+          (p: { configured: boolean; name: string }) => p.configured,
+        );
+        setVoiceSourceLabel(avail && cfg ? `voz natural (${cfg.name})` : "voz do navegador");
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   React.useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, loading]);
 
-  function speak(text: string) {
+  function stopSpeaking() {
+    try {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+        audioRef.current = null;
+      }
+    } catch {
+      /* noop */
+    }
+    try {
+      window.speechSynthesis?.cancel();
+    } catch {
+      /* noop */
+    }
+    setPlaying(false);
+  }
+
+  // Voz do navegador (fallback / modo degradado): SpeechSynthesis pt-BR natural.
+  function speakBrowser(text: string) {
     try {
       if (typeof window === "undefined" || !window.speechSynthesis) return;
       const synth = window.speechSynthesis;
@@ -127,12 +171,57 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
       } else {
         u.lang = "pt-BR";
       }
-      u.rate = 1.0; // ritmo natural
+      u.rate = 1.0;
       u.pitch = 1.0;
+      u.onend = () => setPlaying(false);
+      u.onerror = () => setPlaying(false);
+      setPlaying(true);
       synth.speak(u);
     } catch {
-      /* TTS indisponível */
+      setPlaying(false);
     }
+  }
+
+  // Fala principal: tenta a voz natural do servidor (ElevenLabs/Google) e, se
+  // indisponível ou em erro, cai para a voz do navegador (sem quebrar o chat).
+  async function speak(text: string) {
+    stopSpeaking();
+    if (serverVoiceRef.current) {
+      try {
+        setTtsLoading(true);
+        const res = await fetch("/api/tts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        });
+        const ct = res.headers.get("Content-Type") || "";
+        if (res.ok && ct.startsWith("audio")) {
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          const audio = new Audio(url);
+          audioRef.current = audio;
+          audio.onplay = () => setPlaying(true);
+          audio.onended = () => {
+            setPlaying(false);
+            URL.revokeObjectURL(url);
+            if (audioRef.current === audio) audioRef.current = null;
+          };
+          audio.onerror = () => {
+            setPlaying(false);
+            URL.revokeObjectURL(url);
+          };
+          setTtsLoading(false);
+          await audio.play();
+          return;
+        }
+        // resposta não-áudio (ex.: 501 não configurado) -> fallback navegador
+      } catch {
+        /* erro de rede/reprodução -> fallback */
+      } finally {
+        setTtsLoading(false);
+      }
+    }
+    speakBrowser(text);
   }
 
   async function send(text: string) {
@@ -270,11 +359,22 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
               <p className="font-display text-sm font-semibold">Tutor do Vitaliza</p>
               <p className="mt-0.5 text-[11px] text-[var(--steel-soft)]">Só responde sobre este sistema</p>
             </div>
+            {(playing || ttsLoading) && (
+              <button
+                type="button"
+                onClick={stopSpeaking}
+                aria-label="Parar áudio"
+                title="Parar áudio"
+                className="rounded-full p-2 text-[var(--accent)] transition-colors hover:bg-white/10"
+              >
+                {ttsLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Square className="h-4 w-4" />}
+              </button>
+            )}
             <button
               type="button"
               onClick={() => {
                 setSpeakOn((s) => !s);
-                if (speakOn && typeof window !== "undefined") window.speechSynthesis?.cancel();
+                if (speakOn) stopSpeaking();
               }}
               aria-pressed={speakOn}
               aria-label={speakOn ? "Desativar leitura em voz alta" : "Ativar leitura em voz alta"}
@@ -290,7 +390,7 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
               type="button"
               onClick={() => {
                 setIsOpen(false);
-                if (typeof window !== "undefined") window.speechSynthesis?.cancel();
+                stopSpeaking();
               }}
               aria-label="Fechar o tutor"
               className="rounded-full p-2 transition-colors hover:bg-white/10"
@@ -319,9 +419,15 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
                     <button
                       type="button"
                       onClick={() => speak(m.content)}
-                      className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-medium text-[var(--accent-deep)] hover:underline"
+                      disabled={ttsLoading}
+                      className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-medium text-[var(--accent-deep)] hover:underline disabled:opacity-60"
                     >
-                      <Volume2 className="h-3 w-3" /> Ouvir
+                      {ttsLoading ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <Volume2 className="h-3 w-3" />
+                      )}{" "}
+                      Ouvir
                     </button>
                   )}
                 </div>
@@ -394,7 +500,8 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
               </button>
             </div>
             <p className="mt-1.5 px-1 text-[10px] leading-snug text-[var(--steel-soft)]">
-              Escopo restrito ao repositório Vitaliza · {voiceSupported ? "voz e leitura em voz alta disponíveis" : "leitura em voz alta disponível"}.
+              Escopo restrito ao repositório Vitaliza · {voiceSourceLabel}
+              {voiceSupported ? " · microfone disponível" : ""}.
             </p>
           </form>
         </div>

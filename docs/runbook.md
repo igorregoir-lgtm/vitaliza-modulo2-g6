@@ -8,8 +8,13 @@
 ## Variáveis de ambiente (secrets)
 Definidas em `.env.local` (dev, git-ignored) e nas Environment Variables da Vercel (produção):
 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`,
-`OPENROUTER_API_KEY`, `OPENROUTER_BASE_URL`, `OPENROUTER_MODEL` (=`anthropic/claude-sonnet-4.6`).
-Nunca commitar. **Rotacionar a OpenRouter key** (trafegou em texto puro na construção).
+`OPENROUTER_API_KEY`, `OPENROUTER_BASE_URL`, `OPENROUTER_MODEL` (=`anthropic/claude-sonnet-4.6`),
+`DEEPSEEK_API_KEY`, `DEEPSEEK_BASE_URL`, `DEEPSEEK_MODEL`.
+**Voz (TTS):** `TTS_ENABLED`, `TTS_PROVIDER`, `TTS_FALLBACK_PROVIDER`, `ELEVENLABS_API_KEY`,
+`ELEVENLABS_VOICE_ID`, `ELEVENLABS_MODEL_ID`, `GOOGLE_TTS_API_KEY` ou
+`GOOGLE_APPLICATION_CREDENTIALS_JSON`, `GOOGLE_TTS_LANGUAGE_CODE`, `GOOGLE_TTS_VOICE_NAME`,
+`AUDIO_AUTOPLAY` — detalhes e obtenção de credenciais em [`docs/voice-tts.md`](voice-tts.md).
+Nunca commitar segredos.
 
 ## Deploy
 ```bash

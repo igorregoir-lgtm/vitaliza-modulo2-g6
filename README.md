@@ -52,8 +52,11 @@ Cada tela traz um cartão **"Aprender"** (PBL): explica o "como" e o "porquê", 
 - **Front + API:** Next.js (App Router) na **Vercel** · paleta neutra + Fraunces/IBM Plex/JetBrains Mono.
 - **Dados/Auth:** **Supabase** (Postgres + RLS + Auth por perfil CS/Exec) — `customer`, `score`,
   `explanation`, `intervention`, `audit_log`, `principios`.
-- **Agente IA:** **OpenRouter** (`claude-sonnet-4.6`), **sempre server-side**, com guardrails em código
+- **Agente IA:** tutor conversacional em **DeepSeek** (`/api/tutor`, escopo restrito ao repositório) e
+  advisor prescritivo em **OpenRouter** (`/api/agent`), **sempre server-side**, com guardrails em código
   (sleeping_dog excluído, teto de desconto, máx. 2 canais).
+- **Voz (TTS):** camada server-side **ElevenLabs + Google Cloud TTS** com fallback automático e
+  **voz do navegador** como degradação — ver [`docs/voice-tts.md`](docs/voice-tts.md).
 - **ML (offline):** Python 3.12 — notebook **Marimo** (`notebooks/eda_vitaliza.py` → `01_eda_vitaliza.ipynb`),
   treino, SHAP, serialização `joblib`. Inferência em lote pontua os 4.000 clientes → Supabase.
 
