@@ -15,6 +15,7 @@ consequências. Convenção allla (ver `AGENTS.md` na raiz do produto).
 | [0008](0008-arquetipos-sleeping-dog.md) | 5 arquétipos + exclusão proativa de sleeping_dogs | Accepted |
 | [0009](0009-auditabilidade.md) | Auditabilidade: decision log + audit_log + model card | Accepted |
 | [0010](0010-paleta-sem-marca.md) | Paleta allla sem qualquer menção à marca | Accepted |
+| [0011](0011-inferencia-batch-vs-online.md) | Inferência em lote (real) + simulador heurístico p/ what-if | Accepted |
 
 > Decisões de produto confirmadas pelo cliente em 2026-06-17: build autônomo até o ar; fork em
 > `igorregoir-lgtm/Modulo2-G6` (mantendo o nome); novos projetos Supabase + Vercel; frontend
