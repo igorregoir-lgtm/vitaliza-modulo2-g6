@@ -1,0 +1,19 @@
+{
+  "delta_freq": 1.60572,
+  "contract_x_lifetime": 1.30873,
+  "Lifetime": 0.91358,
+  "ratio_freq_atual_vs_lifetime": 0.89569,
+  "Age": 0.82463,
+  "Avg_additional_charges_total": 0.44126,
+  "Avg_class_frequency_total": 0.30373,
+  "Group_visits": 0.28023,
+  "Contract_period": 0.26847,
+  "Avg_class_frequency_current_month": 0.23564,
+  "flag_early_user": 0.16369,
+  "Promo_friends": 0.1519,
+  "gender": 0.06173,
+  "Near_Location": 0.03444,
+  "Partner": 0.02993,
+  "Phone": 0.00686,
+  "flag_sleeping_dog": 0.0
+}

@@ -1,0 +1,88 @@
+{
+  "model_version": "vitaliza-churn-1.0.0",
+  "trained_at": "TRAINED_OFFLINE",
+  "dataset_sha256": "8b6c2c47f178901fdbc7116d65b593ac392c21514dde4ce7e83e788cbd7bc7b6",
+  "feature_order": [
+    "Contract_period",
+    "Age",
+    "Avg_additional_charges_total",
+    "Lifetime",
+    "Avg_class_frequency_total",
+    "Avg_class_frequency_current_month",
+    "ratio_freq_atual_vs_lifetime",
+    "delta_freq",
+    "contract_x_lifetime",
+    "gender",
+    "Near_Location",
+    "Partner",
+    "Promo_friends",
+    "Phone",
+    "Group_visits",
+    "flag_early_user",
+    "flag_sleeping_dog"
+  ],
+  "actionable": {
+    "Contract_period": true,
+    "Age": false,
+    "Avg_additional_charges_total": true,
+    "Lifetime": false,
+    "Avg_class_frequency_total": true,
+    "Avg_class_frequency_current_month": true,
+    "ratio_freq_atual_vs_lifetime": true,
+    "delta_freq": true,
+    "contract_x_lifetime": true,
+    "gender": false,
+    "Near_Location": false,
+    "Partner": true,
+    "Promo_friends": true,
+    "Phone": false,
+    "Group_visits": true,
+    "flag_early_user": false,
+    "flag_sleeping_dog": false
+  },
+  "input_features_raw": [
+    "gender",
+    "Near_Location",
+    "Partner",
+    "Promo_friends",
+    "Phone",
+    "Contract_period",
+    "Group_visits",
+    "Age",
+    "Avg_additional_charges_total",
+    "Lifetime",
+    "Avg_class_frequency_total",
+    "Avg_class_frequency_current_month",
+    "ratio_freq_atual_vs_lifetime",
+    "delta_freq",
+    "contract_x_lifetime",
+    "flag_early_user",
+    "flag_sleeping_dog"
+  ],
+  "excluded_features": [
+    "Month_to_end_contract"
+  ],
+  "risk_tiers": {
+    "baixo": [
+      0.0,
+      0.3
+    ],
+    "medio": [
+      0.3,
+      0.6
+    ],
+    "alto": [
+      0.6,
+      1.01
+    ]
+  },
+  "chosen_threshold": 0.05,
+  "calibration_method": "sigmoid",
+  "cost_ratio": {
+    "FN": 10.0,
+    "FP": 2.0,
+    "TP": 1.0,
+    "TN": 0.0
+  },
+  "min_recall_constraint": 0.7
+}

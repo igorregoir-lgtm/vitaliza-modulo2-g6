@@ -1,0 +1,57 @@
+{
+  "train": {
+    "roc_auc": 0.9981,
+    "pr_auc": 0.9949,
+    "recall": 1.0,
+    "precision": 0.8265,
+    "f1": 0.905,
+    "lift_top_decile": 3.7685,
+    "threshold": 0.05,
+    "n": 2800,
+    "positive_rate": 0.2654
+  },
+  "val": {
+    "roc_auc": 0.9896,
+    "pr_auc": 0.9792,
+    "recall": 0.9686,
+    "precision": 0.7979,
+    "f1": 0.875,
+    "lift_top_decile": 3.7736,
+    "threshold": 0.05,
+    "n": 600,
+    "positive_rate": 0.265
+  },
+  "test": {
+    "roc_auc": 0.9878,
+    "pr_auc": 0.9748,
+    "recall": 0.9497,
+    "precision": 0.8032,
+    "f1": 0.8703,
+    "lift_top_decile": 3.7736,
+    "threshold": 0.05,
+    "n": 600,
+    "positive_rate": 0.265
+  },
+  "threshold_selection": {
+    "threshold": 0.05,
+    "expected_cost": 282.0,
+    "recall_at_threshold": 0.9686,
+    "constraint_recall_min": 0.7,
+    "feasible_region_nonempty": true
+  },
+  "calibration_method": "sigmoid",
+  "best_params": {
+    "n_estimators": 598,
+    "max_depth": 6,
+    "learning_rate": 0.042611,
+    "subsample": 0.719687,
+    "colsample_bytree": 0.749749,
+    "min_child_weight": 3,
+    "gamma": 3.910992,
+    "reg_lambda": 0.001129,
+    "reg_alpha": 0.01878,
+    "scale_pos_weight": 3.749251
+  },
+  "overfit_gap_train_minus_test_auc": 0.0103,
+  "overfit_verdict": "sem overfit relevante"
+}
