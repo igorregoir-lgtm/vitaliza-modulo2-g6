@@ -79,14 +79,27 @@ export default async function PrincipiosPage() {
             <span className="font-display text-base font-semibold">Vitaliza</span>
           </Link>
           <Link
-            href="/login"
+            href="/dashboard"
             className="inline-flex items-center gap-1.5 text-sm text-[var(--cloud)] hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
-            Voltar ao sistema
+            Voltar ao dashboard
           </Link>
         </div>
       </header>
+
+      {/* Faixa central — identidade + proposta de valor (em todas as páginas) */}
+      <div className="border-b border-[var(--rule)] bg-[var(--paper-soft)]">
+        <div className="mx-auto max-w-3xl px-6 py-3 text-center">
+          <p className="font-display text-base font-semibold text-[var(--ink)]">
+            Sistema de Inteligência de Retenção
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-[var(--steel)]">
+            Risco de churn por usuário, explicação individual com SHAP e recomendação prescritiva,
+            tudo auditável de ponta a ponta.
+          </p>
+        </div>
+      </div>
 
       <main className="mx-auto max-w-3xl px-6 py-12">
         <p className="eyebrow mb-2 flex items-center gap-2 text-[var(--accent-deep)]">
@@ -123,7 +136,7 @@ export default async function PrincipiosPage() {
 
         <p className="mt-10 text-center text-xs text-[var(--steel)]">
           Para exercer seus direitos (revisão humana, exclusão de dados), procure o canal de
-          atendimento. Esta página é acessível sem login.
+          atendimento.
         </p>
       </main>
     </div>

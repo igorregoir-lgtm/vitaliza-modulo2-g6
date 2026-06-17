@@ -94,7 +94,6 @@ function Brand() {
       </span>
       <span className="flex flex-col leading-none">
         <span className="font-display text-base font-semibold text-[var(--ink)]">Vitaliza</span>
-        <span className="eyebrow mt-0.5">Inteligência de Retenção</span>
       </span>
     </Link>
   );
@@ -148,7 +147,6 @@ export function AppShell({
             </span>
             <div className="ml-2.5 flex flex-col leading-none">
               <span className="font-display text-base font-semibold">Vitaliza</span>
-              <span className="eyebrow mt-0.5 text-[var(--steel-soft)]">Inteligência de Retenção</span>
             </div>
           </div>
 
@@ -182,6 +180,19 @@ export function AppShell({
           </div>
         </div>
       </header>
+
+      {/* Faixa central — identidade + proposta de valor (todas as páginas) */}
+      <div className="border-b border-[var(--rule)] bg-[var(--paper)]">
+        <div className="mx-auto max-w-3xl px-4 py-3 text-center">
+          <p className="font-display text-lg font-semibold tracking-tight text-[var(--ink)] sm:text-xl">
+            Sistema de Inteligência de Retenção
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-[var(--steel)] sm:text-sm">
+            Risco de churn por usuário, explicação individual com SHAP e recomendação prescritiva,
+            tudo auditável de ponta a ponta.
+          </p>
+        </div>
+      </div>
 
       <div className="flex flex-1">
         {/* Sidebar */}
