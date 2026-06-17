@@ -122,10 +122,7 @@ export function AppShell({
     <div className="flex min-h-screen flex-col">
       {/* Top bar (dark ink header) */}
       <header className="sticky top-0 z-30 border-b border-[var(--primary-deep)] bg-[var(--ink)] text-[var(--paper)]">
-        <div className="relative flex h-14 items-center gap-3 px-4 sm:px-6">
-          <p className="pointer-events-none absolute left-1/2 hidden -translate-x-1/2 whitespace-nowrap font-display text-base font-semibold tracking-tight text-[var(--paper)] md:block lg:text-lg">
-            Sistema de Inteligência de Retenção
-          </p>
+        <div className="flex h-14 items-center gap-2 px-4 sm:px-6">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="text-[var(--paper)] hover:bg-white/10 lg:hidden">
@@ -144,7 +141,7 @@ export function AppShell({
             </SheetContent>
           </Sheet>
 
-          <div className="hidden items-center lg:flex">
+          <div className="hidden shrink-0 items-center lg:flex">
             <span className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-md)] bg-[var(--accent)] text-white">
               <Activity className="h-4 w-4" />
             </span>
@@ -153,7 +150,11 @@ export function AppShell({
             </div>
           </div>
 
-          <div className="ml-auto flex items-center gap-3">
+          <p className="min-w-0 flex-1 truncate px-1 text-center font-display text-[13px] font-semibold tracking-tight text-[var(--paper)] sm:text-base lg:text-lg">
+            Sistema de Inteligência de Retenção
+          </p>
+
+          <div className="flex shrink-0 items-center gap-3">
             {email ? (
               <>
                 <Badge variant="outline" className="border-white/25 text-[var(--paper)]">
