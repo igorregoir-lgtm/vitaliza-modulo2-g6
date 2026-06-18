@@ -218,39 +218,42 @@ export function IndividualView({ members }: { members: MemberOption[] }) {
 
           {/* Advisor */}
           <Card>
-            <CardHeader className="flex-row items-center justify-between">
-              <div>
-                <CardTitle>Explicação narrativa e recomendação</CardTitle>
-                <CardDescription>
-                  Função A (narrativa, ≤150 palavras) + Função B (oferta prescritiva), com
-                  guardrails de não-intrusão.
-                </CardDescription>
-              </div>
-              {!advisor && (
-                <Button variant="accent" onClick={runAdvisor} disabled={loadingAdvisor}>
-                  {loadingAdvisor ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Sparkles className="h-4 w-4" />
-                  )}
-                  Gerar recomendação
-                </Button>
-              )}
+            <CardHeader>
+              <CardTitle>Explicação narrativa e recomendação</CardTitle>
+              <CardDescription>
+                Função A (narrativa, ≤150 palavras) + Função B (oferta prescritiva), com
+                guardrails de não-intrusão.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {loadingAdvisor && (
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-11/12" />
-                  <Skeleton className="h-4 w-9/12" />
+                <div className="flex flex-col items-center gap-3 px-6 py-10 text-center">
+                  <Loader2 className="h-6 w-6 animate-spin text-[var(--accent)]" />
+                  <p className="text-sm text-[var(--steel)]">
+                    Consultando o agente consultor…
+                  </p>
+                  <div className="mt-2 w-full max-w-md space-y-2">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-11/12" />
+                    <Skeleton className="h-4 w-9/12" />
+                  </div>
                 </div>
               )}
 
               {!loadingAdvisor && !advisor && (
-                <p className="text-sm text-[var(--steel)]">
-                  Clique em &quot;Gerar recomendação&quot; para o agente consultor explicar o caso e
-                  propor uma ação.
-                </p>
+                <div className="flex flex-col items-center gap-4 rounded-[var(--radius-md)] border border-dashed border-[var(--rule)] bg-[var(--paper-soft)] px-6 py-10 text-center">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--accent-light)] text-[var(--accent-deep)]">
+                    <Sparkles className="h-6 w-6" />
+                  </span>
+                  <p className="max-w-md text-sm text-[var(--ink-soft)]">
+                    Gere a explicação narrativa e a recomendação prescritiva (oferta,
+                    canal, copy e timing) para este membro.
+                  </p>
+                  <Button variant="accent" onClick={runAdvisor}>
+                    <Sparkles className="h-4 w-4" />
+                    Gerar recomendação
+                  </Button>
+                </div>
               )}
 
               {advisor && (
@@ -273,6 +276,18 @@ export function IndividualView({ members }: { members: MemberOption[] }) {
                       applied={applied}
                     />
                   ) : null}
+
+                  <div className="flex justify-end">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={runAdvisor}
+                      disabled={loadingAdvisor}
+                    >
+                      <Sparkles className="h-4 w-4" />
+                      Gerar novamente
+                    </Button>
+                  </div>
                 </div>
               )}
             </CardContent>
