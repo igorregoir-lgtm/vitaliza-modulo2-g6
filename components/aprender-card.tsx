@@ -14,11 +14,13 @@ interface AprenderCardProps {
   why?: string;
   bullets?: string[];
   defaultOpen?: boolean;
+  /** Linha curta de tease (ex.: convida a usar o simulador vivo). */
+  tease?: string;
 }
 
 /** Card "Aprender · PBL": ao clicar, abre SOMENTE o chat inline do tutor
  *  (no fluxo da página) — sem painel estático separado. */
-export function AprenderCard({ title }: AprenderCardProps) {
+export function AprenderCard({ title, tease }: AprenderCardProps) {
   const [showInline, setShowInline] = React.useState(false);
   const seedQuestion = `Explique de forma simples a tela "${title}": o que ela faz e por que ela importa para reduzir cancelamentos.`;
 
@@ -38,6 +40,9 @@ export function AprenderCard({ title }: AprenderCardProps) {
           <span className="flex min-w-0 flex-col">
             <span className="eyebrow">Aprender · PBL</span>
             <span className="truncate text-sm font-semibold text-[var(--ink)]">{title}</span>
+            {tease && (
+              <span className="mt-0.5 truncate text-xs text-[var(--steel)]">{tease}</span>
+            )}
           </span>
         </button>
 

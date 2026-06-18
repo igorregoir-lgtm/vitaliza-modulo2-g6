@@ -72,6 +72,12 @@ export interface PredictResult {
   shap_local: ShapLocal;
 }
 
+/** Explain endpoint payload: prediction + the raw feature snapshot (for the
+ *  client-side what-if simulator). See ADR-0014. */
+export interface ExplainResponse extends PredictResult {
+  features: CustomerFeatures;
+}
+
 export interface Recommendation {
   offer: string;
   channel: string[];

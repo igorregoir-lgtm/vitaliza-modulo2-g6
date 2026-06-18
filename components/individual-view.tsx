@@ -28,8 +28,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { RiskGauge } from "@/components/risk-gauge";
 import { ShapWaterfall } from "@/components/shap-waterfall";
 import { TierBadge } from "@/components/tier-badge";
+import { LiveSimulator } from "@/components/simulator/live-simulator";
 import { ARCHETYPE_DESC, ARCHETYPE_LABELS } from "@/lib/labels";
-import type { AdvisorResult, PredictResult } from "@/lib/types";
+import type { AdvisorResult, CustomerFeatures, ExplainResponse, PredictResult } from "@/lib/types";
 
 interface MemberOption {
   id: string;
@@ -39,6 +40,7 @@ interface MemberOption {
 export function IndividualView({ members }: { members: MemberOption[] }) {
   const [selected, setSelected] = React.useState<string>(members[0]?.id ?? "");
   const [pred, setPred] = React.useState<PredictResult | null>(null);
+  const [features, setFeatures] = React.useState<CustomerFeatures | null>(null);
   const [advisor, setAdvisor] = React.useState<AdvisorResult | null>(null);
   const [loadingPred, setLoadingPred] = React.useState(false);
   const [loadingAdvisor, setLoadingAdvisor] = React.useState(false);
@@ -54,14 +56,18 @@ export function IndividualView({ members }: { members: MemberOption[] }) {
       // in the effect body) to avoid cascading renders.
       if (ignore) return;
       setPred(null);
+      setFeatures(null);
       setAdvisor(null);
       setApplied(false);
       setLoadingPred(true);
       try {
         const res = await fetch(`/api/explain/${encodeURIComponent(id)}`, { cache: "no-store" });
         if (!res.ok) throw new Error();
-        const data = (await res.json()) as PredictResult;
-        if (!ignore) setPred(data);
+        const data = (await res.json()) as ExplainResponse;
+        if (!ignore) {
+          setPred(data);
+          setFeatures(data.features);
+        }
       } catch {
         if (!ignore) toast.error("Não foi possível carregar a previsão do membro.");
       } finally {
@@ -199,6 +205,15 @@ export function IndividualView({ members }: { members: MemberOption[] }) {
               </CardContent>
             </Card>
           </div>
+
+          {/* Live what-if simulator — arraste alavancas e veja o modelo recalcular */}
+          {features && (
+            <LiveSimulator
+              externalRef={selected}
+              features={features}
+              realProb={pred.churn_probability}
+            />
+          )}
 
           {/* Advisor */}
           <Card>

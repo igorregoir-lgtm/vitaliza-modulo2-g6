@@ -29,7 +29,9 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
       },
     });
 
-    return NextResponse.json(scored.prediction);
+    // Devolve a previsão + o snapshot de features (para o simulador what-if
+    // client-side ancorar o delta no score real). Ver ADR-0014.
+    return NextResponse.json({ ...scored.prediction, features: scored.customer.features });
   } catch (err) {
     console.error("[explain]", err);
     return NextResponse.json({ error: "falha na explicação" }, { status: 500 });

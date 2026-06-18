@@ -12,6 +12,7 @@ import type {
   CohortStatsResult,
   CustomerFeatures,
   EdaSummary,
+  ExplainResponse,
   PredictResult,
 } from "./types";
 
@@ -52,9 +53,9 @@ export const api = {
     return postJSON<PredictResult>("/api/predict", { features });
   },
 
-  /** Explain a known customer (score + SHAP local). */
-  explainUser(customerId: string): Promise<PredictResult> {
-    return getJSON<PredictResult>(`/api/explain/${encodeURIComponent(customerId)}`);
+  /** Explain a known customer (score + SHAP local + raw features). */
+  explainUser(customerId: string): Promise<ExplainResponse> {
+    return getJSON<ExplainResponse>(`/api/explain/${encodeURIComponent(customerId)}`);
   },
 
   /** Advisor recommendation (Function A + B) for a customer. */
