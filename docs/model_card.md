@@ -129,3 +129,57 @@ alterá-lo no cliente mude o desfecho. As recomendações priorizam features
 `SEED = 42` em todo o pipeline; dataset versionado por SHA-256; artefatos
 serializados com joblib; pipelines de treino e inferência separados
 (`pipeline/train_*.py` × `pipeline/inference.py`).
+
+## 11. Dois modelos por desenho (produção × surrogate de simulação)
+O artefato usa **dois modelos distintos, com papéis separados e rotulados**. As
+métricas das seções 5–7 acima descrevem **apenas o modelo (a)** — o surrogate **não**
+as altera nem é avaliado por elas.
+
+**(a) XGBoost calibrado — scoring de produção (inalterado pela feature).**
+É o modelo descrito por todo este card: pontua os 4.000 clientes em lote
+(`pipeline/inference.py`), com SHAP local, e o app **serve** esses escores reais
+nas telas e na API ([ADR-0011](decisions/0011-inferencia-batch-vs-online.md)). O
+Simulador Vivo da Consulta Individual **não toca** neste modelo: o score "Atual"
+exibido é sempre o XGBoost real.
+
+**(b) Heurística transparente — surrogate auditável, só no what-if interativo.**
+A re-pontuação ao vivo do simulador (arrastar alavancas acionáveis e ver o modelo
+"mudar de ideia") usa `lib/heuristic.ts#predictHeuristic`, uma função **pura,
+client-safe e transparente** — escolhida para permitir re-cálculo instantâneo no
+navegador, sem rede e sem o runtime Python pesado na borda
+([ADR-0011](decisions/0011-inferencia-batch-vs-online.md)). É um **surrogate**: serve
+para simular o *efeito relativo* (direção e ordem de grandeza) de uma intervenção,
+não para reproduzir o nível absoluto do XGBoost.
+
+**Ancoragem honesta real + delta ([ADR-0014](decisions/0014-ancoragem-simulador-real-mais-delta.md)).**
+A projeção exibida ancora no score real e aplica **apenas o delta** do surrogate:
+
+```
+projetado = clamp01( score_real_XGBoost + ( heurística_modificada − heurística_base ) )
+```
+
+O ponto de partida ("Atual · XGBoost") é o score de produção; o delta (efeito da
+intervenção) vem do surrogate, calculado sobre o mesmo cliente com e sem os
+overrides das alavancas. A UI rotula os dois números ("Atual · XGBoost" /
+"Projeção · simulação") e exibe o disclaimer fixo: *descreve o comportamento do
+modelo, não causalidade*. Em modo amostra (sem score real),
+`score_real == heurística_base`, logo `projetado == heurística_modificada` — degrada
+de forma consistente. Núcleo coberto por testes (`lib/simulator/*.test.ts`, vitest).
+
+### Limites e uso pretendido do surrogate
+- **Uso pretendido:** exploração educacional/what-if **com humano no loop** na
+  Consulta Individual — entender *como o modelo reage* a alavancas acionáveis. Não é
+  predição de produção nem decisão automática.
+- **Apenas features acionáveis** são editáveis (frequência de aulas no mês,
+  participação em desafios em grupo, duração do plano, meses até o fim do contrato);
+  features de estado/demografia (idade, gênero, etc.) **não** são editáveis.
+- **Não é causal:** SHAP e a projeção descrevem o comportamento do modelo, não que
+  alterar a alavanca no cliente real mude o desfecho.
+- **Simplificação anotada na UI:** duração do plano e meses até o fim do contrato são
+  editáveis de forma independente no surrogate.
+- **Não-intrusão preservada:** o otimizador ("alavanca mais barata") respeita o
+  guardrail "não acorde o cão que dorme" — não sugere intervenção para `sleeping_dog`
+  / `proactive_allowed=false` ([ADR-0008](decisions/0008-arquetipos-sleeping-dog.md)).
+- O XGBoost de produção **não é alterado** pela existência do surrogate.
+
+Detalhe e contratos: [`docs/superpowers/specs/2026-06-17-simulador-vivo-design.md`](superpowers/specs/2026-06-17-simulador-vivo-design.md).

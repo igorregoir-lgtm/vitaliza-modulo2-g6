@@ -28,7 +28,8 @@ perfil (CS/Exec) existe no código (`lib/supabase/middleware.ts`, `lib/auth.ts`)
 
 **Melhoria pedida pelo professor — explicabilidade individual → acionável → recomendação prática:**
 materializada na tela **Consulta Individual** (waterfall SHAP por usuário, drivers marcados como
-acionáveis/não-acionáveis, e recomendação prescritiva oferta/canal/copy/timing via agente).
+acionáveis/não-acionáveis, e recomendação prescritiva oferta/canal/copy/timing via agente). Estendida
+pelo **Simulador Vivo** (abaixo): de *explicar* a previsão para *explorar* o que muda o risco, ao vivo.
 
 ---
 
@@ -39,6 +40,12 @@ acionáveis/não-acionáveis, e recomendação prescritiva oferta/canal/copy/tim
 2. **EDA Interativa** — 6 visualizações reais do dataset (churn por contrato, sobrevivência, frequência,
    correlação, scatter com sleeping dogs, cohort).
 3. **Consulta Individual (CS)** — score + tier + **SHAP waterfall** + explicação narrativa + **recomendação**.
+   Inclui o **Simulador Vivo + otimizador**: arraste alavancas acionáveis (frequência de aulas, desafios em
+   grupo, duração do plano, meses até o fim) e veja score, waterfall SHAP e arquétipo recalcularem **ao vivo**
+   (client-side). O botão **"Ver a IA mudar de ideia"** anima a alavanca sugerida e narra o resultado por voz.
+   A projeção ancora no XGBoost real e aplica só o delta do surrogate transparente — descreve o comportamento
+   do modelo, não causalidade. Spec: [`docs/superpowers/specs/2026-06-17-simulador-vivo-design.md`](docs/superpowers/specs/2026-06-17-simulador-vivo-design.md) ·
+   ancoragem: [`docs/decisions/0014-ancoragem-simulador-real-mais-delta.md`](docs/decisions/0014-ancoragem-simulador-real-mais-delta.md).
 4. **Visão de Carteira** — ranking por risco, filtro por arquétipo, **bloqueio de sleeping dogs** (não-intrusão).
 5. **/principios-de-personalizacao** — página pública (LGPD/ANPD 07/2025), sem login.
 
