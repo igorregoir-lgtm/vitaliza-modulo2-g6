@@ -42,7 +42,7 @@ pelo **Simulador Vivo** (abaixo): de *explicar* a previsão para *explorar* o qu
 3. **Consulta Individual (CS)** — score + tier + **SHAP waterfall** + explicação narrativa + **recomendação**.
    Inclui o **Simulador Vivo + otimizador**: arraste alavancas acionáveis (frequência de aulas, desafios em
    grupo, duração do plano, meses até o fim) e veja score, waterfall SHAP e arquétipo recalcularem **ao vivo**
-   (client-side). O botão **"Ver a IA mudar de ideia"** anima a alavanca sugerida e narra o resultado por voz.
+   (client-side). Os botões **"Simular esta alavanca"** (anima a alavanca sugerida ao vivo) e **"Tutor Explica"** (explicação do tutor em texto, com áudio opcional) tornam o efeito autoexplicativo.
    A projeção ancora no XGBoost real e aplica só o delta do surrogate transparente — descreve o comportamento
    do modelo, não causalidade. Spec: [`docs/superpowers/specs/2026-06-17-simulador-vivo-design.md`](docs/superpowers/specs/2026-06-17-simulador-vivo-design.md) ·
    ancoragem: [`docs/decisions/0014-ancoragem-simulador-real-mais-delta.md`](docs/decisions/0014-ancoragem-simulador-real-mais-delta.md).

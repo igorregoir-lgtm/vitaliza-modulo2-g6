@@ -27,7 +27,7 @@ export default async function IndividualPage() {
       <AprenderCard
         screen="Consulta Individual"
         title="Da explicação à ação"
-        tease="Novo: clique em &quot;Ver a IA mudar de ideia&quot; e assista o risco recalcular ao vivo — ou arraste as alavancas você mesmo, com explicação em voz."
+        tease="Novo: clique em &quot;Simular esta alavanca&quot; e assista o risco recalcular ao vivo, com a explicação do tutor em texto — ou arraste as alavancas você mesmo."
         what="Para um membro específico, mostra o score, o waterfall SHAP (contribuição de cada variável), a explicação narrativa do agente e uma recomendação prescritiva — com botão para registrar a intervenção."
         why="Foi a melhoria pedida na avaliação: deixar claro o que pesou em cada caso, o que a operação consegue mudar e converter isso em uma ação concreta e auditável."
         bullets={[

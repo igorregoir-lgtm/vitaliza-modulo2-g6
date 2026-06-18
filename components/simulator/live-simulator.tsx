@@ -312,12 +312,9 @@ export function LiveSimulator({
           </div>
         </div>
 
-        {/* Otimizador — subiu para o topo, logo após o cabeçalho */}
-        <OptimizerHint
-          features={features}
-          realProb={realProb}
-          onApply={handleLeverChange}
-        />
+        {/* Otimizador — subiu para o topo, logo após o cabeçalho. Só o texto da
+            sugestão; a ação ("Simular esta alavanca") vive na linha abaixo. */}
+        <OptimizerHint features={features} realProb={realProb} />
 
         {/* Descoberta: auto-demo + Tutor Explica (logo abaixo de "Simular esta alavanca") */}
         <div className="flex flex-wrap items-center gap-3">
@@ -325,18 +322,18 @@ export function LiveSimulator({
             <Button
               variant="accent"
               onClick={runAutoDemo}
-              aria-label="Ver a IA recalcular o risco ao vivo"
+              aria-label="Simular a alavanca sugerida ao vivo"
             >
               {demoPlaying ? (
                 <Square className="h-4 w-4" />
               ) : (
                 <Sparkles className="h-4 w-4" />
               )}
-              {demoPlaying ? "Parar demonstração" : "Ver a IA mudar de ideia"}
+              {demoPlaying ? "Parar simulação" : "Simular esta alavanca"}
             </Button>
           )}
           <Button
-            variant="outline"
+            variant="accent"
             onClick={() => setTutorOpen((o) => !o)}
             aria-expanded={tutorOpen}
           >

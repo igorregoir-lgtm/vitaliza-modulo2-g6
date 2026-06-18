@@ -31,13 +31,14 @@ dogs** (não-intrusão).
 ## 4. Consulta individual — `/individual`  ← o ponto alto
 1. Selecione um membro. Veja **score + tier + waterfall SHAP real** + explicação
    narrativa + recomendação prescritiva (oferta/canal/copy/timing).
-2. Role até o card **"Simule uma intervenção"** (aberto por padrão).
-3. **Momento "what the hell":** clique em **"Ver a IA mudar de ideia"**. O sistema
+2. Role até o card **"Simule uma Intervenção"** (aberto por padrão).
+3. **Momento "what the hell":** clique em **"Simular esta alavanca"**. O sistema
    anima sozinho a alavanca mais barata sugerida pelo otimizador, **recalcula ao
-   vivo** score, waterfall SHAP e arquétipo, e **narra por voz** o que mudou.
+   vivo** score, waterfall SHAP e arquétipo, e abre o **"Tutor Explica"** com a
+   explicação em texto (áudio opcional pelo botão "Ouvir").
 4. Em seguida, arraste você mesmo as alavancas acionáveis (frequência de aulas no
    mês, desafios em grupo, duração do plano, meses até o fim) e veja o arquétipo
-   virar. Clique **"Ouvir o que mudou"** e **"Aplicar intervenção"**.
+   virar. Clique em **"Aplicar Intervenção"** para registrar (auditado).
 - **Rigor (o que observar):**
   - O leitor antes→depois rotula **"Atual · XGBoost"** vs **"Projeção · simulação"**:
     a projeção **ancora no score real** e soma só o delta do surrogate transparente
