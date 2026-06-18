@@ -51,7 +51,7 @@ export function AprenderCard({ title, tease }: AprenderCardProps) {
           type="button"
           onClick={() => setShowInline((v) => !v)}
           aria-expanded={showInline}
-          aria-label={showInline ? "Fechar o tutor" : "Perguntar ao tutor"}
+          aria-label={showInline ? "Fechar o tutor" : "O Tutor Explica"}
           className={cn(
             "group relative inline-flex shrink-0 items-center gap-2 rounded-[var(--radius-md)] px-3.5 py-2",
             "bg-[var(--accent)] text-white text-[11px] font-semibold uppercase tracking-[0.12em]",
@@ -62,7 +62,7 @@ export function AprenderCard({ title, tease }: AprenderCardProps) {
           )}
         >
           <TutorIcon className="h-[18px] w-[18px] transition-transform group-hover:scale-110" />
-          <span className="hidden sm:inline">{showInline ? "Fechar tutor" : "Perguntar ao tutor"}</span>
+          <span className="hidden sm:inline">{showInline ? "Fechar tutor" : "O Tutor Explica"}</span>
           <span className="sm:hidden">Tutor</span>
           {!showInline && (
             <span className="absolute -right-1 -top-1 flex h-3 w-3" aria-hidden>

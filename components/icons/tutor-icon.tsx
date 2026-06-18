@@ -1,7 +1,7 @@
 import * as React from "react";
 
 /**
- * Ícone do "Perguntar ao tutor" — inspirado na identidade allla.
+ * Ícone do tutor — inspirado na identidade allla.
  * Combina três motivos da marca:
  *  - balão de conversa (a pergunta / o diálogo com o tutor);
  *  - três barras ascendentes (os três "l" do logotipo — aprendizado/crescimento);

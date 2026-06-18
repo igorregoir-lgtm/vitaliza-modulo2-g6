@@ -19,7 +19,7 @@ export function useTutor(): TutorApi {
   return ctx ?? { open: () => {} };
 }
 
-/** Provider: chat conversacional FLUTUANTE (botão "Tutor?" que acompanha o
+/** Provider: chat conversacional FLUTUANTE (botão "Pergunte ao Tutor" que acompanha o
  *  scroll) + contexto `open()` para acionar de qualquer lugar. O chat INLINE
  *  (dos cards) usa o mesmo hook em `TutorInline`. */
 export function TutorProvider({ children }: { children: React.ReactNode }) {
@@ -44,7 +44,7 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
         <button
           type="button"
           onClick={() => open()}
-          aria-label="Abrir o tutor"
+          aria-label="Pergunte ao Tutor"
           className={cn(
             "group fixed bottom-5 right-5 z-40 inline-flex items-center gap-2.5 rounded-full px-4 py-3",
             "bg-[var(--accent)] text-white shadow-[0_8px_28px_-6px_rgba(20,184,166,0.7)] ring-1 ring-inset ring-white/15",
@@ -52,7 +52,7 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
           )}
         >
           <TutorIcon className="h-5 w-5" />
-          <span className="text-[13px] font-semibold tracking-tight">Tutor?</span>
+          <span className="text-[13px] font-semibold tracking-tight">Pergunte ao Tutor</span>
           <span className="absolute -right-0.5 -top-0.5 flex h-3 w-3">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--accent)] opacity-70" />
             <span className="relative inline-flex h-3 w-3 rounded-full bg-[var(--accent)] ring-2 ring-[var(--paper-soft)]" />
