@@ -63,7 +63,7 @@ function WaterfallRow({ driver, maxAbs }: { driver: ShapDriver; maxAbs: number }
       <TooltipTrigger asChild>
         <div className="grid grid-cols-[1fr_auto] items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="w-44 shrink-0 truncate text-xs text-[var(--ink-soft)]" title={featureLabel(driver.feature)}>
+            <span className="w-28 shrink-0 truncate text-xs text-[var(--ink-soft)] sm:w-44" title={featureLabel(driver.feature)}>
               {featureLabel(driver.feature)}
             </span>
             {driver.actionable && (

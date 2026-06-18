@@ -34,11 +34,15 @@ export function EdaView({ summary }: { summary: EdaSummary }) {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-wrap items-end gap-4 rounded-[var(--radius-lg)] border border-[var(--rule)] bg-[var(--paper)] p-4">
+      <div className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--rule)] bg-[var(--paper)] p-4 sm:flex-row sm:flex-wrap sm:items-end">
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="f-contract">Filtrar por contrato</Label>
           <Select value={contract} onValueChange={setContract}>
-            <SelectTrigger id="f-contract" className="w-48">
+            <SelectTrigger
+              id="f-contract"
+              aria-label="Filtrar por tipo de contrato"
+              className="w-full sm:w-48"
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -52,7 +56,11 @@ export function EdaView({ summary }: { summary: EdaSummary }) {
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="f-cohort">Filtrar por cohort</Label>
           <Select value={cohort} onValueChange={setCohort}>
-            <SelectTrigger id="f-cohort" className="w-48">
+            <SelectTrigger
+              id="f-cohort"
+              aria-label="Filtrar por cohort de entrada"
+              className="w-full sm:w-48"
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -65,7 +73,7 @@ export function EdaView({ summary }: { summary: EdaSummary }) {
             </SelectContent>
           </Select>
         </div>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="flex items-center gap-2 sm:ml-auto">
           <Badge variant="muted">{summary.n.toLocaleString("pt-BR")} registros</Badge>
           <Badge variant="critico">Churn base: {(summary.churn_rate * 100).toFixed(1)}%</Badge>
         </div>

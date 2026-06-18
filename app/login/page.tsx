@@ -81,7 +81,7 @@ function LoginForm() {
       </div>
 
       {error && (
-        <p className="rounded-[var(--radius-md)] bg-[#f6d8d4] px-3 py-2 text-sm text-[#9c2e26]">
+        <p className="rounded-[var(--radius-md)] bg-[var(--tier-critico-bg)] px-3 py-2 text-sm text-[var(--tier-critico-text)]">
           {error}
         </p>
       )}

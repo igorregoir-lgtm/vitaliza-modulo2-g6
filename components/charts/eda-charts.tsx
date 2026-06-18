@@ -135,12 +135,20 @@ export function CorrelationHeatmap({ data }: { data: EdaSummary["correlation"] }
       subtitle="Correlação entre variáveis-chave e o churn (teal = positiva, vermelho = negativa)."
     >
       <div className="overflow-x-auto">
-        <table className="w-full border-separate border-spacing-0.5 text-center">
+        <table
+          role="grid"
+          aria-label="Mapa de correlação entre variáveis-chave e o churn"
+          className="w-full border-separate border-spacing-0.5 text-center"
+        >
           <thead>
             <tr>
-              <th className="p-1" />
+              <th scope="col" className="p-1" />
               {features.map((f) => (
-                <th key={f} className="mono p-1 text-[10px] text-[var(--steel)]">
+                <th
+                  key={f}
+                  scope="col"
+                  className="mono p-1 text-[10px] text-[var(--steel)]"
+                >
                   {f}
                 </th>
               ))}
@@ -149,7 +157,12 @@ export function CorrelationHeatmap({ data }: { data: EdaSummary["correlation"] }
           <tbody>
             {features.map((y) => (
               <tr key={y}>
-                <td className="mono p-1 text-right text-[10px] text-[var(--steel)]">{y}</td>
+                <th
+                  scope="row"
+                  className="mono p-1 text-right text-[10px] font-normal text-[var(--steel)]"
+                >
+                  {y}
+                </th>
                 {features.map((x) => {
                   const v = cell(x, y);
                   return (

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Database } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { AprenderCard } from "@/components/aprender-card";
 import { EdaView } from "@/components/eda-view";
@@ -8,6 +9,7 @@ export const metadata: Metadata = { title: "EDA Interativa" };
 
 export default async function EdaPage() {
   const summary = await computeEdaSummary();
+  const isEmpty = summary.by_contract.length === 0;
 
   return (
     <div className="flex flex-col gap-6">
@@ -28,7 +30,16 @@ export default async function EdaPage() {
         ]}
       />
 
-      <EdaView summary={summary} />
+      {isEmpty ? (
+        <div className="flex flex-col items-center justify-center gap-3 rounded-[var(--radius-lg)] border border-[var(--rule)] bg-[var(--paper)] px-6 py-16 text-center">
+          <Database className="h-8 w-8 text-[var(--steel)]" aria-hidden="true" />
+          <p className="text-sm text-[var(--ink-soft)]">
+            Nenhum dado disponível para a análise exploratória.
+          </p>
+        </div>
+      ) : (
+        <EdaView summary={summary} />
+      )}
     </div>
   );
 }

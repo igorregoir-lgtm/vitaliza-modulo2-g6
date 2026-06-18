@@ -28,6 +28,24 @@
   --tier-alto: #e07a3f;
   --tier-critico: #c0463b;
 
+  /* Risk-tier badge backgrounds + text (pares para chips/badges) */
+  --tier-medio-bg: #f6ecd2;
+  --tier-medio-text: #8a6d1f;
+  --tier-alto-bg: #f7e2d2;
+  --tier-alto-text: #a8531f;
+  --tier-critico-bg: #f6d8d4;
+  --tier-critico-text: #9c2e26;
+
+  /* Tendência (variação positiva/negativa) */
+  --trend-positive: var(--accent-deep);
+  --trend-negative: var(--tier-alto);
+
+  /* Banner de aviso (warning) */
+  --warning-bg: #fbf3df;
+  --warning-border: var(--tier-medio);
+  --warning-text: #8a6d1f;
+  --warning-text-soft: #7a611c;
+
   /* Surface / foreground mapping */
   --background: var(--paper);
   --foreground: var(--ink);

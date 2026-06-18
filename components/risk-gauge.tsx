@@ -23,7 +23,13 @@ export function RiskGauge({
 
   return (
     <div className="flex flex-col items-center">
-      <svg width="180" height="104" viewBox="0 0 180 104" role="img" aria-label={`Risco ${TIER_LABELS[tier]}`}>
+      <svg
+        viewBox="0 0 180 104"
+        role="img"
+        aria-label={`Risco ${TIER_LABELS[tier]}`}
+        className="h-auto w-full max-w-[180px]"
+        preserveAspectRatio="xMidYMid meet"
+      >
         {/* track */}
         <path
           d={`M ${cx - radius} ${cy} A ${radius} ${radius} 0 0 1 ${cx + radius} ${cy}`}

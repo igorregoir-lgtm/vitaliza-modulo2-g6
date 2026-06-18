@@ -64,7 +64,7 @@ export function ChatBody({ chat, compact = false }: { chat: TutorChatApi; compac
                 key={s}
                 type="button"
                 onClick={() => chat.send(s)}
-                className="rounded-full border border-[var(--rule)] bg-[var(--paper)] px-3 py-1.5 text-xs text-[var(--ink-soft)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent-deep)]"
+                className="rounded-full border border-[var(--rule)] bg-[var(--paper)] px-3 py-1.5 text-xs text-[var(--ink-soft)] transition-colors hover:border-[var(--accent)] hover:bg-[var(--paper-soft)] hover:text-[var(--accent-deep)]"
               >
                 {s}
               </button>

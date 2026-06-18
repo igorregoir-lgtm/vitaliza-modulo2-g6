@@ -1,13 +1,11 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { toast } from "sonner";
 import {
   Loader2,
   Sparkles,
   Send,
-  ShieldAlert,
   CircleCheck,
   Megaphone,
   Clock,
@@ -29,6 +27,7 @@ import { RiskGauge } from "@/components/risk-gauge";
 import { ShapWaterfall } from "@/components/shap-waterfall";
 import { TierBadge } from "@/components/tier-badge";
 import { LiveSimulator } from "@/components/simulator/live-simulator";
+import { SleepingDogBanner } from "@/components/sleeping-dog-banner";
 import { ARCHETYPE_DESC, ARCHETYPE_LABELS } from "@/lib/labels";
 import type { AdvisorResult, CustomerFeatures, ExplainResponse, PredictResult } from "@/lib/types";
 
@@ -179,16 +178,18 @@ export function IndividualView({ members }: { members: MemberOption[] }) {
                   tier={pred.risk_tier}
                   threshold={pred.threshold}
                 />
-                <div className="flex flex-wrap items-center justify-center gap-2">
-                  <TierBadge tier={pred.risk_tier} />
-                  <Badge variant="outline">{ARCHETYPE_LABELS[pred.archetype]}</Badge>
+                <div className="flex w-full flex-col items-center gap-4 border-t border-[var(--rule-soft)] pt-3">
+                  <div className="flex flex-wrap items-center justify-center gap-2">
+                    <TierBadge tier={pred.risk_tier} />
+                    <Badge variant="outline">{ARCHETYPE_LABELS[pred.archetype]}</Badge>
+                  </div>
+                  <p className="text-center text-xs text-[var(--steel)]">
+                    {ARCHETYPE_DESC[pred.archetype]}
+                  </p>
+                  <p className="mono text-[10px] text-[var(--steel-soft)]">
+                    modelo {pred.model_version}
+                  </p>
                 </div>
-                <p className="text-center text-xs text-[var(--steel)]">
-                  {ARCHETYPE_DESC[pred.archetype]}
-                </p>
-                <p className="mono text-[10px] text-[var(--steel-soft)]">
-                  modelo {pred.model_version}
-                </p>
               </CardContent>
             </Card>
 
@@ -298,28 +299,6 @@ export function IndividualView({ members }: { members: MemberOption[] }) {
   );
 }
 
-function SleepingDogBanner({ reason }: { reason?: string }) {
-  return (
-    <div className="rounded-[var(--radius-md)] border border-[var(--tier-medio)] bg-[#fbf3df] p-4">
-      <div className="flex items-start gap-3">
-        <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-[#8a6d1f]" />
-        <div>
-          <p className="text-sm font-semibold text-[#8a6d1f]">
-            Não acorde o cão que dorme — sem ação proativa
-          </p>
-          <p className="mt-1 text-sm text-[#7a611c]">{reason}</p>
-          <Link
-            href="/principios-de-personalizacao"
-            className="mt-2 inline-block text-xs font-medium text-[var(--accent-deep)] underline-offset-2 hover:underline"
-          >
-            Ver política de não-intrusão
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function RecommendationCard({
   rec,
   onApply,
@@ -332,7 +311,7 @@ function RecommendationCard({
   applied: boolean;
 }) {
   return (
-    <div className="rounded-[var(--radius-md)] border border-[var(--accent-light)] bg-[var(--accent-light)]/30 p-4">
+    <div className="rounded-[var(--radius-md)] border border-[var(--accent)] bg-[var(--accent-light)]/30 p-4">
       <p className="eyebrow mb-3 text-[var(--accent-deep)]">Recomendação prescritiva (Função B)</p>
       <div className="grid gap-3 sm:grid-cols-2">
         <Field icon={Megaphone} label="Oferta" value={rec.offer} />
@@ -371,7 +350,7 @@ function Field({
   return (
     <div className="rounded-[var(--radius-sm)] bg-[var(--paper)] p-3">
       <p className="eyebrow mb-1 flex items-center gap-1.5">
-        <Icon className="h-3 w-3" />
+        <Icon className="h-4 w-4" />
         {label}
       </p>
       <p className="text-sm text-[var(--ink-soft)]">{value}</p>

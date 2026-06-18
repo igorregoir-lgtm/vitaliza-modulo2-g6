@@ -10,12 +10,12 @@
 // ============================================================================
 
 import * as React from "react";
-import Link from "next/link";
-import { Lightbulb, ShieldAlert, CircleCheck } from "lucide-react";
+import { Lightbulb, CircleCheck } from "lucide-react";
 import { findCheapestLever } from "@/lib/simulator/engine";
 import { predictHeuristic, tierFromProb } from "@/lib/heuristic";
 import { TIER_LABELS } from "@/lib/labels";
 import { TierBadge } from "@/components/tier-badge";
+import { SleepingDogBanner } from "@/components/sleeping-dog-banner";
 import { Button } from "@/components/ui/button";
 import type { CustomerFeatures } from "@/lib/types";
 
@@ -86,26 +86,7 @@ export function OptimizerHint({ features, realProb, onApply }: OptimizerHintProp
   // null por não-intrusão → banner no estilo do SleepingDogBanner.
   if (nonIntrusive) {
     return (
-      <div className="rounded-[var(--radius-md)] border border-[var(--tier-medio)] bg-[#fbf3df] p-4">
-        <div className="flex items-start gap-3">
-          <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-[#8a6d1f]" />
-          <div>
-            <p className="text-sm font-semibold text-[#8a6d1f]">
-              Não acorde o cão que dorme — sem ação proativa
-            </p>
-            <p className="mt-1 text-sm text-[#7a611c]">
-              Este perfil está excluído de campanhas proativas, então o otimizador
-              não sugere alavancas. A simulação continua disponível para estudo.
-            </p>
-            <Link
-              href="/principios-de-personalizacao"
-              className="mt-2 inline-block text-xs font-medium text-[var(--accent-deep)] underline-offset-2 hover:underline"
-            >
-              Ver política de não-intrusão
-            </Link>
-          </div>
-        </div>
-      </div>
+      <SleepingDogBanner reason="Este perfil está excluído de campanhas proativas, então o otimizador não sugere alavancas. A simulação continua disponível para estudo." />
     );
   }
 

@@ -81,7 +81,7 @@ export function RoiSimulator({
             <Metric label="Custo da campanha" value={brl(totalCost)} />
             <Metric label="Resultado líquido" value={brl(net)} accent={net >= 0} negative={net < 0} />
             <Metric label="ROI" value={`${roi >= 0 ? "+" : ""}${pct(roi, 0)}`} accent={roi >= 0} negative={roi < 0} />
-            <div className="col-span-2 rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--paper-soft)] p-3 text-xs text-[var(--steel)]">
+            <div className="col-span-2 rounded-[var(--radius-md)] border border-[var(--rule-soft)] bg-[var(--cloud)] p-3 text-[11px] leading-relaxed text-[var(--steel)]">
               Premissas: LTV preservado de {ltvMonths} meses × {brl(avgMonthlyRevenue)}/mês ={" "}
               {brl(ltvPerMember)} por membro recuperado. &quot;Cães que dormem&quot; ficam fora da
               base elegível (não-intrusão).
