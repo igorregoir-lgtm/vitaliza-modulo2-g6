@@ -4,31 +4,35 @@
 // Live simulator — orquestrador do laboratório what-if na Consulta Individual.
 // See docs/superpowers/specs/2026-06-17-simulador-vivo-design.md §3, §5, §9, §10.
 //
-// Mantém o estado dos overrides das 4 alavancas, faz debounce ~120ms e roda
-// projectAnchored() a cada mudança. Gauge + waterfall + badge de arquétipo
-// refletem a versão SIMULADA (predNew). Botões: "Ouvir o que mudou" (voz on-
-// demand via useSpeak + buildNarration), "Aplicar intervenção" (POST
-// /api/apply-intervention) e "Resetar". Reusa apenas tokens/ui existentes.
+// Layout: cabeçalho (estilo banner) -> otimizador (topo) -> linha "Ver a IA
+// mudar de ideia" (auto-demo) + "Tutor Explica" -> painel de TEXTO do tutor
+// (áudio opcional dentro) -> antes→depois -> alavancas | versão simulada
+// (score / arquétipo / waterfall rotulados) -> "Aplicar Intervenção" + "Resetar".
+// Toda explicação é TEXTO; o áudio é opcional dentro do "Tutor Explica".
 // ============================================================================
 
 import * as React from "react";
 import { toast } from "sonner";
-import { Volume2, Square, Loader2, Send, RotateCcw, CircleCheck, Sparkles } from "lucide-react";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+  Volume2,
+  Square,
+  Loader2,
+  Send,
+  RotateCcw,
+  CircleCheck,
+  Sparkles,
+  FlaskConical,
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RiskGauge } from "@/components/risk-gauge";
 import { ShapWaterfall } from "@/components/shap-waterfall";
 import { TierBadge } from "@/components/tier-badge";
+import { TutorIcon } from "@/components/icons/tutor-icon";
 import { useSpeak } from "@/components/tutor/use-speak";
 import { LEVERS } from "@/lib/simulator/levers";
-import { projectAnchored, simulate, findCheapestLever, type Projection } from "@/lib/simulator/engine";
+import { projectAnchored, findCheapestLever, type Projection } from "@/lib/simulator/engine";
 import { tierFromProb } from "@/lib/heuristic";
 import { buildNarration } from "@/lib/simulator/narrate";
 import { ARCHETYPE_DESC, ARCHETYPE_LABELS, featureLabel } from "@/lib/labels";
@@ -66,6 +70,7 @@ export function LiveSimulator({
   const [overrides, setOverrides] = React.useState<Record<string, number>>(initial);
   const [debounced, setDebounced] = React.useState<Record<string, number>>(initial);
   const [demoPlaying, setDemoPlaying] = React.useState(false);
+  const [tutorOpen, setTutorOpen] = React.useState(false);
   const demoTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Re-seed when the selected member changes — adjust state during render
@@ -140,6 +145,20 @@ export function LiveSimulator({
 
   const isDirty = Object.keys(overrideDelta).length > 0;
 
+  // Explicação do tutor em TEXTO (mesma redação que o áudio leria). O áudio é
+  // opcional, disparado pelo botão "Ouvir" dentro do painel "Tutor Explica".
+  const narration = React.useMemo(() => {
+    const top = predNew.top_drivers[0];
+    return buildNarration({
+      realProb,
+      projected,
+      deltaPP,
+      changedLevers,
+      topDriverLabel: top ? featureLabel(top.feature) : "frequência de aulas",
+      topDriverDir: top ? (top.shap_value >= 0 ? "up" : "down") : "up",
+    });
+  }, [realProb, projected, deltaPP, changedLevers, predNew]);
+
   // Sugestão do otimizador (parte do membro real) — também alimenta o auto-demo.
   const suggestion = React.useMemo(
     () => findCheapestLever(features, realProb),
@@ -155,12 +174,12 @@ export function LiveSimulator({
   }, []);
 
   // Auto-demo: anima a alavanca sugerida do valor atual até o alvo, recalculando
-  // ao vivo (pula o debounce p/ fluidez) e narrando o resultado. Respeita
-  // prefers-reduced-motion (salta) e não-intrusão (botão some sem sugestão).
+  // ao vivo (pula o debounce p/ fluidez) e ABRINDO o "Tutor Explica" em texto
+  // (sem áudio automático). Respeita prefers-reduced-motion (salta) e
+  // não-intrusão (botão some sem sugestão).
   function runAutoDemo() {
     if (demoPlaying) {
       stopDemo();
-      stopSpeaking();
       return;
     }
     if (!suggestion) return;
@@ -170,21 +189,7 @@ export function LiveSimulator({
 
     setOverrides(initial);
     setDebounced(initial);
-
-    const demoPred = simulate(features, {
-      [suggestion.feature]: to,
-    } as Partial<CustomerFeatures>);
-    const top = demoPred.top_drivers[0];
-    speak(
-      buildNarration({
-        realProb,
-        projected: suggestion.projected,
-        deltaPP: Math.round((suggestion.projected - realProb) * 100),
-        changedLevers: [{ label: suggestion.label, toValue: to, unit: lever?.unit }],
-        topDriverLabel: top ? featureLabel(top.feature) : suggestion.label,
-        topDriverDir: top ? (top.shap_value >= 0 ? "up" : "down") : "down",
-      }),
-    );
+    setTutorOpen(true); // explicação em TEXTO
 
     const reduce =
       typeof window !== "undefined" &&
@@ -227,35 +232,18 @@ export function LiveSimulator({
     setDebounced(initial);
   }
 
+  // Áudio opcional do "Tutor Explica" — lê a mesma narração que está em texto.
   function handleSpeak() {
     if (playing) {
       stopSpeaking();
       return;
     }
-    const top = predNew.top_drivers[0];
-    const narration = buildNarration({
-      realProb,
-      projected,
-      deltaPP,
-      changedLevers,
-      topDriverLabel: top ? featureLabel(top.feature) : "frequência de aulas",
-      topDriverDir: top ? (top.shap_value >= 0 ? "up" : "down") : "up",
-    });
     speak(narration);
   }
 
   async function handleApply() {
     setApplying(true);
     try {
-      const top = predNew.top_drivers[0];
-      const narration = buildNarration({
-        realProb,
-        projected,
-        deltaPP,
-        changedLevers,
-        topDriverLabel: top ? featureLabel(top.feature) : "frequência de aulas",
-        topDriverDir: top ? (top.shap_value >= 0 ? "up" : "down") : "up",
-      });
       // Map the active levers/overrides to a human action string for the offer.
       const humanAction =
         changedLevers.length > 0
@@ -306,30 +294,81 @@ export function LiveSimulator({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Simule uma intervenção</CardTitle>
-        <CardDescription>
-          Arraste uma alavanca e veja o modelo mudar de ideia ao vivo — score,
-          waterfall e arquétipo se ajustam à versão simulada. O efeito vem do
-          modelo transparente, ancorado no score real.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-6">
-        {/* Auto-demo: anima a melhor alavanca e narra — convite à descoberta */}
-        {suggestion && (
+      <CardContent className="flex flex-col gap-6 pt-6">
+        {/* Cabeçalho — mesmo design do banner do otimizador (caixa accent) */}
+        <div className="rounded-[var(--radius-md)] border border-[var(--accent-light)] bg-[var(--accent-light)]/30 p-4">
+          <div className="flex items-start gap-3">
+            <FlaskConical className="mt-0.5 h-5 w-5 shrink-0 text-[var(--accent-deep)]" />
+            <div>
+              <p className="font-semibold text-[var(--accent-deep)]">Simule uma Intervenção</p>
+              <p className="mt-1 text-sm text-[var(--ink-soft)]">
+                Arraste uma alavanca e veja o modelo simular uma intervenção — o{" "}
+                <span className="font-medium text-[var(--ink)]">score</span>, o{" "}
+                <span className="font-medium text-[var(--ink)]">waterfall</span> e o{" "}
+                <span className="font-medium text-[var(--ink)]">arquétipo</span> se ajustam à
+                versão simulada. O efeito vem do modelo transparente, ancorado no score real.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Otimizador — subiu para o topo, logo após o cabeçalho */}
+        <OptimizerHint
+          features={features}
+          realProb={realProb}
+          onApply={handleLeverChange}
+        />
+
+        {/* Descoberta: auto-demo + Tutor Explica (logo abaixo de "Simular esta alavanca") */}
+        <div className="flex flex-wrap items-center gap-3">
+          {suggestion && (
+            <Button
+              variant="accent"
+              onClick={runAutoDemo}
+              aria-label="Ver a IA recalcular o risco ao vivo"
+            >
+              {demoPlaying ? (
+                <Square className="h-4 w-4" />
+              ) : (
+                <Sparkles className="h-4 w-4" />
+              )}
+              {demoPlaying ? "Parar demonstração" : "Ver a IA mudar de ideia"}
+            </Button>
+          )}
           <Button
-            variant="accent"
-            onClick={runAutoDemo}
-            className="w-fit"
-            aria-label="Ver a IA recalcular o risco ao vivo"
+            variant="outline"
+            onClick={() => setTutorOpen((o) => !o)}
+            aria-expanded={tutorOpen}
           >
-            {demoPlaying ? (
-              <Square className="h-4 w-4" />
-            ) : (
-              <Sparkles className="h-4 w-4" />
-            )}
-            {demoPlaying ? "Parar demonstração" : "Ver a IA mudar de ideia"}
+            <TutorIcon className="h-4 w-4" />
+            Tutor Explica
           </Button>
+        </div>
+
+        {/* Painel do Tutor Explica — explicação em TEXTO; áudio opcional dentro */}
+        {tutorOpen && (
+          <div className="rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--paper-soft)] p-4">
+            <div className="flex items-start justify-between gap-3">
+              <p className="eyebrow text-[var(--accent-deep)]">Tutor explica</p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSpeak}
+                disabled={ttsLoading}
+                aria-label={playing ? "Parar áudio" : "Ouvir em áudio"}
+              >
+                {ttsLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : playing ? (
+                  <Square className="h-4 w-4" />
+                ) : (
+                  <Volume2 className="h-4 w-4" />
+                )}
+                {playing ? "Parar" : "Ouvir"}
+              </Button>
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-[var(--ink-soft)]">{narration}</p>
+          </div>
         )}
 
         {/* Antes → depois */}
@@ -346,50 +385,38 @@ export function LiveSimulator({
             </p>
           </div>
 
-          {/* Versão simulada: gauge + arquétipo + waterfall */}
+          {/* Versão simulada: score + arquétipo + waterfall (rotulados) */}
           <div className="flex flex-col gap-4">
             <p className="eyebrow">Versão simulada</p>
-            <div className="flex flex-col items-center gap-3 rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--paper-soft)] p-4">
-              <RiskGauge
-                probability={projected}
-                tier={projectedTier}
-                threshold={predNew.threshold}
-              />
-              <div className="flex flex-wrap items-center justify-center gap-2">
-                <TierBadge tier={projectedTier} />
-                <Badge variant="outline">{ARCHETYPE_LABELS[predNew.archetype]}</Badge>
+            <div className="flex flex-col gap-3 rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--paper-soft)] p-4">
+              <p className="eyebrow">Score (risco de churn)</p>
+              <div className="flex flex-col items-center gap-3">
+                <RiskGauge
+                  probability={projected}
+                  tier={projectedTier}
+                  threshold={predNew.threshold}
+                />
+                <div className="flex w-full flex-col items-center gap-1 border-t border-[var(--rule)] pt-3">
+                  <p className="eyebrow">Arquétipo</p>
+                  <div className="flex flex-wrap items-center justify-center gap-2">
+                    <TierBadge tier={projectedTier} />
+                    <Badge variant="outline">{ARCHETYPE_LABELS[predNew.archetype]}</Badge>
+                  </div>
+                  <p className="text-center text-xs text-[var(--steel)]">
+                    {ARCHETYPE_DESC[predNew.archetype]}
+                  </p>
+                </div>
               </div>
-              <p className="text-center text-xs text-[var(--steel)]">
-                {ARCHETYPE_DESC[predNew.archetype]}
-              </p>
             </div>
             <div className="rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--paper)] p-4">
-              <p className="eyebrow mb-2">Explicação local simulada (SHAP)</p>
+              <p className="eyebrow mb-2">Waterfall — explicação local (SHAP)</p>
               <ShapWaterfall shap={predNew.shap_local} />
             </div>
           </div>
         </div>
 
-        {/* Otimizador */}
-        <OptimizerHint
-          features={features}
-          realProb={realProb}
-          onApply={handleLeverChange}
-        />
-
-        {/* Ações */}
+        {/* Ações finais: Aplicar Intervenção + Resetar */}
         <div className="flex flex-wrap items-center gap-3 border-t border-[var(--rule)] pt-4">
-          <Button variant="outline" onClick={handleSpeak} disabled={ttsLoading}>
-            {ttsLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : playing ? (
-              <Square className="h-4 w-4" />
-            ) : (
-              <Volume2 className="h-4 w-4" />
-            )}
-            {playing ? "Parar narração" : "Ouvir o que mudou"}
-          </Button>
-
           <Button
             variant="accent"
             onClick={handleApply}
@@ -402,7 +429,7 @@ export function LiveSimulator({
             ) : (
               <Send className="h-4 w-4" />
             )}
-            {applied ? "Intervenção registrada" : "Aplicar intervenção"}
+            {applied ? "Intervenção registrada" : "Aplicar Intervenção"}
           </Button>
 
           <Button variant="ghost" onClick={handleReset} disabled={!isDirty}>
