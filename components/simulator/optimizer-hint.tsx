@@ -74,7 +74,7 @@ export function OptimizerHint({ features, realProb, onApply }: OptimizerHintProp
                 className="w-fit"
                 onClick={() => onApply(suggestion.feature, suggestion.toValue)}
               >
-                Aplicar no simulador
+                Simular esta alavanca
               </Button>
             )}
           </div>

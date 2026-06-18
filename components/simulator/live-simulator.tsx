@@ -13,7 +13,7 @@
 
 import * as React from "react";
 import { toast } from "sonner";
-import { Volume2, Square, Loader2, Send, RotateCcw, CircleCheck } from "lucide-react";
+import { Volume2, Square, Loader2, Send, RotateCcw, CircleCheck, Sparkles } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -28,7 +28,7 @@ import { ShapWaterfall } from "@/components/shap-waterfall";
 import { TierBadge } from "@/components/tier-badge";
 import { useSpeak } from "@/components/tutor/use-speak";
 import { LEVERS } from "@/lib/simulator/levers";
-import { projectAnchored, type Projection } from "@/lib/simulator/engine";
+import { projectAnchored, simulate, findCheapestLever, type Projection } from "@/lib/simulator/engine";
 import { tierFromProb } from "@/lib/heuristic";
 import { buildNarration } from "@/lib/simulator/narrate";
 import { ARCHETYPE_DESC, ARCHETYPE_LABELS, featureLabel } from "@/lib/labels";
@@ -65,6 +65,8 @@ export function LiveSimulator({
   // Live values (update on every drag); debounced values drive the projection.
   const [overrides, setOverrides] = React.useState<Record<string, number>>(initial);
   const [debounced, setDebounced] = React.useState<Record<string, number>>(initial);
+  const [demoPlaying, setDemoPlaying] = React.useState(false);
+  const demoTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Re-seed when the selected member changes — adjust state during render
   // instead of in an effect (avoids a cascading re-render). React docs pattern:
@@ -81,6 +83,14 @@ export function LiveSimulator({
     const t = setTimeout(() => setDebounced(overrides), DEBOUNCE_MS);
     return () => clearTimeout(t);
   }, [overrides]);
+
+  // Limpa o timer do auto-demo ao desmontar (inclui o remount ao trocar de
+  // membro — o pai passa key={member}, então a instância é recriada limpa).
+  React.useEffect(() => {
+    return () => {
+      if (demoTimer.current) clearTimeout(demoTimer.current);
+    };
+  }, []);
 
   const { speak, stopSpeaking, playing, ttsLoading } = useSpeak();
   const [applying, setApplying] = React.useState(false);
@@ -130,11 +140,88 @@ export function LiveSimulator({
 
   const isDirty = Object.keys(overrideDelta).length > 0;
 
+  // Sugestão do otimizador (parte do membro real) — também alimenta o auto-demo.
+  const suggestion = React.useMemo(
+    () => findCheapestLever(features, realProb),
+    [features, realProb],
+  );
+
+  const stopDemo = React.useCallback(() => {
+    if (demoTimer.current) {
+      clearTimeout(demoTimer.current);
+      demoTimer.current = null;
+    }
+    setDemoPlaying(false);
+  }, []);
+
+  // Auto-demo: anima a alavanca sugerida do valor atual até o alvo, recalculando
+  // ao vivo (pula o debounce p/ fluidez) e narrando o resultado. Respeita
+  // prefers-reduced-motion (salta) e não-intrusão (botão some sem sugestão).
+  function runAutoDemo() {
+    if (demoPlaying) {
+      stopDemo();
+      stopSpeaking();
+      return;
+    }
+    if (!suggestion) return;
+    const lever = LEVERS.find((l) => l.feature === suggestion.feature);
+    const from = Number(features[suggestion.feature] ?? 0);
+    const to = suggestion.toValue;
+
+    setOverrides(initial);
+    setDebounced(initial);
+
+    const demoPred = simulate(features, {
+      [suggestion.feature]: to,
+    } as Partial<CustomerFeatures>);
+    const top = demoPred.top_drivers[0];
+    speak(
+      buildNarration({
+        realProb,
+        projected: suggestion.projected,
+        deltaPP: Math.round((suggestion.projected - realProb) * 100),
+        changedLevers: [{ label: suggestion.label, toValue: to, unit: lever?.unit }],
+        topDriverLabel: top ? featureLabel(top.feature) : suggestion.label,
+        topDriverDir: top ? (top.shap_value >= 0 ? "up" : "down") : "down",
+      }),
+    );
+
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || lever?.control !== "slider") {
+      setOverrides((prev) => ({ ...prev, [suggestion.feature]: to }));
+      setDebounced((prev) => ({ ...prev, [suggestion.feature]: to }));
+      return;
+    }
+
+    setDemoPlaying(true);
+    const step = lever.step ?? 0.1;
+    const decimals = (String(step).split(".")[1] ?? "").length;
+    const STEPS = 30;
+    let i = 0;
+    const tick = () => {
+      i += 1;
+      const v = Number((from + ((to - from) * i) / STEPS).toFixed(decimals));
+      const next = i >= STEPS ? to : v;
+      setOverrides((prev) => ({ ...prev, [suggestion.feature]: next }));
+      setDebounced((prev) => ({ ...prev, [suggestion.feature]: next }));
+      if (i >= STEPS) {
+        stopDemo();
+        return;
+      }
+      demoTimer.current = setTimeout(tick, 110);
+    };
+    demoTimer.current = setTimeout(tick, 110);
+  }
+
   function handleLeverChange(feature: keyof CustomerFeatures, value: number) {
+    stopDemo();
     setOverrides((prev) => ({ ...prev, [feature]: value }));
   }
 
   function handleReset() {
+    stopDemo();
     stopSpeaking();
     setOverrides(initial);
     setDebounced(initial);
@@ -228,6 +315,23 @@ export function LiveSimulator({
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
+        {/* Auto-demo: anima a melhor alavanca e narra — convite à descoberta */}
+        {suggestion && (
+          <Button
+            variant="accent"
+            onClick={runAutoDemo}
+            className="w-fit"
+            aria-label="Ver a IA recalcular o risco ao vivo"
+          >
+            {demoPlaying ? (
+              <Square className="h-4 w-4" />
+            ) : (
+              <Sparkles className="h-4 w-4" />
+            )}
+            {demoPlaying ? "Parar demonstração" : "Ver a IA mudar de ideia"}
+          </Button>
+        )}
+
         {/* Antes → depois */}
         <ProjectionReadout realProb={realProb} projected={projected} deltaPP={deltaPP} />
 
@@ -286,7 +390,11 @@ export function LiveSimulator({
             {playing ? "Parar narração" : "Ouvir o que mudou"}
           </Button>
 
-          <Button variant="accent" onClick={handleApply} disabled={applying || applied}>
+          <Button
+            variant="accent"
+            onClick={handleApply}
+            disabled={applying || applied || !isDirty}
+          >
             {applying ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : applied ? (

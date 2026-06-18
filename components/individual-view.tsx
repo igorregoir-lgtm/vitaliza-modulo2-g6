@@ -209,6 +209,7 @@ export function IndividualView({ members }: { members: MemberOption[] }) {
           {/* Live what-if simulator — arraste alavancas e veja o modelo recalcular */}
           {features && (
             <LiveSimulator
+              key={selected}
               externalRef={selected}
               features={features}
               realProb={pred.churn_probability}
