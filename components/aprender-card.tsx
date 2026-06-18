@@ -4,7 +4,7 @@ import * as React from "react";
 import { GraduationCap, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TutorIcon } from "@/components/icons/tutor-icon";
-import { useTutor } from "@/components/tutor/tutor-provider";
+import { TutorInline } from "@/components/tutor/tutor-inline";
 
 interface AprenderCardProps {
   /** Short concept id / screen name (mantido para contexto/compatibilidade). */
@@ -20,12 +20,9 @@ interface AprenderCardProps {
 
 export function AprenderCard({ title, what, why, bullets, defaultOpen = false }: AprenderCardProps) {
   const [open, setOpen] = React.useState(defaultOpen);
-  const tutor = useTutor();
+  const [showInline, setShowInline] = React.useState(false);
 
-  const askTutor = () =>
-    tutor.open({
-      question: `Sobre a tela "${title}": o que ela faz e por que ela importa para reduzir cancelamentos? Explique de forma simples.`,
-    });
+  const seedQuestion = `Sobre a tela "${title}": o que ela faz e por que ela importa para reduzir cancelamentos? Explique de forma simples.`;
 
   return (
     <div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--rule)] bg-[var(--paper-soft)]">
@@ -46,11 +43,12 @@ export function AprenderCard({ title, what, why, bullets, defaultOpen = false }:
           </span>
         </button>
 
-        {/* CTA do tutor (abre o chat conversacional) */}
+        {/* CTA do tutor — abre o chat INLINE (no próprio card) */}
         <button
           type="button"
-          onClick={askTutor}
-          aria-label="Perguntar ao tutor"
+          onClick={() => setShowInline((v) => !v)}
+          aria-expanded={showInline}
+          aria-label={showInline ? "Fechar o tutor" : "Perguntar ao tutor"}
           className={cn(
             "group relative inline-flex shrink-0 items-center gap-2 rounded-[var(--radius-md)] px-3.5 py-2",
             "bg-[var(--accent)] text-white text-[11px] font-semibold uppercase tracking-[0.12em]",
@@ -61,15 +59,17 @@ export function AprenderCard({ title, what, why, bullets, defaultOpen = false }:
           )}
         >
           <TutorIcon className="h-[18px] w-[18px] transition-transform group-hover:scale-110" />
-          <span className="hidden sm:inline">Perguntar ao tutor</span>
+          <span className="hidden sm:inline">{showInline ? "Fechar tutor" : "Perguntar ao tutor"}</span>
           <span className="sm:hidden">Tutor</span>
-          <span className="absolute -right-1 -top-1 flex h-3 w-3" aria-hidden>
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--accent)] opacity-75" />
-            <span className="relative inline-flex h-3 w-3 rounded-full bg-[var(--accent)] ring-2 ring-[var(--paper-soft)]" />
-          </span>
+          {!showInline && (
+            <span className="absolute -right-1 -top-1 flex h-3 w-3" aria-hidden>
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--accent)] opacity-75" />
+              <span className="relative inline-flex h-3 w-3 rounded-full bg-[var(--accent)] ring-2 ring-[var(--paper-soft)]" />
+            </span>
+          )}
         </button>
 
-        {/* Expand chevron */}
+        {/* Expand chevron (conteúdo "o que/por quê") */}
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
@@ -98,13 +98,22 @@ export function AprenderCard({ title, what, why, bullets, defaultOpen = false }:
               ))}
             </ul>
           )}
-          <button
-            type="button"
-            onClick={askTutor}
-            className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-[var(--accent-deep)] hover:underline"
-          >
-            <TutorIcon className="h-3.5 w-3.5" /> Conversar com o tutor sobre isto
-          </button>
+          {!showInline && (
+            <button
+              type="button"
+              onClick={() => setShowInline(true)}
+              className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-[var(--accent-deep)] hover:underline"
+            >
+              <TutorIcon className="h-3.5 w-3.5" /> Conversar com o tutor sobre isto
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Chat INLINE do tutor (no fluxo do card, não flutuante) */}
+      {showInline && (
+        <div className="border-t border-[var(--rule)] px-4 pb-4 pt-1">
+          <TutorInline seedQuestion={seedQuestion} onClose={() => setShowInline(false)} />
         </div>
       )}
     </div>
