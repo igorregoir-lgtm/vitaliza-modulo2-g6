@@ -1,0 +1,91 @@
+{
+  "numeric": [
+    "Contract_period",
+    "Age",
+    "Avg_additional_charges_total",
+    "Lifetime",
+    "Avg_class_frequency_total",
+    "Avg_class_frequency_current_month",
+    "ratio_freq_atual_vs_lifetime",
+    "delta_freq",
+    "contract_x_lifetime"
+  ],
+  "binary": [
+    "gender",
+    "Near_Location",
+    "Partner",
+    "Promo_friends",
+    "Phone",
+    "Group_visits",
+    "flag_early_user",
+    "flag_sleeping_dog"
+  ],
+  "output_order": [
+    "Contract_period",
+    "Age",
+    "Avg_additional_charges_total",
+    "Lifetime",
+    "Avg_class_frequency_total",
+    "Avg_class_frequency_current_month",
+    "ratio_freq_atual_vs_lifetime",
+    "delta_freq",
+    "contract_x_lifetime",
+    "gender",
+    "Near_Location",
+    "Partner",
+    "Promo_friends",
+    "Phone",
+    "Group_visits",
+    "flag_early_user",
+    "flag_sleeping_dog"
+  ],
+  "winsor": {
+    "Avg_additional_charges_total": {
+      "lower": 3.1654748268770665,
+      "upper": 398.41124597262404
+    },
+    "Avg_class_frequency_total": {
+      "lower": 0.0,
+      "upper": 4.21486360523625
+    },
+    "Avg_class_frequency_current_month": {
+      "lower": 0.0,
+      "upper": 4.261762756437836
+    }
+  },
+  "median": {
+    "Contract_period": 1.0,
+    "Age": 29.0,
+    "Avg_additional_charges_total": 134.96702745411204,
+    "Lifetime": 3.0,
+    "Avg_class_frequency_total": 1.8255929275713902,
+    "Avg_class_frequency_current_month": 1.7103205088052205,
+    "ratio_freq_atual_vs_lifetime": 0.9837196101515977,
+    "delta_freq": -0.023820902731592764,
+    "contract_x_lifetime": 6.0
+  },
+  "mean": {
+    "Contract_period": 4.542142857142857,
+    "Age": 29.20642857142857,
+    "Avg_additional_charges_total": 145.8674627793249,
+    "Lifetime": 3.7289285714285714,
+    "Avg_class_frequency_total": 1.8725231177257489,
+    "Avg_class_frequency_current_month": 1.75615507100604,
+    "ratio_freq_atual_vs_lifetime": 0.89021789121242,
+    "delta_freq": -0.1164498243990924,
+    "contract_x_lifetime": 19.626428571428573
+  },
+  "scale": {
+    "Contract_period": 4.494720201956686,
+    "Age": 3.2878936095553795,
+    "Avg_additional_charges_total": 94.28551881635585,
+    "Lifetime": 3.675461913911263,
+    "Avg_class_frequency_total": 0.966835128030222,
+    "Avg_class_frequency_current_month": 1.0497208961016358,
+    "ratio_freq_atual_vs_lifetime": 0.34538332893485874,
+    "delta_freq": 0.32565636914534907,
+    "contract_x_lifetime": 31.621112094643998
+  },
+  "threshold": 0.05,
+  "model_version": "vitaliza-churn-1.0.0"
+}
