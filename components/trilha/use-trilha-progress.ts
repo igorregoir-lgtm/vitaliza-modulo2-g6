@@ -1,10 +1,12 @@
 "use client";
 
 // ============================================================================
-// Progresso da Trilha em localStorage (sem login, sem servidor — ADR-0015).
+// Progresso da Trilha em sessionStorage (sem login, sem servidor — ADR-0015).
+// sessionStorage (não localStorage) p/ que cada VISITA comece limpa: zera ao
+// fechar a aba/janela, mas sobrevive a um reload acidental no meio do tour.
+// Botão "Reiniciar trilha" na capa permite zerar manualmente a qualquer momento.
 // Usa useSyncExternalStore (idiomático p/ store externo + SSR-safe; sem
-// setState-em-efeito). Cross-tab via evento 'storage'; same-tab via evento
-// custom disparado nas escritas.
+// setState-em-efeito); same-tab via evento custom disparado nas escritas.
 // See docs/superpowers/specs/2026-06-19-trilha-aprendizado-design.md §5, §10.
 // ============================================================================
 
@@ -35,7 +37,7 @@ function getSnapshot(): MissionId[] {
   if (typeof window === "undefined") return EMPTY;
   let raw: string | null = null;
   try {
-    raw = window.localStorage.getItem(STORAGE_KEY);
+    raw = window.sessionStorage.getItem(STORAGE_KEY);
   } catch {
     raw = null;
   }
@@ -63,7 +65,7 @@ function subscribe(cb: () => void): () => void {
 function write(ids: MissionId[]): void {
   if (typeof window === "undefined") return;
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+    window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
   } catch {
     // modo privado / quota — falha silenciosa.
   }

@@ -132,11 +132,17 @@ export function GuideRail() {
                     Pergunte ao tutor
                   </Button>
                   {mission.deepenHref && (
-                    <Button variant="ghost" size="sm" asChild>
+                    <Button variant="ghost" size="sm" asChild title={mission.deepenHint}>
                       <a href={mission.deepenHref}>Aprofundar</a>
                     </Button>
                   )}
                 </div>
+
+                {mission.deepenHint && (
+                  <p className="text-[11px] leading-relaxed text-[var(--steel-soft)]">
+                    ↳ Aprofundar: {mission.deepenHint}
+                  </p>
+                )}
               </div>
             ) : (
               <StationCheck mission={mission} onComplete={handleComplete} onCancel={() => setMode("guide")} />

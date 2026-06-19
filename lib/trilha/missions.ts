@@ -38,8 +38,10 @@ export interface Mission {
   verb: string;
   /** Tela-alvo com o parâmetro que liga o painel-guia. */
   href: string;
-  /** Aprofundamento opcional (camada "fundo"). */
+  /** Aprofundamento opcional (camada "fundo") — exploração livre do tema. */
   deepenHref?: string;
+  /** O que se explora ao aprofundar (1 frase). */
+  deepenHint?: string;
   /** 1 frase: o que o aprendiz vai conseguir fazer. */
   objective: string;
   /** O que fazer NESTA tela (guia; mais detalhado nas primeiras missões). */
@@ -60,6 +62,7 @@ export const MISSIONS: Mission[] = [
     verb: "Entender",
     href: "/dashboard?trilha=entender",
     deepenHref: "/eda",
+    deepenHint: "Explore por conta própria as 6 visualizações do dataset (churn por contrato, sobrevivência, frequência, correlação).",
     objective: "Dimensionar o tamanho e o custo do churn antes de agir.",
     instruction:
       "Olhe os indicadores no topo: o churn mensal está em 10,2% (a meta é 6,0%). Cada cancelamento tem um custo. Role até o simulador de ROI e veja, em reais, quanto a retenção pode preservar.",
@@ -98,6 +101,8 @@ export const MISSIONS: Mission[] = [
     title: "Explicar um caso",
     verb: "Explicar",
     href: "/individual?trilha=explicar",
+    deepenHref: "/individual",
+    deepenHint: "Abra qualquer membro da base e leia o waterfall SHAP livremente, sem roteiro.",
     objective: "Ler, para um membro específico, por que o modelo o considera em risco.",
     instruction:
       "Escolha um membro de risco alto. Olhe o waterfall SHAP: cada barra é uma variável empurrando o risco para cima ou para baixo. As 'acionáveis' são as que a operação consegue mudar.",
@@ -136,6 +141,8 @@ export const MISSIONS: Mission[] = [
     title: "Simular uma intervenção",
     verb: "Simular",
     href: "/individual?trilha=simular",
+    deepenHref: "/individual",
+    deepenHint: "Use o simulador livre: arraste todas as alavancas e compare cenários sem o passo a passo.",
     objective: "Testar intervenções e ver o modelo recalcular o risco ao vivo.",
     instruction:
       "Tente você primeiro: no card 'Simule uma intervenção', arraste a frequência de aulas para cima e observe o score, o waterfall e o arquétipo mudarem. Só depois clique em 'Simular esta alavanca' para ver a sugestão do otimizador.",
@@ -174,6 +181,8 @@ export const MISSIONS: Mission[] = [
     title: "Decidir a ação",
     verb: "Decidir",
     href: "/individual?trilha=decidir",
+    deepenHref: "/carteira",
+    deepenHint: "Decida no nível da carteira: ordene por risco, filtre por arquétipo e veja o bloqueio dos 'cães que dormem'.",
     objective:
       "Transformar a leitura do modelo em uma ação de retenção custo-consciente — e saber quando NÃO agir.",
     instruction:
@@ -213,6 +222,8 @@ export const MISSIONS: Mission[] = [
     title: "Avaliar o sistema",
     verb: "Avaliar",
     href: "/trilha/avaliar?trilha=avaliar",
+    deepenHref: "/principios-de-personalizacao",
+    deepenHint: "Aprofunde a ética e a governança: a página pública de princípios de personalização (LGPD).",
     objective:
       "Avaliar o sistema como um todo: onde colocar o corte de decisão e o quanto confiar no modelo.",
     instruction:

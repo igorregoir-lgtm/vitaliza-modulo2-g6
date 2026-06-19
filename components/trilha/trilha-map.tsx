@@ -40,9 +40,28 @@ export function TrilhaMap() {
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--steel)]">
           Uma jornada guiada pelas telas reais do sistema — de entender o problema do churn até
-          desenhar e comunicar uma estratégia de retenção. Cada missão termina com um check rápido,
-          e seu progresso fica salvo neste navegador.
+          desenhar e comunicar uma estratégia de retenção. Cada missão termina com um check rápido;
+          seu progresso vale para esta visita e zera ao fechar a aba.
         </p>
+
+        {/* Duas formas de percorrer — deixa explícito o modo aprofundado */}
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--paper-soft)] p-3">
+            <p className="eyebrow text-[var(--accent-deep)]">1 · Tour guiado (~{TRILHA_EST_MIN} min)</p>
+            <p className="mt-1 text-xs leading-relaxed text-[var(--steel)]">
+              Siga as missões em ordem. Em cada tela, o painel-guia diz o que fazer e fecha com um
+              check. É o caminho rápido e completo.
+            </p>
+          </div>
+          <div className="rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--paper-soft)] p-3">
+            <p className="eyebrow text-[var(--accent-deep)]">2 · Aprofundar (livre)</p>
+            <p className="mt-1 text-xs leading-relaxed text-[var(--steel)]">
+              Em qualquer missão, use <span className="font-medium text-[var(--ink)]">Aprofundar</span>{" "}
+              para explorar o tema sem roteiro, e <span className="font-medium text-[var(--ink)]">Pergunte
+              ao tutor</span> (no painel-guia) para ir fundo nos porquês.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Progresso + CTA de tour */}
@@ -161,12 +180,15 @@ function MissionRow({
         </div>
         <p className="mt-0.5 truncate font-semibold text-[var(--ink)]">{mission.title}</p>
         <p className="text-sm text-[var(--steel)]">{mission.objective}</p>
+        {mission.deepenHint && (
+          <p className="mt-1 text-xs text-[var(--steel-soft)]">↳ Aprofundar: {mission.deepenHint}</p>
+        )}
       </div>
 
       {/* Ações */}
       <div className="flex shrink-0 items-center gap-2">
         {mission.deepenHref && (
-          <Button variant="ghost" size="sm" asChild>
+          <Button variant="ghost" size="sm" asChild title={mission.deepenHint}>
             <a href={mission.deepenHref}>Aprofundar</a>
           </Button>
         )}

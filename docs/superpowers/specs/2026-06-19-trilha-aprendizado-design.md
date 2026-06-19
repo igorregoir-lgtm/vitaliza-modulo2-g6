@@ -36,7 +36,7 @@ ganham rota própria sob `/trilha/*`.
 - **Arquitetura híbrida:** capa/mapa `/trilha` (progresso) → cada missão abre a **tela real** com
   `?trilha=<id>` → o **GuideRail** (montado no `AppShell`) aparece quando há `?trilha=` na URL →
   ao concluir, abre o **StationCheck** → marca progresso → volta à capa.
-- **Sem login, sem servidor de estado:** progresso em **`localStorage`** (`use-trilha-progress`).
+- **Sem login, sem servidor de estado:** progresso em **`sessionStorage`** (`use-trilha-progress`).
   Degrada graciosamente (SSR: vazio até hidratar).
 - **Uma única fonte de verdade** das missões (`lib/trilha/missions.ts`) alimenta a capa, o GuideRail
   e o StationCheck.
@@ -75,7 +75,7 @@ missões 1–2 com instrução passo a passo; 4–5 mais enxutas.
   (prompt novo `runCapstoneSummary`), com fallback determinístico. **(#6)**
 
 **Novos — client components / hook:**
-- `components/trilha/use-trilha-progress.ts` — hook localStorage (`completed[]`, `current`, helpers).
+- `components/trilha/use-trilha-progress.ts` — hook sessionStorage (`completed[]`, `current`, helpers).
 - `components/trilha/trilha-map.tsx` — capa/mapa: estações, estado (feito/atual/bloqueado), progresso.
 - `components/trilha/guide-rail.tsx` — painel-guia (objetivo + instrução + tutor + "Concluir missão");
   dispara o StationCheck. Lê `?trilha=` (Suspense).
@@ -131,14 +131,14 @@ export const TRILHA_TOTAL: number;                // MISSIONS.length
 ```
 
 ```ts
-// components/trilha/use-trilha-progress.ts  — localStorage, key "vitaliza:trilha:v1"
+// components/trilha/use-trilha-progress.ts  — sessionStorage, key "vitaliza:trilha:v1"
 export interface TrilhaProgress {
   completed: MissionId[];
   isComplete: (id: MissionId) => boolean;
   markComplete: (id: MissionId) => void;
   reset: () => void;
   pct: number;            // completed / TRILHA_TOTAL (0..100, inteiro)
-  hydrated: boolean;      // false até ler o localStorage (evita flash)
+  hydrated: boolean;      // false até ler o sessionStorage (evita flash)
 }
 export function useTrilhaProgress(): TrilhaProgress;
 ```
@@ -259,7 +259,7 @@ foco visível, `aria-current`/`aria-expanded`/`aria-pressed`, alvos ≥ 40px, `p
 
 ## 10. Edge cases / erros
 
-- `useTrilhaProgress`: `try/catch` em torno do `localStorage` (modo privado/SSR); `hydrated=false`
+- `useTrilhaProgress`: `try/catch` em torno do `sessionStorage` (modo privado/SSR); `hydrated=false`
   até o primeiro efeito; nunca quebra a renderização.
 - `/api/trilha-data`: se `getScoredCustomers()` vazio → `{ points: [], baseRate: 0, n: 0, threshold: 0.5 }`;
   os exploradores mostram estado vazio ("popule a base"). Filtra pontos com `true_churn == null`.

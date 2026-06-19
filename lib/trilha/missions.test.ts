@@ -46,6 +46,16 @@ describe("MISSIONS config", () => {
     }
   });
 
+  it("missões com aprofundamento têm href e hint", () => {
+    const withDeepen = MISSIONS.filter((m) => m.deepenHref);
+    // pelo menos as missões sobre telas operacionais devem oferecer aprofundar
+    expect(withDeepen.length).toBeGreaterThanOrEqual(4);
+    for (const m of withDeepen) {
+      expect(m.deepenHref).toMatch(/^\//);
+      expect(m.deepenHint && m.deepenHint.length).toBeGreaterThan(0);
+    }
+  });
+
   it("getMission resolve por id e retorna undefined p/ inválido", () => {
     expect(getMission("entender")?.order).toBe(1);
     expect(getMission("sintese")?.bloom).toBe("Criar");

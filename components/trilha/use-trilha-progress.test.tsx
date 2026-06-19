@@ -6,10 +6,10 @@ import { useTrilhaProgress } from "./use-trilha-progress";
 const KEY = "vitaliza:trilha:v1";
 
 beforeEach(() => {
-  window.localStorage.clear();
+  window.sessionStorage.clear();
 });
 
-describe("useTrilhaProgress (persistência localStorage)", () => {
+describe("useTrilhaProgress (persistência sessionStorage — reset ao fechar)", () => {
   it("começa vazio e hidrata no cliente", () => {
     const { result } = renderHook(() => useTrilhaProgress());
     expect(result.current.completed).toEqual([]);
@@ -17,12 +17,12 @@ describe("useTrilhaProgress (persistência localStorage)", () => {
     expect(result.current.hydrated).toBe(true);
   });
 
-  it("markComplete persiste no localStorage e reflete em isComplete/completed", () => {
+  it("markComplete persiste no sessionStorage e reflete em isComplete/completed", () => {
     const { result } = renderHook(() => useTrilhaProgress());
     act(() => result.current.markComplete("entender"));
     expect(result.current.isComplete("entender")).toBe(true);
     expect(result.current.completed).toContain("entender");
-    const stored = JSON.parse(window.localStorage.getItem(KEY) ?? "[]") as string[];
+    const stored = JSON.parse(window.sessionStorage.getItem(KEY) ?? "[]") as string[];
     expect(stored).toContain("entender");
   });
 
@@ -35,7 +35,7 @@ describe("useTrilhaProgress (persistência localStorage)", () => {
     expect(result.current.completed.filter((x) => x === "entender")).toHaveLength(1);
     act(() => result.current.reset());
     expect(result.current.completed).toEqual([]);
-    expect(window.localStorage.getItem(KEY)).toBe("[]");
+    expect(window.sessionStorage.getItem(KEY)).toBe("[]");
   });
 
   it("pct = concluídas / total * 100", () => {
@@ -44,8 +44,8 @@ describe("useTrilhaProgress (persistência localStorage)", () => {
     expect(result.current.pct).toBe(Math.round((1 / 6) * 100)); // 17
   });
 
-  it("lê progresso pré-existente do localStorage", () => {
-    window.localStorage.setItem(KEY, JSON.stringify(["entender", "explicar"]));
+  it("lê progresso pré-existente do sessionStorage", () => {
+    window.sessionStorage.setItem(KEY, JSON.stringify(["entender", "explicar"]));
     const { result } = renderHook(() => useTrilhaProgress());
     expect(result.current.completed).toEqual(["entender", "explicar"]);
     expect(result.current.pct).toBe(Math.round((2 / 6) * 100)); // 33
