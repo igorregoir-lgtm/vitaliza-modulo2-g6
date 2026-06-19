@@ -10,6 +10,14 @@
 Acesse a URL acima. Não é preciso login (modo demonstração). Em cada tela há um
 cartão **"Aprender"** (PBL) explicando o "como" e o "porquê" — e um agente tutor.
 
+> **Caminho guiado (recomendado):** abra **`/trilha`** (Trilha de Aprendizado) e faça o **tour de
+> ~13 min**. Ele conduz você pelas 6 missões da taxonomia de Bloom — Entender, Explicar, Simular,
+> Decidir, Avaliar e Sintetizar — sobreposto às telas reais, com um check rápido ao fim de cada uma e
+> progresso salvo no navegador. A estação **Avaliar** (`/trilha/avaliar`) traz o explorador de
+> **threshold** (recall × falsos positivos × ROI) e a **curva de calibração** sobre os escores reais;
+> a **Síntese** (`/trilha/sintese`) gera um resumo executivo imprimível. Os passos abaixo cobrem as
+> mesmas telas avulsas, para quem preferir navegar livre.
+
 ## 1. Dashboard executivo — `/` (redireciona p/ `/dashboard`)
 Veja os KPIs (churn, LTV, LTV/CAC, retenção mês 6, meta 6%), o split por risco e o
 **simulador de ROI** (taxa de aceite × custo → receita preservada).
@@ -62,3 +70,5 @@ Página pública (LGPD / ANPD 07/2025): quais dados, com que finalidade, como co
 | Decision log / auditabilidade? | [`docs/decisions/`](decisions/) + `audit_log` (Supabase) + [`docs/traceability-matrix.md`](traceability-matrix.md) |
 | Cobertura requisito → componente? | [`docs/traceability-matrix.md`](traceability-matrix.md) (seções A–E) |
 | Testes do simulador? | `lib/simulator/*.test.ts` (vitest, 28 testes) |
+| Threshold/calibração e trilha testados? | `lib/trilha/*.test.ts` (threshold, calibração, config das missões) — suíte total: 63 testes |
+| Trilha de Aprendizado (Bloom + checks + capstone)? | `/trilha` · [spec](superpowers/specs/2026-06-19-trilha-aprendizado-design.md) · [ADR-0015](decisions/0015-trilha-overlay-progresso-local.md) |

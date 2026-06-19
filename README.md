@@ -35,6 +35,15 @@ pelo **Simulador Vivo** (abaixo): de *explicar* a previsão para *explorar* o qu
 
 ## Telas
 
+> **Comece pela [Trilha de Aprendizado](https://vitaliza-retencao.vercel.app/trilha) (`/trilha`)** —
+> a porta de entrada **pedagógica**: uma jornada guiada em 6 missões pela taxonomia de Bloom
+> (Entender → Explicar → Simular → Decidir → Avaliar → Sintetizar) **sobre as telas reais**, com
+> painel-guia, checks formativos e progresso salvo no navegador. Inclui a estação **"Avaliar"**
+> (explorador de **threshold** recall × falsos positivos × ROI + **curva de calibração**/Brier sobre
+> os escores reais) e um **resumo executivo imprimível** (capstone). Spec:
+> [`docs/superpowers/specs/2026-06-19-trilha-aprendizado-design.md`](docs/superpowers/specs/2026-06-19-trilha-aprendizado-design.md) ·
+> arquitetura: [`docs/decisions/0015-trilha-overlay-progresso-local.md`](docs/decisions/0015-trilha-overlay-progresso-local.md).
+
 1. **Dashboard Executivo** — KPIs (churn, LTV, LTV/CAC, retenção mês 6, meta 6%), split por risco,
    **simulador de ROI** (taxa de aceite × custo → receita preservada).
 2. **EDA Interativa** — 6 visualizações reais do dataset (churn por contrato, sobrevivência, frequência,

@@ -254,3 +254,76 @@ export function fallbackAdvisor({ pred, externalRef }: AdvisorInput): AdvisorRes
     recommendation: rec,
   };
 }
+
+// ---------------------------------------------------------------------------
+// CAPSTONE — resumo executivo da jornada (Trilha de Aprendizado, #6).
+// Sintetiza a trilha numa estratégia de retenção, em tom executivo. Reusa o
+// LLM do advisor; degrada para um texto determinístico sem a chave.
+// ---------------------------------------------------------------------------
+export interface CapstoneInput {
+  /** Taxa-base de churn observada (0..1). */
+  baseRate: number;
+  /** Membros analisados na base. */
+  n: number;
+  /** O que o aprendiz percorreu (títulos das missões concluídas). */
+  highlights: string[];
+}
+
+const CAPSTONE_SYSTEM = `Você é o tutor da Vitaliza ajudando o aprendiz a SINTETIZAR, em tom executivo e
+acolhedor, a jornada que ele acabou de percorrer — transformando-a numa estratégia de retenção.
+Escreva em português do Brasil, no máximo ~200 palavras, sem jargão técnico (explique qualquer termo
+em uma frase). Estruture como um breve memorando para a liderança, cobrindo: (1) o tamanho do problema
+de churn; (2) como o modelo ajuda — risco por membro + explicação local (SHAP); (3) a decisão de ação
+custo-consciente, incluindo quando NÃO intervir (perfil 'cão que dorme', não-intrusão); (4) a escolha
+do corte/limiar guiada por ROI, não por recall; (5) um fechamento conectando tudo a receita preservada.
+Comece exatamente com: "Você desenhou uma estratégia de retenção orientada por dados." Use os dados
+fornecidos. Inclua UMA vez o lembrete: a explicabilidade descreve o comportamento do modelo, não
+relações de causa e efeito.
+Escreva em PROSA CORRIDA (parágrafos curtos), SEM marcação markdown: nada de '#', '**', '---',
+títulos ou listas com marcadores. Apenas texto.`;
+
+function capstoneUserMsg({ baseRate, n, highlights }: CapstoneInput): string {
+  const pct = `${Math.round(baseRate * 100)}%`;
+  const done = highlights.length > 0 ? highlights.join("; ") : "a trilha completa";
+  return `Dados da jornada:
+- Base analisada: ${n} membros.
+- Taxa-base de cancelamento observada: ${pct}.
+- Etapas percorridas pelo aprendiz: ${done}.
+
+Gere o resumo executivo da estratégia de retenção.`;
+}
+
+export async function runCapstoneSummary(input: CapstoneInput): Promise<string> {
+  return callOpenRouter(
+    [
+      { role: "system", content: CAPSTONE_SYSTEM },
+      { role: "user", content: capstoneUserMsg(input) },
+    ],
+    600,
+  );
+}
+
+/** Resumo determinístico (sem LLM) — mesmo arco do prompt. */
+export function fallbackCapstoneSummary({ baseRate, n, highlights }: CapstoneInput): string {
+  const pct = `${Math.round(baseRate * 100)}%`;
+  const steps =
+    highlights.length > 0
+      ? `Você percorreu: ${highlights.join("; ")}. `
+      : "";
+  return (
+    "Você desenhou uma estratégia de retenção orientada por dados.\n\n" +
+    `O problema tem tamanho: numa base de ${n} membros analisados, a taxa-base de cancelamento ` +
+    `observada é de ${pct} — alta o bastante para justificar agir, mas não tão alta que baste ` +
+    "'chutar'. É exatamente onde um modelo de risco compensa.\n\n" +
+    "Como o modelo ajuda: ele estima o risco de cada membro e, com a explicação local (SHAP), mostra " +
+    "quais variáveis pesaram naquele caso e quais a operação consegue mudar — uma leitura do " +
+    "comportamento do modelo, não de causa e efeito do mundo real.\n\n" +
+    "A decisão de ação é custo-consciente: cada recomendação respeita orçamento e canais, e há casos " +
+    "em que a melhor decisão é NÃO intervir — o perfil 'cão que dorme' (vínculo longo, uso quase zero) " +
+    "fica fora das campanhas proativas por política de não-intrusão.\n\n" +
+    "No nível do sistema, o corte de decisão é escolhido pelo ROI — equilibrando churns capturados e " +
+    "contatos desperdiçados — e não apenas pelo recall. " +
+    steps +
+    "Fechando o ciclo, cada membro retido preserva receita: é assim que o risco do modelo vira valor de negócio."
+  );
+}

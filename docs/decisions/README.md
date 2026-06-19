@@ -19,6 +19,7 @@ consequências. Convenção allla (ver `AGENTS.md` na raiz do produto).
 | [0012](0012-tutor-conversacional-deepseek.md) | Tutor conversacional (DeepSeek) com voz, TTS e escopo restrito | Accepted |
 | [0013](0013-tts-elevenlabs-google.md) | Voz humana pt-BR: TTS server-side (ElevenLabs + Google) com fallback | Accepted |
 | [0014](0014-ancoragem-simulador-real-mais-delta.md) | Ancoragem do simulador: score real (XGBoost) + delta heurístico (refina 0011) | Accepted |
+| [0015](0015-trilha-overlay-progresso-local.md) | Trilha de Aprendizado: overlay guiado sobre as telas reais + progresso local (localStorage) | Accepted |
 
 > Decisões de produto confirmadas pelo cliente em 2026-06-17: build autônomo até o ar; fork em
 > `igorregoir-lgtm/Modulo2-G6` (mantendo o nome); novos projetos Supabase + Vercel; frontend

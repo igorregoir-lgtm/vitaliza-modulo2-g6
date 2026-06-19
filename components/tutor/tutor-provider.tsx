@@ -46,7 +46,7 @@ export function TutorProvider({ children }: { children: React.ReactNode }) {
           onClick={() => open()}
           aria-label="Pergunte ao Tutor"
           className={cn(
-            "group fixed bottom-5 right-5 z-40 inline-flex items-center gap-2.5 rounded-full px-4 py-3",
+            "no-print group fixed bottom-5 right-5 z-40 inline-flex items-center gap-2.5 rounded-full px-4 py-3",
             "bg-[var(--accent)] text-white shadow-[0_8px_28px_-6px_rgba(20,184,166,0.7)] ring-1 ring-inset ring-white/15",
             "transition-all hover:bg-[var(--accent-deep)] hover:shadow-[0_10px_32px_-6px_rgba(20,184,166,0.8)] active:translate-y-px",
           )}

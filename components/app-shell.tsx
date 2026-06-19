@@ -12,6 +12,7 @@ import {
   Menu,
   LogOut,
   Activity,
+  Map,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { TutorProvider } from "@/components/tutor/tutor-provider";
+import { GuideRail } from "@/components/trilha/guide-rail";
 import type { UserRole } from "@/lib/types";
 
 interface NavItem {
@@ -29,6 +31,7 @@ interface NavItem {
 }
 
 const NAV: NavItem[] = [
+  { href: "/trilha", label: "Trilha de Aprendizado", icon: Map, roles: ["exec", "admin", "cs"] },
   { href: "/dashboard", label: "Dashboard Executivo", icon: LayoutDashboard, roles: ["exec", "admin", "cs"] },
   { href: "/eda", label: "EDA Interativa", icon: BarChart3, roles: ["exec", "admin", "cs"] },
   { href: "/individual", label: "Consulta Individual", icon: UserSearch, roles: ["cs", "admin", "exec"] },
@@ -123,7 +126,7 @@ export function AppShell({
     <TutorProvider>
     <div className="flex min-h-screen flex-col">
       {/* Top bar (dark ink header) */}
-      <header className="sticky top-0 z-30 border-b border-[var(--primary-deep)] bg-[var(--ink)] text-[var(--paper)]">
+      <header className="no-print sticky top-0 z-30 border-b border-[var(--primary-deep)] bg-[var(--ink)] text-[var(--paper)]">
         <div className="flex h-14 items-center gap-2 px-4 sm:px-6">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
@@ -186,7 +189,7 @@ export function AppShell({
       </header>
 
       {/* Faixa de proposta de valor (todas as páginas) */}
-      <div className="border-b border-[var(--rule)] bg-[var(--paper)]">
+      <div className="no-print border-b border-[var(--rule)] bg-[var(--paper)]">
         <div className="mx-auto max-w-3xl px-4 py-2.5 text-center">
           <p className="text-xs leading-relaxed text-[var(--steel)] sm:text-sm">
             Risco de churn por usuário, explicação individual com SHAP e recomendação prescritiva,
@@ -197,7 +200,7 @@ export function AppShell({
 
       <div className="flex flex-1">
         {/* Sidebar */}
-        <aside className="hidden w-64 shrink-0 border-r border-[var(--rule)] bg-[var(--paper)] lg:block">
+        <aside className="no-print hidden w-64 shrink-0 border-r border-[var(--rule)] bg-[var(--paper)] lg:block">
           <div className="sticky top-14 px-3 py-5">
             <NavLinks role={role} pathname={pathname} />
             <div className="mt-6 rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--paper-soft)] p-3">
@@ -215,6 +218,12 @@ export function AppShell({
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">{children}</div>
         </main>
       </div>
+
+      {/* Painel-guia da Trilha — aparece quando há ?trilha=<id> na URL.
+          Suspense exigido pelo useSearchParams (Next 16). */}
+      <React.Suspense fallback={null}>
+        <GuideRail />
+      </React.Suspense>
     </div>
     </TutorProvider>
   );

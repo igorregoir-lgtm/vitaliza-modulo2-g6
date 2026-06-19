@@ -2,13 +2,19 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/page-header";
 import { AprenderCard } from "@/components/aprender-card";
 import { IndividualView } from "@/components/individual-view";
+import { ContrastingCases } from "@/components/trilha/contrasting-cases";
 import { getScoredCustomers } from "@/lib/scoring";
 import { ARCHETYPE_LABELS, TIER_LABELS } from "@/lib/labels";
 import { Users } from "lucide-react";
 
 export const metadata: Metadata = { title: "Consulta Individual" };
 
-export default async function IndividualPage() {
+export default async function IndividualPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ trilha?: string }>;
+}) {
+  const { trilha } = await searchParams;
   const scored = await getScoredCustomers();
   const members = scored
     .sort((a, b) => b.prediction.churn_probability - a.prediction.churn_probability)
@@ -54,7 +60,10 @@ export default async function IndividualPage() {
           </div>
         </div>
       ) : (
-        <IndividualView members={members} />
+        <>
+          <IndividualView members={members} />
+          {trilha === "explicar" && <ContrastingCases members={members} />}
+        </>
       )}
     </div>
   );
