@@ -8,7 +8,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { CheckCircle2, Circle, ArrowRight, RotateCcw, Compass, Sparkles } from "lucide-react";
+import { CheckCircle2, Circle, ArrowRight, RotateCcw, Compass, Sparkles, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -33,58 +33,91 @@ export function TrilhaMap() {
   return (
     <div className="flex flex-col gap-6">
       {/* Cabeçalho editorial */}
-      <div className="border-b border-[var(--rule)] pb-5">
+      <div>
         <p className="eyebrow mb-1">Aprender fazendo · PBL</p>
         <h1 className="font-display text-2xl font-semibold tracking-tight text-[var(--ink)] sm:text-3xl">
           Trilha de Aprendizado
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--steel)]">
-          Uma jornada guiada pelas telas reais do sistema — de entender o problema do churn até
-          desenhar e comunicar uma estratégia de retenção. Cada missão termina com um check rápido;
-          seu progresso vale para esta visita e zera ao fechar a aba.
+          Uma jornada guiada pelas telas reais do sistema — do problema do churn até desenhar e
+          comunicar uma estratégia de retenção.
         </p>
-
-        {/* Duas formas de percorrer — deixa explícito o modo aprofundado */}
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--paper-soft)] p-3">
-            <p className="eyebrow text-[var(--accent-deep)]">1 · Tour guiado (~{TRILHA_EST_MIN} min)</p>
-            <p className="mt-1 text-xs leading-relaxed text-[var(--steel)]">
-              Siga as missões em ordem. Em cada tela, o painel-guia diz o que fazer e fecha com um
-              check. É o caminho rápido e completo.
-            </p>
-          </div>
-          <div className="rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--paper-soft)] p-3">
-            <p className="eyebrow text-[var(--accent-deep)]">2 · Aprofundar (livre)</p>
-            <p className="mt-1 text-xs leading-relaxed text-[var(--steel)]">
-              Em qualquer missão, use <span className="font-medium text-[var(--ink)]">Aprofundar</span>{" "}
-              para explorar o tema sem roteiro, e <span className="font-medium text-[var(--ink)]">Pergunte
-              ao tutor</span> (no painel-guia) para ir fundo nos porquês.
-            </p>
-          </div>
-        </div>
       </div>
 
-      {/* Progresso + CTA de tour */}
-      <div className="flex flex-col gap-4 rounded-[var(--radius-lg)] border border-[var(--rule)] bg-[var(--paper-soft)] p-5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center justify-between gap-3">
-            <p className="eyebrow">Progresso</p>
-            <p className="mono text-xs text-[var(--steel)]">
-              {hydrated ? completed.length : 0} de {TRILHA_TOTAL} missões
+      {/* HERO — como percorrer (os dois modos, em destaque) */}
+      <section aria-label="Como percorrer a trilha">
+        <p className="eyebrow mb-3 text-[var(--steel)]">Escolha como percorrer</p>
+        <div className="grid gap-4 lg:grid-cols-2">
+          {/* 1) Tour guiado — cartão-CTA primário (clicável) */}
+          <Link
+            href={allDone ? MISSIONS[0].href : firstIncomplete.href}
+            className="group relative flex flex-col overflow-hidden rounded-[var(--radius-lg)] border-2 border-[var(--accent)] bg-[var(--accent-light)]/60 p-5 transition-all hover:bg-[var(--accent-light)] hover:shadow-[0_14px_34px_-14px_rgba(20,184,166,0.6)] focus-visible:outline-2 focus-visible:outline-[var(--accent)] focus-visible:outline-offset-2"
+          >
+            <span className="absolute right-4 top-4 rounded-full bg-[var(--accent)] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">
+              Recomendado
+            </span>
+            <div className="flex items-center gap-3">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-[var(--accent)] text-white shadow-[0_6px_18px_-6px_rgba(20,184,166,0.85)]">
+                <Compass className="h-6 w-6" />
+              </span>
+              <div>
+                <p className="eyebrow text-[var(--accent-deep)]">Opção 1</p>
+                <p className="font-display text-xl font-semibold leading-tight text-[var(--ink)]">
+                  Tour guiado{" "}
+                  <span className="text-sm font-normal text-[var(--steel)]">· ~{TRILHA_EST_MIN} min</span>
+                </p>
+              </div>
+            </div>
+            <p className="mt-3 text-sm leading-relaxed text-[var(--ink-soft)]">
+              Siga as 6 missões em ordem. Em cada tela, o painel-guia mostra exatamente o que fazer e
+              fecha com um check rápido. O caminho mais rápido e completo.
+            </p>
+            <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--accent-deep)]">
+              {tourLabel}
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </span>
+          </Link>
+
+          {/* 2) Aprofundar — cartão explicativo (claro, alto contraste) */}
+          <div className="flex flex-col rounded-[var(--radius-lg)] border border-[var(--rule)] bg-[var(--paper)] p-5">
+            <div className="flex items-center gap-3">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-[var(--accent-light)] text-[var(--accent-deep)]">
+                <Layers className="h-6 w-6" />
+              </span>
+              <div>
+                <p className="eyebrow text-[var(--accent-deep)]">Opção 2</p>
+                <p className="font-display text-xl font-semibold leading-tight text-[var(--ink)]">
+                  Aprofundar <span className="text-sm font-normal text-[var(--steel)]">· livre</span>
+                </p>
+              </div>
+            </div>
+            <p className="mt-3 text-sm leading-relaxed text-[var(--ink-soft)]">
+              Em qualquer missão, toque em{" "}
+              <span className="rounded bg-[var(--accent-light)] px-1.5 py-0.5 font-semibold text-[var(--accent-deep)]">Aprofundar</span>{" "}
+              para explorar o tema sem roteiro, e{" "}
+              <span className="rounded bg-[var(--accent-light)] px-1.5 py-0.5 font-semibold text-[var(--accent-deep)]">Pergunte ao tutor</span>{" "}
+              para ir fundo nos porquês.
+            </p>
+            <p className="mt-auto pt-3 text-xs text-[var(--steel)]">
+              Cada degrau abaixo aponta o que explorar mais a fundo (↳ Aprofundar).
             </p>
           </div>
-          <Progress
-            value={hydrated ? pct : 0}
-            aria-label={`Progresso da trilha: ${hydrated ? completed.length : 0} de ${TRILHA_TOTAL} missões`}
-            className="mt-2"
-          />
         </div>
-        <Button variant="accent" asChild className="shrink-0">
-          <Link href={allDone ? MISSIONS[0].href : firstIncomplete.href}>
-            <Compass className="h-4 w-4" />
-            {tourLabel}
-          </Link>
-        </Button>
+      </section>
+
+      {/* Progresso — barra prominente (o tour é o cartão acima) */}
+      <div className="flex flex-col gap-2 rounded-[var(--radius-lg)] border border-[var(--rule)] bg-[var(--paper-soft)] p-4">
+        <div className="flex items-center justify-between gap-3">
+          <p className="eyebrow">Seu progresso</p>
+          <p className="mono text-xs font-semibold text-[var(--ink)]">
+            {hydrated ? completed.length : 0} / {TRILHA_TOTAL} missões
+          </p>
+        </div>
+        <Progress
+          value={hydrated ? pct : 0}
+          aria-label={`Progresso da trilha: ${hydrated ? completed.length : 0} de ${TRILHA_TOTAL} missões`}
+        />
+        <p className="text-[11px] text-[var(--steel)]">Vale para esta visita — zera ao fechar a aba.</p>
       </div>
 
       {/* Degraus */}
