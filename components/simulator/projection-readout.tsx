@@ -18,17 +18,21 @@ function pct(p: number): string {
 export interface ProjectionReadoutProps {
   /** Real XGBoost score (pred.churn_probability). */
   realProb: number;
-  /** Anchored projection from projectAnchored(). */
+  /** Projeção exibida (ONNX real ou heurística ancorada). */
   projected: number;
   /** Math.round((projected - realProb) * 100). */
   deltaPP: number;
+  /** Fonte da projeção — 'onnx' = XGBoost real; 'heuristic' = surrogate ancorado. */
+  source?: "onnx" | "heuristic";
 }
 
 export function ProjectionReadout({
   realProb,
   projected,
   deltaPP,
+  source = "heuristic",
 }: ProjectionReadoutProps) {
+  const onnx = source === "onnx";
   const magnitude = Math.abs(deltaPP);
   // Para risco de churn, queda (deltaPP < 0) é bom → cor de tier baixo.
   const deltaColor =
@@ -62,16 +66,17 @@ export function ProjectionReadout({
           </div>
         </div>
         <ReadoutCell
-          eyebrow="Projeção · simulação"
+          eyebrow={onnx ? "Projeção · XGBoost real" : "Projeção · simulação"}
           value={pct(projected)}
-          hint="modelo transparente, ancorado no score real"
+          hint={onnx ? "inferência real via ONNX" : "modelo transparente, ancorado no score real"}
           emphasis
         />
       </div>
 
       <p className="text-xs leading-relaxed text-[var(--steel)]">
-        Projeção pelo modelo transparente auditável, ancorada no score real do
-        XGBoost. Descreve o comportamento do modelo — não causalidade.
+        {onnx
+          ? "Projeção = XGBoost real recalculado (ONNX) para a versão simulada. O waterfall SHAP ao lado segue o modelo transparente (híbrido). Descreve o comportamento do modelo — não causalidade."
+          : "Projeção pelo modelo transparente auditável, ancorada no score real do XGBoost. Descreve o comportamento do modelo — não causalidade."}
       </p>
     </div>
   );

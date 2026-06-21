@@ -63,3 +63,19 @@ surrogate, rotulado). Produção permaneceu intacta durante todo o experimento.
 - O comportamento atual (ADR-0011/0014) permanece a fonte de verdade até o preview validar a função.
 - Trabalho futuro bem-escopado: função de score real → wire com flag/fallback → decisão de SHAP.
 - Se/quando promovido, ADR-0011 e 0014 são atualizados (a ancoragem some quando o real roda online).
+
+## Atualização (2026-06-21) — wire implementado atrás da flag (híbrido)
+A pendência acima foi **resolvida** no branch `feat/online-inference-onnx`:
+- **Flag + fallback:** hook `lib/onnx/use-online-projection.ts` (flag `NEXT_PUBLIC_ONLINE_INFERENCE`,
+  **default off**). Ligado, o Simulador Vivo usa o score **real do XGBoost** (via `/api/infer-onnx`)
+  como "Projeção"; desligado **ou** em qualquer erro/indisponibilidade, cai de volta na heurística
+  ancorada (ADR-0014) — **zero regressão** (com a flag off o comportamento é idêntico ao atual).
+- **SHAP — decisão:** mantido o **surrogate transparente** (híbrido). Quando o ONNX está ativo, o
+  readout rotula a fonte ("Projeção · XGBoost real") e nota que o waterfall segue o surrogate.
+- **Runtime validado localmente** (dev server, `/api/infer-onnx`): early_dropper **0.9413**, engajado
+  **0.0117** — idêntico à produção. Resolve o bloqueio anterior (preview 401 por Deployment Protection):
+  a prova foi feita no runtime local, não no preview gated.
+- **Gate:** eslint + **83 testes** (2 novos cobrindo o invariante "flag off → sem rede") + `next build`
+  (25 rotas, inclui `/api/infer-onnx`) — tudo verde.
+- **Pendente só a promoção:** merge em `main` (seguro — a flag fica **off** por padrão) e, se ligada em
+  produção um dia, atualizar ADR-0011/0014 (a ancoragem some quando o real roda online).

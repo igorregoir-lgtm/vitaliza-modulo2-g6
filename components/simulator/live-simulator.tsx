@@ -40,6 +40,7 @@ import type { CustomerFeatures } from "@/lib/types";
 import { LeverControls } from "./lever-controls";
 import { ProjectionReadout } from "./projection-readout";
 import { OptimizerHint } from "./optimizer-hint";
+import { useOnlineProjection, ONLINE_INFERENCE_ENABLED } from "@/lib/onnx/use-online-projection";
 
 const DEBOUNCE_MS = 120;
 
@@ -126,10 +127,7 @@ export function LiveSimulator({
     [features, realProb, overrideDelta],
   );
 
-  const { predNew, projected, deltaPP } = projection;
-  // O tier da "versão simulada" segue a PROJEÇÃO ancorada (não a prob. crua da
-  // heurística), para não contradizer o readout e o otimizador.
-  const projectedTier = tierFromProb(projected);
+  const { predNew } = projection;
 
   const changedLevers = React.useMemo(
     () =>
@@ -144,6 +142,20 @@ export function LiveSimulator({
   );
 
   const isDirty = Object.keys(overrideDelta).length > 0;
+
+  // Wire OPCIONAL da inferência REAL (XGBoost via ONNX) atrás da flag
+  // NEXT_PUBLIC_ONLINE_INFERENCE (desligada por padrão → produção intacta).
+  // Quando ligada e há intervenção, a "Projeção" exibida passa a ser o score REAL
+  // do XGBoost; o SHAP/arquétipo seguem no surrogate transparente (híbrido,
+  // ADR-0017). Qualquer erro/indisponibilidade cai de volta na heurística ancorada.
+  const online = useOnlineProjection(features, overrideDelta);
+  const usingOnnx =
+    ONLINE_INFERENCE_ENABLED && isDirty && online.status === "ok" && online.prob != null;
+  const projected = usingOnnx ? (online.prob as number) : projection.projected;
+  const deltaPP = Math.round((projected - realProb) * 100);
+  // O tier da "versão simulada" segue a PROJEÇÃO exibida (não a prob. crua da
+  // heurística), para não contradizer o readout e o otimizador.
+  const projectedTier = tierFromProb(projected);
 
   // Explicação do tutor em TEXTO (mesma redação que o áudio leria). O áudio é
   // opcional, disparado pelo botão "Ouvir" dentro do painel "Tutor Explica".
@@ -369,7 +381,12 @@ export function LiveSimulator({
         )}
 
         {/* Antes → depois */}
-        <ProjectionReadout realProb={realProb} projected={projected} deltaPP={deltaPP} />
+        <ProjectionReadout
+          realProb={realProb}
+          projected={projected}
+          deltaPP={deltaPP}
+          source={usingOnnx ? "onnx" : "heuristic"}
+        />
 
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Alavancas */}
@@ -408,6 +425,12 @@ export function LiveSimulator({
             <div className="rounded-[var(--radius-md)] border border-[var(--rule)] bg-[var(--paper)] p-4">
               <p className="eyebrow mb-2">Waterfall — explicação local (SHAP)</p>
               <ShapWaterfall shap={predNew.shap_local} />
+              {usingOnnx && (
+                <p className="mt-2 text-[10px] leading-relaxed text-[var(--steel-soft)]">
+                  Score acima = XGBoost real (ONNX). Este waterfall é a explicação do
+                  modelo transparente (surrogate) — modo híbrido.
+                </p>
+              )}
             </div>
           </div>
         </div>
