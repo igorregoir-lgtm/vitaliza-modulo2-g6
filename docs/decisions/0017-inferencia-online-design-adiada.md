@@ -77,5 +77,26 @@ A pendência acima foi **resolvida** no branch `feat/online-inference-onnx`:
   a prova foi feita no runtime local, não no preview gated.
 - **Gate:** eslint + **83 testes** (2 novos cobrindo o invariante "flag off → sem rede") + `next build`
   (25 rotas, inclui `/api/infer-onnx`) — tudo verde.
-- **Pendente só a promoção:** merge em `main` (seguro — a flag fica **off** por padrão) e, se ligada em
-  produção um dia, atualizar ADR-0011/0014 (a ancoragem some quando o real roda online).
+- **Promovido em `main`** (fast-forward, 2026-06-21): o wire está em produção com a **flag off**
+  (comportamento inalterado).
+
+## Bloqueio no runtime da Vercel (2026-06-21) — limite de 250 MB da função
+Ao tentar fazer a rota `/api/infer-onnx` **rodar na Vercel**, o deploy falha com
+**"A Serverless Function has exceeded the unzipped maximum size of 250 MB"**. Causa: o pacote
+`onnxruntime-node` traz binários de TODAS as plataformas (darwin ~72 MB + win32 ~127 MB + linux ~55 MB
+= **~254 MB**) e o `serverExternalPackages` o embarca inteiro. Tentativas que **não** resolveram:
+`outputFileTracingIncludes`/`outputFileTracingExcludes` (excludes não podam pacotes externos) e um
+script de poda no `buildCommand` (a função seguiu >250 MB). **Local funciona** (o Node tem o `.so`):
+early_dropper 0,9413 / engajado 0,0117 == produção.
+
+Impacto em produção: **nulo**. A flag fica **off** → o cliente nunca chama a rota; mesmo ligada, o hook
+cai no fallback (heurística) ao receber erro. A rota, se chamada direto, retorna 500 (o addon nativo não
+carrega no Lambda) — **dormente**, sem afetar a app (o restante responde 200). O `main` ficou no commit
+do merge (`845616b`), que **deploya Ready**; os experimentos de config que quebravam o deploy (>250 MB)
+foram descartados do histórico.
+
+**Para rodar de verdade na Vercel (decisão futura):** trocar `onnxruntime-node` (nativo, 254 MB) por
+**`onnxruntime-web` (WASM, poucos MB)** na API route — roda na função sem `.so` e cabe no limite —, OU
+mover a inferência para um **serviço externo** (container/Modal/etc.). Até lá, a fonte de verdade segue
+**lote real + surrogate transparente** (ADR-0011/0014), e o wire fica pronto para quando o backend de
+inferência couber no runtime.
