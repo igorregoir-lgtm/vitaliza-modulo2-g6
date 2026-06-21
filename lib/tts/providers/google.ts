@@ -72,7 +72,10 @@ export class GoogleTextToSpeechProvider implements TextToSpeechProvider {
   private readonly apiKey = (process.env.GOOGLE_TTS_API_KEY ?? "").trim();
   private readonly serviceAccount = readServiceAccount();
   private readonly languageCode = (process.env.GOOGLE_TTS_LANGUAGE_CODE ?? "").trim() || "pt-BR";
-  private readonly voiceName = (process.env.GOOGLE_TTS_VOICE_NAME ?? "").trim() || "pt-BR-Neural2-C";
+  // Voz nativa pt-BR. Default = Chirp3-HD (a mais natural do Google); Neural2/
+  // Wavenet também servem via env. NB: Chirp3-HD NÃO aceita `pitch` no audioConfig.
+  private readonly voiceName =
+    (process.env.GOOGLE_TTS_VOICE_NAME ?? "").trim() || "pt-BR-Chirp3-HD-Aoede";
 
   isConfigured(): boolean {
     return this.apiKey.length > 0 || this.serviceAccount !== null;
@@ -92,7 +95,8 @@ export class GoogleTextToSpeechProvider implements TextToSpeechProvider {
     const body = JSON.stringify({
       input: { text },
       voice: { languageCode: this.languageCode, name: this.voiceName },
-      audioConfig: { audioEncoding: "MP3", speakingRate: 1.0, pitch: 0.0 },
+      // pitch OMITIDO de propósito: as vozes Chirp3-HD rejeitam o parâmetro.
+      audioConfig: { audioEncoding: "MP3", speakingRate: 1.0 },
     });
 
     let url = TTS_URL;
