@@ -2,7 +2,7 @@
 
 > Spec de feature. Status: **aprovado** (brainstorming, 2026-06-19). Repagina a aba
 > `/principios-de-personalizacao` num **dossiê narrativo** que explica o sistema de ponta a ponta
-> para uma banca de exame (padrão de rigor "doutorado Stanford"), gerando o momento "what the hell".
+> para uma banca de exame (padrão de rigor "doutorado Stanford"), gerando o momento 'aha'.
 > Segue [ADR-0010](../../decisions/0010-paleta-sem-marca.md) (paleta **sem marca**). Consolida o que
 > já existe (model card, ADRs, matriz de rastreabilidade, specs, telas) — **linka, não duplica**.
 
@@ -10,7 +10,7 @@
 O artefato é avaliado **sem demo ao vivo**: o avaliador abre o sistema sozinho. Falta uma **porta de
 entrada de explicabilidade** que: (a) diga o que é o sistema e as dores que ataca; (b) dê a descrição
 técnica completa; (c) explique a lógica da Trilha; (d) exponha o rigor e a honestidade do modelo; e
-(e) crie o "what the hell" — fazendo a banca pensar *"isto não é um modelo de churn de aluno; é um
+(e) crie o momento 'aha' — fazendo a banca pensar *"isto não é um modelo de churn de aluno; é um
 sistema de retenção auditável, que deixa manipular o raciocínio do modelo ao vivo, prova que sua
 métrica não é leakage, sabe quando NÃO agir, e se ensina."*
 
@@ -46,7 +46,7 @@ sustentável pelo repo é cortada (verificação adversarial obrigatória, §11)
 - `evidence-link.tsx` — chip "ver evidência" (deep link p/ tela viva ou doc), com ícone.
 - `flow-diagram.tsx` — diagrama simples do fluxo (SVG/CSS, tokens; dados → modelo → SHAP → advisor →
   ação → auditoria; + tutor + trilha).
-- `callout.tsx` — bloco de destaque accent para os beats "what the hell".
+- `callout.tsx` — bloco de destaque accent para os beats de revelação.
 
 **Páginas / shell (alterados):**
 - `app/(app)/principios-de-personalizacao/page.tsx` — reescrita (server component): compõe as 10
@@ -98,7 +98,7 @@ export function Section(props: { id: string; eyebrow: string; title: string; chi
 ## 7. Tratamento visual (ADR-0010, sem marca)
 Tokens existentes apenas (`--accent*`, `--ink*`, `--paper*`, `--steel*`, `--rule`, `--tier-*`);
 títulos serif, eyebrows mono, corpo em `--ink-soft` (não `steel`). KpiStat e Callout accent para os
-beats "what the hell". Índice fixo (`no-print`). Acessibilidade: `aria-current` no índice, âncoras
+beats de revelação. Índice fixo (`no-print`). Acessibilidade: `aria-current` no índice, âncoras
 com `scroll-margin-top`, foco visível, `prefers-reduced-motion`. **Imprimível**: reusa
 `@media print` (índice/botões `no-print`; seções imprimem como dossiê limpo).
 

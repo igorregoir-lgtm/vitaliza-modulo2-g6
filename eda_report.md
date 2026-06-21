@@ -1,4 +1,4 @@
-# EDA Report — Vitaliza (Sistema de Inteligência de Retenção)
+# EDA Report — Vitaliza (Sistema de Inteligência de Retenção de Clientes)
 
 > Análise exploratória de `data/gym_churn_us.csv` (4.000 assinantes × 14 colunas,
 > churn global **26,52%**). Todos os números abaixo foram **computados sobre a base**

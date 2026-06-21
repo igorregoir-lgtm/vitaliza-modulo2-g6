@@ -1,5 +1,5 @@
 -- ============================================================================
--- Vitaliza — Sistema de Inteligência de Retenção
+-- Vitaliza — Sistema de Inteligência de Retenção de Clientes
 -- Migration 0001 — schema inicial (modelo de dados + RLS + auditoria)
 -- Auditabilidade: ver docs/decisions/0009-auditabilidade.md
 -- ============================================================================

@@ -1,5 +1,5 @@
 """
-EDA Vitaliza — notebook Marimo (Sistema de Inteligência de Retenção).
+EDA Vitaliza — notebook Marimo (Sistema de Inteligência de Retenção de Clientes).
 
 PBL — porquê este notebook existe: a EDA é a Etapa 1 da metodologia (SPEC §7.1).
 Antes de modelar, precisamos ENTENDER o churn: quem sai, quando e por quê. Cada
@@ -23,7 +23,7 @@ def _():
 def _(mo):
     mo.md(
         r"""
-        # EDA — Vitaliza: Sistema de Inteligência de Retenção
+        # EDA — Vitaliza: Sistema de Inteligência de Retenção de Clientes
 
         **Objetivo pedagógico (PBL).** Cada seção explica o **como** (técnica) e o
         **porquê** (decisão de negócio). A EDA não é enfeite: ela define as features,

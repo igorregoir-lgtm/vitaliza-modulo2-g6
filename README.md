@@ -1,4 +1,4 @@
-# Vitaliza — Sistema de Inteligência de Retenção
+# Vitaliza — Sistema de Inteligência de Retenção de Clientes
 
 Predição de churn **explicável** + **recomendação prescritiva** de retenção, com um **agente de IA
 educacional e empático** (PBL), para uma assinatura de bem-estar/fitness (case Vitaliza).

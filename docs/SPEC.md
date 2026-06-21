@@ -1,4 +1,4 @@
-# SPEC — Sistema de Inteligência de Retenção (Vitaliza)
+# SPEC — Sistema de Inteligência de Retenção de Clientes (Vitaliza)
 
 > **Artefato 2 — Trilha de Tecnologia (Inteli, Módulo 2).** Documento de especificação
 > dirigida (spec-driven). É a fonte de verdade do artefato e a base de auditabilidade.
@@ -17,7 +17,7 @@
 
 A **Vitaliza** é uma assinatura de bem-estar/fitness com churn mensal de **10,2%** (63% acima da
 meta interna de 6,2%), LTV/CAC de **2,02** (abaixo do piso de 3,0 exigido pela Série B) e ratchet
-anti-diluição ativo. O artefato é um **Sistema de Inteligência de Retenção**: prevê o risco de
+anti-diluição ativo. O artefato é um **Sistema de Inteligência de Retenção de Clientes**: prevê o risco de
 churn por usuário, **explica** a previsão (global e individual), traduz a explicação em
 **linguagem natural empática** e a converte em **recomendação prescritiva de retenção**, dentro de
 uma camada **pedagógica (PBL)** que ensina o "como" e o "porquê" de cada etapa.

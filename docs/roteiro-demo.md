@@ -40,7 +40,7 @@ dogs** (não-intrusão).
 1. Selecione um membro. Veja **score + tier + waterfall SHAP real** + explicação
    narrativa + recomendação prescritiva (oferta/canal/copy/timing).
 2. Role até o card **"Simule uma Intervenção"** (aberto por padrão).
-3. **Momento "what the hell":** clique em **"Simular esta alavanca"**. O sistema
+3. **Momento 'aha':** clique em **"Simular esta alavanca"**. O sistema
    anima sozinho a alavanca mais barata sugerida pelo otimizador, **recalcula ao
    vivo** score, waterfall SHAP e arquétipo, e abre o **"Tutor Explica"** com a
    explicação em texto (áudio opcional pelo botão "Ouvir").

@@ -8,7 +8,7 @@
 ## 1. Contexto e objetivo
 
 O artefato é acadêmico e **não terá demo ao vivo**: o usuário abre o sistema sozinho e precisa
-ter um momento "what the hell" por **autodescoberta**, com forte **valor educacional**. A feature
+ter um momento 'aha' por **autodescoberta**, com forte **valor educacional**. A feature
 transforma a Consulta Individual em um laboratório: o usuário arrasta alavancas acionáveis de um
 membro e **vê o modelo mudar de ideia ao vivo** (score, waterfall SHAP, arquétipo), com o **tutor
 narrando em voz** o que mudou e por quê, e um **otimizador** que aponta a alavanca mais barata para
