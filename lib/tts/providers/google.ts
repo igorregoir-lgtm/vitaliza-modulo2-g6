@@ -75,7 +75,7 @@ export class GoogleTextToSpeechProvider implements TextToSpeechProvider {
   // Voz nativa pt-BR. Default = Chirp3-HD (a mais natural do Google); Neural2/
   // Wavenet também servem via env. NB: Chirp3-HD NÃO aceita `pitch` no audioConfig.
   private readonly voiceName =
-    (process.env.GOOGLE_TTS_VOICE_NAME ?? "").trim() || "pt-BR-Chirp3-HD-Aoede";
+    (process.env.GOOGLE_TTS_VOICE_NAME ?? "").trim() || "pt-BR-Chirp3-HD-Charon";
 
   isConfigured(): boolean {
     return this.apiKey.length > 0 || this.serviceAccount !== null;
