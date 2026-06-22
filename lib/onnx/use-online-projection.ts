@@ -1,34 +1,36 @@
 "use client";
 
 // ============================================================================
-// useOnlineProjection — wire OPCIONAL da inferência REAL (XGBoost via ONNX) no
-// Simulador Vivo. Atrás da flag NEXT_PUBLIC_ONLINE_INFERENCE (desligada por
-// padrão). Ver ADR-0017 e docs de inferência online.
+// useOnlineProjection — wire da inferência REAL (XGBoost via ONNX) no Simulador
+// Vivo, rodando NO NAVEGADOR (onnxruntime-web/WASM, ver client-infer.ts). Ver
+// ADR-0017.
 //
-// Ligada: busca a probabilidade real do XGBoost (rota /api/infer-onnx) para
-// {...features, ...overrideDelta} e a devolve ao simulador, que a usa como
-// "Projeção" no lugar da heurística ancorada. SHAP/arquétipo seguem no surrogate
-// transparente (HÍBRIDO — score real + explicação surrogate).
+// LIGADO por padrão (client-side é seguro): quando há intervenção, busca a prob.
+// real do XGBoost para {...features, ...overrideDelta} e a devolve ao simulador,
+// que a usa como "Projeção" no lugar da heurística ancorada. SHAP/arquétipo
+// seguem no surrogate transparente (HÍBRIDO — score real + explicação surrogate).
 //
-// Fail-safe por construção: flag off OU qualquer erro/indisponibilidade → prob:null
-// → o simulador mantém a heurística ancorada (comportamento atual; produção intacta).
-// Corrida resolvida por id incremental (só a última resposta vale) + AbortController.
+// Fail-safe por construção: qualquer erro (WASM indisponível, CDN bloqueado etc.)
+// → status "error", prob null → o simulador mantém a heurística ancorada
+// (ADR-0014), zero regressão. Desligar de propósito: NEXT_PUBLIC_ONLINE_INFERENCE=0.
+// Corrida resolvida por id incremental (só a última resposta vale).
 // ============================================================================
 
 import * as React from "react";
 import type { CustomerFeatures } from "@/lib/types";
+import { inferChurnProbBrowser } from "./client-infer";
 
-/** Flag pública (inlined em build). "1" ou "true" liga; ausência = desligada. */
+/** Pública (inlined em build). LIGADA por padrão; "0"/"false" desliga. */
 export const ONLINE_INFERENCE_ENABLED =
-  process.env.NEXT_PUBLIC_ONLINE_INFERENCE === "1" ||
-  process.env.NEXT_PUBLIC_ONLINE_INFERENCE === "true";
+  process.env.NEXT_PUBLIC_ONLINE_INFERENCE !== "0" &&
+  process.env.NEXT_PUBLIC_ONLINE_INFERENCE !== "false";
 
 export type OnlineStatus = "off" | "loading" | "ok" | "error";
 
 export interface OnlineProjection {
   /** Prob. real do XGBoost p/ as features mescladas, ou null quando indisponível. */
   prob: number | null;
-  /** 'off' = flag desligada; senão o estado da última chamada. */
+  /** 'off' = desligada; senão o estado da última inferência. */
   status: OnlineStatus;
 }
 
@@ -45,31 +47,25 @@ export function useOnlineProjection(
   const hasDelta = Object.keys(overrideDelta).length > 0;
 
   React.useEffect(() => {
-    // Desligada ou sem intervenção: nada a buscar (em repouso a projeção é o score real).
+    // Desligada ou sem intervenção: nada a inferir (em repouso a projeção é o score real).
     if (!ONLINE_INFERENCE_ENABLED || !hasDelta) return;
     const id = ++reqId.current;
-    const merged = { ...features, ...overrideDelta };
-    const ctrl = new AbortController();
-    fetch("/api/infer-onnx", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(merged),
-      signal: ctrl.signal,
-    })
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
-      .then((d: { churn_probability?: number }) => {
-        if (id !== reqId.current) return; // resposta obsoleta
-        const p = Number(d?.churn_probability);
+    let active = true;
+    void (async () => {
+      try {
+        const p = await inferChurnProbBrowser({ ...features, ...overrideDelta });
+        if (!active || id !== reqId.current) return; // resposta obsoleta
         setResult(
           Number.isFinite(p) ? { prob: p, status: "ok" } : { prob: null, status: "error" },
         );
-      })
-      .catch((e: unknown) => {
-        if (id !== reqId.current) return;
-        if (e instanceof DOMException && e.name === "AbortError") return; // cancelada
+      } catch {
+        if (!active || id !== reqId.current) return;
         setResult({ prob: null, status: "error" });
-      });
-    return () => ctrl.abort();
+      }
+    })();
+    return () => {
+      active = false;
+    };
   }, [features, overrideDelta, hasDelta]);
 
   // Curto-circuito explícito quando desligada (não importa o estado interno).

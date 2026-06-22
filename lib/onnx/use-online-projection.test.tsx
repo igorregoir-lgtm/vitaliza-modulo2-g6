@@ -1,15 +1,13 @@
 // @vitest-environment jsdom
-import { renderHook } from "@testing-library/react";
-import { describe, it, expect, vi, afterEach } from "vitest";
-import {
-  useOnlineProjection,
-  ONLINE_INFERENCE_ENABLED,
-} from "./use-online-projection";
-import type { CustomerFeatures } from "@/lib/types";
+import { renderHook, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// Invariante de segurança de produção: sem a env NEXT_PUBLIC_ONLINE_INFERENCE
-// (caso no ambiente de teste), o hook deve ser inerte — nenhuma chamada de rede
-// e status "off", de modo que o simulador siga 100% na heurística ancorada.
+// Mock da inferência client-side (não roda WASM no teste).
+const { inferMock } = vi.hoisted(() => ({ inferMock: vi.fn() }));
+vi.mock("./client-infer", () => ({ inferChurnProbBrowser: inferMock }));
+
+import { useOnlineProjection } from "./use-online-projection";
+import type { CustomerFeatures } from "@/lib/types";
 
 const FEATURES: CustomerFeatures = {
   gender: 1,
@@ -26,21 +24,32 @@ const FEATURES: CustomerFeatures = {
   Avg_class_frequency_total: 2,
   Avg_class_frequency_current_month: 1,
 };
+const DELTA = { Avg_class_frequency_current_month: 3 };
 
-describe("useOnlineProjection — flag desligada (padrão)", () => {
-  afterEach(() => vi.restoreAllMocks());
+describe("useOnlineProjection — ONNX no navegador (ligado por padrão)", () => {
+  beforeEach(() => inferMock.mockReset());
 
-  it("a flag está desligada no ambiente de teste", () => {
-    expect(ONLINE_INFERENCE_ENABLED).toBe(false);
+  it("usa o score do ONNX quando a inferência resolve", async () => {
+    inferMock.mockResolvedValue(0.83);
+    const { result } = renderHook(() => useOnlineProjection(FEATURES, DELTA));
+    await waitFor(() => expect(result.current.status).toBe("ok"));
+    expect(result.current.prob).toBe(0.83);
+    expect(inferMock).toHaveBeenCalledTimes(1);
   });
 
-  it("não chama a rede e reporta status 'off' mesmo com intervenção", () => {
-    const fetchSpy = vi.spyOn(globalThis, "fetch");
-    const { result } = renderHook(() =>
-      useOnlineProjection(FEATURES, { Avg_class_frequency_current_month: 3 }),
-    );
-    expect(result.current.status).toBe("off");
+  it("cai no fallback (status error, prob null) quando a inferência não dá número válido", async () => {
+    // Resultado inválido (NaN) → o hook reporta 'error' e prob null, igual ao
+    // caminho de exceção (try/catch) — o simulador volta à heurística ancorada.
+    inferMock.mockResolvedValue(Number.NaN);
+    const { result } = renderHook(() => useOnlineProjection(FEATURES, DELTA));
+    await waitFor(() => expect(result.current.status).toBe("error"));
     expect(result.current.prob).toBeNull();
-    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("não infere em repouso (sem intervenção)", () => {
+    inferMock.mockResolvedValue(0.5);
+    const { result } = renderHook(() => useOnlineProjection(FEATURES, {}));
+    expect(inferMock).not.toHaveBeenCalled();
+    expect(result.current.prob).toBeNull();
   });
 });

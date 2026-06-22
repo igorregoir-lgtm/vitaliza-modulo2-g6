@@ -100,3 +100,23 @@ foram descartados do histórico.
 mover a inferência para um **serviço externo** (container/Modal/etc.). Até lá, a fonte de verdade segue
 **lote real + surrogate transparente** (ADR-0011/0014), e o wire fica pronto para quando o backend de
 inferência couber no runtime.
+
+## Solução adotada (2026-06-21) — ONNX no NAVEGADOR (WASM client-side)
+Em vez de rodar o ONNX numa função serverless (que não cabe nos 250 MB), o modelo roda **no navegador**
+via **`onnxruntime-web` (WASM)**. O caso de uso é um simulador interativo, então o cliente é o lugar
+natural: **sem função serverless** (some o muro dos 250 MB), **instantâneo** (sem ida-e-volta a cada
+arrasto) e **custo zero**. Reaproveita o `lib/onnx/preprocess.ts` (já em JS) e o `model.onnx` (653 KB,
+movido para `public/onnx/`).
+
+- **Removidos:** a rota `app/api/infer-onnx/route.ts` e a dependência nativa `onnxruntime-node`
+  (`serverExternalPackages`/`outputFileTracing` saíram do `next.config.ts`) → o deploy volta a ser
+  limpo, sem o pacote de 254 MB.
+- **Novo:** `lib/onnx/client-infer.ts` carrega o onnxruntime-web sob demanda (dynamic import →
+  code-split), com os `.wasm` do CDN jsDelivr na versão fixada e single-thread (`numThreads=1`, sem
+  exigir COOP/COEP). `lib/onnx/use-online-projection.ts` agora chama essa inferência no cliente.
+- **Flag + fallback preservados** e agora **LIGADOS por padrão** (`NEXT_PUBLIC_ONLINE_INFERENCE=0`
+  desliga): se o WASM não carregar (CDN bloqueado etc.), cai na heurística ancorada (ADR-0014) — zero
+  regressão. **SHAP segue surrogate** (híbrido); o readout rotula "Projeção · XGBoost real".
+- **Validado no navegador** (ver nota da sessão): a "Projeção" do Simulador Vivo passa a ser o XGBoost
+  real recalculado no cliente. A ancoragem do ADR-0014 permanece como **fallback**, não mais como a
+  única fonte do what-if.

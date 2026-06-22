@@ -1,12 +1,8 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  // onnxruntime-node é um addon nativo: não empacotar, exigir em runtime.
-  serverExternalPackages: ["onnxruntime-node"],
-  // garante o model.onnx no bundle da função de inferência (lido via fs).
-  outputFileTracingIncludes: {
-    "/api/infer-onnx": ["./lib/onnx/**"],
-  },
-};
+// A inferência ONNX roda no NAVEGADOR (onnxruntime-web/WASM, ver lib/onnx/
+// client-infer.ts) — não há função serverless de inferência, logo nenhum
+// serverExternalPackages/outputFileTracing é necessário aqui.
+const nextConfig: NextConfig = {};
 
 export default nextConfig;
